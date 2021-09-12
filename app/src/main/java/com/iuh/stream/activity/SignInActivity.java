@@ -30,10 +30,19 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
             }
         });
+
+        singInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // start Main activity
+                startActivity(new Intent(SignInActivity.this, MainActivity.class));
+            }
+        });
     }
 
     private void addControls() {
         // init view
         createAccountBtn = findViewById(R.id.create_account_btn);
+        singInBtn = findViewById(R.id.sign_in_sign_in_btn);
     }
 }
