@@ -11,28 +11,31 @@ import com.iuh.stream.R;
 
 public class RegisterActivity extends AppCompatActivity {
     // views
-    private Button signInBtn;
+    private Button registerWithPhoneNumberBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        addControl();
+        addControls();
         addEvents();
+
     }
 
     private void addEvents() {
-        signInBtn.setOnClickListener(new View.OnClickListener() {
+        registerWithPhoneNumberBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // start sign in activity
-                startActivity(new Intent(RegisterActivity.this, SignInActivity.class));
+            public void onClick(View view) {
+                // start RegisterPhoneNumberActivity
+                startActivity(new Intent(RegisterActivity.this, RegisterPhoneNumberActivity.class));
             }
         });
     }
 
-    private void addControl() {
-        // init views
-        signInBtn = findViewById(R.id.register_sign_in_btn);
+    private void addControls() {
+        // inti views
+        registerWithPhoneNumberBtn = findViewById(R.id.register_with_phone_number_btn);
     }
+
+
 }

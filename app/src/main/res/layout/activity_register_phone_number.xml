@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.RegisterPhoneNumberActivity"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:text="Nhập số điện thoại của bạn"
+            android:textStyle="bold"
+            android:layout_marginTop="36dp"
+            android:layout_gravity="center_horizontal"/>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="18dp"
+            android:id="@+id/phone_number_input"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
+            app:counterEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_email_or_phone_number_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Số điện thoại"
+                android:inputType="phone"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/register_phone_number_next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiếp tục"
+            android:textSize="18sp"/>
+
+
+        <Button
+            android:id="@+id/register_with_email_btn"
+            android:layout_marginTop="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Đăng ký bằng địa chỉ email"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bạn đã có tài khoản? "
+            android:textColor="@color/black"/>
+        <Button
+            android:id="@+id/register_phone_sign_in_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Đăng nhập"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

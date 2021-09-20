@@ -11,15 +11,33 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
+        android:orientation="vertical"
         android:gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bevan"
-            android:text="@string/app_name"
+            android:text="Stream"
             android:textColor="@color/main"
-            android:textSize="56sp" />
+            android:textSize="48sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:textColor="@color/main"
+            android:textStyle="italic"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ứng dụng nhắn tin tiện lợi"/>
+
+
+
     </LinearLayout>
 
 

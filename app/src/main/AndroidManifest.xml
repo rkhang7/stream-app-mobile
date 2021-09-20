@@ -9,13 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Stream">
-        <activity android:name=".activity.RegisterActivity"
-            android:theme="@style/Theme.NoActionBar">
-
-        </activity>
+        <activity
+            android:name=".activity.RegisterPhoneNumberActivity"
+            android:exported="true"
+            android:parentActivityName=".activity.RegisterActivity"/>
+        <activity
+            android:name=".activity.RegisterEmailActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.SignInActivity"
-            android:theme="@style/Theme.NoActionBar"></activity>
+            android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.StartActivity"
             android:theme="@style/Theme.NoActionBar">
