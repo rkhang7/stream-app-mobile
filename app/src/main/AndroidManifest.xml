@@ -10,9 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stream">
         <activity
+            android:name=".activity.VerifyActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.RegisterPhoneNumberActivity"
             android:exported="true"
-            android:parentActivityName=".activity.RegisterActivity"/>
+            android:parentActivityName=".activity.RegisterActivity" />
         <activity
             android:name=".activity.RegisterEmailActivity"
             android:exported="true" />

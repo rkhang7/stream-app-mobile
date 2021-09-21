@@ -38,10 +38,11 @@
             app:counterEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/register_email_or_phone_number_et"
+                android:id="@+id/register_phone_number_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Số điện thoại"
+                android:maxLength="10"
                 android:inputType="phone"/>
         </com.google.android.material.textfield.TextInputLayout>
 

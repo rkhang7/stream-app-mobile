@@ -33,7 +33,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="3"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             android:layout_above="@id/password_input"
@@ -43,7 +43,7 @@
                 android:id="@+id/register_email_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="text|textCapWords"
                 android:hint="Họ và tên đệm" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,7 +53,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             android:layout_above="@id/password_input">
@@ -62,7 +62,7 @@
                 android:id="@+id/register_last_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="text|textCapWords"
                 android:hint="Tên" />
         </com.google.android.material.textfield.TextInputLayout>
 
