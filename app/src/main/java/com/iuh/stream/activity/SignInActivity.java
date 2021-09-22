@@ -12,37 +12,37 @@ import com.iuh.stream.R;
 
 public class SignInActivity extends AppCompatActivity {
     // views
-    private Button singInBtn, createAccountBtn;
+    private Button signInPhoneNumberBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
         addControls();
-        addEvent();
+        addEvents();
     }
 
-    private void addEvent() {
-        createAccountBtn.setOnClickListener(new View.OnClickListener() {
+    private void addEvents() {
+        signInPhoneNumberBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // start Register activity
-                startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
-            }
-        });
+            public void onClick(View view) {
+                // start SignInPhoneNumberActivity
 
-        singInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // start Main activity
-                startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                startActivity(new Intent(SignInActivity.this, SignInPhoneNumberActivity.class));
             }
         });
     }
 
     private void addControls() {
-        // init view
-        createAccountBtn = findViewById(R.id.create_account_btn);
-        singInBtn = findViewById(R.id.sign_in_sign_in_btn);
+        // set title
+        getSupportActionBar().setTitle("Chọn phương thức đăng nhập");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        // init views
+        signInPhoneNumberBtn =  findViewById(R.id.sign_in_phone_number_btn);
     }
+
+
+
+
 }

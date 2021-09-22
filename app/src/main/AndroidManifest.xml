@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stream">
         <activity
+            android:name=".activity.SignInPhoneNumberActivity"
+            android:exported="true"
+            android:parentActivityName=".activity.SignInActivity"/>
+        <activity
             android:name=".activity.VerifyActivity"
             android:exported="true" />
         <activity
@@ -24,7 +28,7 @@
             android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.SignInActivity"
-            android:theme="@style/Theme.NoActionBar" />
+            android:parentActivityName=".activity.StartActivity" />
         <activity
             android:name=".activity.StartActivity"
             android:theme="@style/Theme.NoActionBar">

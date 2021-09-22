@@ -75,6 +75,7 @@ public class VerifyActivity extends AppCompatActivity {
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 handleVerifyOTP();
             }
         });
@@ -181,6 +182,11 @@ public class VerifyActivity extends AppCompatActivity {
                                 }
                             });
 
+                        }
+                        else {
+                            Intent intent = new Intent(VerifyActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                         }
                     }else {
                         progressBar.setVisibility(View.INVISIBLE);

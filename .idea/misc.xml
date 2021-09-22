@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_register_phone_number.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.13697916666666668" />
+        <entry key="app/src/main/res/layout/activity_sign_in_phone_number.xml" value="0.14" />
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
