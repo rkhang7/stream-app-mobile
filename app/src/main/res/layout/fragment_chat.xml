@@ -12,4 +12,10 @@
         android:text="Chat fragment"
         android:gravity="center"/>
 
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đăng xuất" />
+
 </FrameLayout>

@@ -10,25 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stream">
         <activity
-            android:name=".activity.SignInPhoneNumberActivity"
-            android:exported="true"
-            android:parentActivityName=".activity.SignInActivity"/>
-        <activity
-            android:name=".activity.VerifyActivity"
-            android:exported="true" />
-        <activity
-            android:name=".activity.RegisterPhoneNumberActivity"
-            android:exported="true"
-            android:parentActivityName=".activity.RegisterActivity" />
-        <activity
-            android:name=".activity.RegisterEmailActivity"
-            android:exported="true" />
-        <activity
-            android:name=".activity.RegisterActivity"
+            android:name=".activity.SignInActivity"
             android:theme="@style/Theme.NoActionBar" />
         <activity
-            android:name=".activity.SignInActivity"
-            android:parentActivityName=".activity.StartActivity" />
+            android:name=".activity.MainActivity"
+            android:parentActivityName=".activity.StartActivity"
+            android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.StartActivity"
             android:theme="@style/Theme.NoActionBar">
@@ -38,7 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.RegisterActivity"
+            android:theme="@style/Theme.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"
