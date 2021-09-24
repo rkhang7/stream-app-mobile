@@ -1,27 +1,21 @@
 package com.iuh.stream.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
+import com.iuh.stream.dialog.ResetPasswordDialog;
 import com.iuh.stream.dialog.ShowLoginMethodsDialog;
 
 public class SignInActivity extends AppCompatActivity {
-    // views
-    private Button signInPhoneNumberBtn;
-    private ShowLoginMethodsDialog methodsDialog;
     private FirebaseAuth mAuth;
 
     @Override
@@ -31,11 +25,7 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        methodsDialog = new ShowLoginMethodsDialog(this);
-
-        findViewById(R.id.btnShowMoreLogin).setOnClickListener(v -> {
-            methodsDialog.show();
-        });
+        findViewById(R.id.btnShowMoreLogin).setOnClickListener(v -> new ShowLoginMethodsDialog(this).show());
 
         findViewById(R.id.btnToRegister).setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterActivity.class);
@@ -52,9 +42,11 @@ public class SignInActivity extends AppCompatActivity {
         TextInputEditText edtPassword = findViewById(R.id.txtPassword);
         ProgressBar pbLoginEmail = findViewById(R.id.pbLoginEmail);
 
-        findViewById(R.id.btnLoginEmail).setOnClickListener(v -> {
-            pbLoginEmail.setVisibility(View.VISIBLE);
+        findViewById(R.id.btnForgotPassword).setOnClickListener(v -> {
+            new ResetPasswordDialog(this).show();
+        });
 
+        findViewById(R.id.btnLoginEmail).setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
 
@@ -72,9 +64,8 @@ public class SignInActivity extends AppCompatActivity {
                 flag = false;
             }
 
-            if (!flag)
-                return;
-            else {
+            if (flag){
+                pbLoginEmail.setVisibility(View.VISIBLE);
                 //Login
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.iuh.stream">
+    package="com.iuh.stream" >
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Stream">
+        android:theme="@style/Theme.Stream" >
         <activity
             android:name=".activity.SignInActivity"
             android:theme="@style/Theme.NoActionBar" />
@@ -18,14 +18,15 @@
             android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.StartActivity"
-            android:theme="@style/Theme.NoActionBar">
+            android:theme="@style/Theme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.RegisterActivity"
+        <activity
+            android:name=".activity.RegisterActivity"
             android:theme="@style/Theme.NoActionBar" />
 
         <meta-data

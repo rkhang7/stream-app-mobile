@@ -165,6 +165,7 @@ public class RegisterActivity extends AppCompatActivity {
                 lnEnterPhone.setVisibility(View.GONE);
                 lnVerifyPhone.setVisibility(View.VISIBLE);
                 pbPhone.setVisibility(View.GONE);
+                tvPhoneNumber.setText(phoneNumber84);
 
                 int seconds = 60;
                 new CountDownTimer(seconds * 1000,1000){
@@ -294,9 +295,7 @@ public class RegisterActivity extends AppCompatActivity {
                 flag = false;
             }
 
-            if (!flag)
-                return;
-            else  {
+            if (flag){
                 pbEmailRegister.setVisibility(View.VISIBLE);
                 //Register account
                 mAuth.createUserWithEmailAndPassword(email, password)
