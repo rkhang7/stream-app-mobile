@@ -21,6 +21,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
@@ -44,6 +47,9 @@ public class ShowLoginMethodsDialog extends Dialog {
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private ProgressBar pbPhone;
     private EditText edtOtpCode;
+    public static final int RC_SIGN_IN = 100;
+    private GoogleSignInClient mGoogleSignInClient;
+    public static ProgressBar signInGoogleProgressBar;
 
     public ShowLoginMethodsDialog(Activity activity) {
         super(activity);
@@ -51,6 +57,7 @@ public class ShowLoginMethodsDialog extends Dialog {
         setContentView(R.layout.show_login_method_dialog);
 
         mAuth = FirebaseAuth.getInstance();
+        signInGoogleProgressBar = findViewById(R.id.sign_in_google_pb);
 
         this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
@@ -59,7 +66,33 @@ public class ShowLoginMethodsDialog extends Dialog {
             dismiss();
         });
 
+        findViewById(R.id.btnLoginWithGoogle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInGoogleProgressBar.setVisibility(View.VISIBLE);
+                configGoogleSignIn(activity);
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                activity.startActivityForResult(signInIntent, RC_SIGN_IN);
+            }
+        });
+
+
+
         loginPhonePart();
+
+
+
+
+    }
+
+    private void configGoogleSignIn(Activity activity) {
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(activity.getString((R.string.default_web_client_id)))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(getOwnerActivity(), gso);
     }
 
     private void loginPhonePart() {
@@ -224,5 +257,7 @@ public class ShowLoginMethodsDialog extends Dialog {
 
         return true;
     }
+
+
 
 }
