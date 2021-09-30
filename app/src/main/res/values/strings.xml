@@ -5,4 +5,27 @@
     <string name="top_icon">TOP ICON</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login">Đăng nhập</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="phone">Số điện thoại</string>
+    <string name="verify_code">Mã xác nhận</string>
+    <string name="get_code">Lấy mã</string>
+    <string name="or">Hoặc</string>
+    <string name="login_with_google">Đăng nhập với google</string>
+    <string name="default_client_id">294939694851-r99kqg9rcf9g8kbi5kb5oh9p0qdmiem1.apps.googleusercontent.com</string>
+    <string name="reset">Đặt lại</string>
+    <string name="back">Quay lại</string>
+    <string name="account_exists">Đã có tài khoản?</string>
+    <string name="lastname">Họ và tên đệm</string>
+    <string name="firstname">Tên</string>
+    <string name="birthdate">Ngày sinh</string>
+    <string name="login_method">Phương thức đăng nhập</string>
+    <string name="gender">Giới tính</string>
+    <string name="female">Nữ</string>
+    <string name="male">Nam</string>
+    <string name="re_password">Nhập lại mật khẩu</string>
+    <string name="account_not_yet">Chưa có tài khoản?</string>
+    <string name="reset_password">Đặt lại mật khẩu</string>
 </resources>

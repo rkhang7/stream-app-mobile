@@ -1,147 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.SignInActivity"
-    android:padding="16dp"
+    android:padding="10dp"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/bevan"
-            android:text="Đăng nhập"
-            android:textColor="@color/main"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            app:endIconMode="clear_text"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            tools:ignore="UseCompoundDrawables">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtEmail"
-                android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="text"/>
+                android:src="@drawable/stream_64"
+                android:contentDescription="@string/app_name" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Mật khẩu"
-            app:endIconMode="password_toggle"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtPassword"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                android:text="@string/app_name"
+                style="@style/Heading1"/>
 
-        </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btnLoginEmail"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:text="Đăng nhập"
-            android:padding="10dp"
-        />
+            android:layout_marginTop="24dp"
+            android:layout_below="@id/linearLayout">
 
-        <ProgressBar
-            android:visibility="gone"
-            android:id="@+id/pbLoginEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/textView2"
+                style="@style/Heading2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnForgotPassword"
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="5dp"
+                android:background="@color/gray"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
+                app:layout_constraintTop_toTopOf="@+id/textView2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:textColor="@color/danger"
-            android:text="Quên mật khẩu"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="Hoặc"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:id="@+id/btnShowMoreLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:text="Đăng nhập bằng phương thức khác"
-            android:backgroundTint="@color/info"
-            android:padding="10dp"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="Nếu chưa có tài khoản"
+            android:layout_below="@id/constraintLayout2"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
-        <Button
-            android:id="@+id/btnToRegister"
+            android:backgroundTint="@color/transparent"
+            app:tabIndicatorColor="@color/transparent"
+            app:tabPaddingEnd="0dp"
+            app:tabPaddingStart="0dp">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout="@layout/tab_email" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout="@layout/tab_phone" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <LinearLayout
+            android:id="@+id/byEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textStyle="normal"
-            android:textSize="16sp"
-            android:textColor="@color/main"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:text="Đăng ký"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/white_smoke"
             android:padding="10dp"
-            />
+            android:visibility="visible"
+            android:layout_below="@id/tabLayout">
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/icons8_email_24px_3"
+                style="@style/InputText">
 
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/EditText"
+                    android:hint="@string/email"
+                    android:backgroundTint="@color/white"/>
 
-</LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/icons8_lock_24px_2"
+                style="@style/InputText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="@string/password"
+                    style="@style/EditText"
+                    android:backgroundTint="@color/white"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnLoginEmail"
+                android:layout_width="match_parent"
+                style="@style/RoundedButton"
+                android:text="@string/login"
+                android:layout_marginTop="20dp"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/pgEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_marginTop="10dp"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/forgot_password"
+                style="@style/TextError"
+                android:gravity="right"
+                android:layout_marginTop="20dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/byPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/white_smoke"
+            android:padding="10dp"
+            android:visibility="invisible"
+            android:layout_below="@id/tabLayout"
+            android:layout_alignBottom="@id/byEmail">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+                <Button
+                    android:id="@+id/btnGetCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:backgroundTint="@color/c_yellow"
+                    android:background="@drawable/tab_right"
+                    style="@style/TextNormalBold"
+                    android:text="@string/get_code"
+                    app:layout_constraintTop_toTopOf="@id/phone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/phone"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/icons8_phone_24px_1"
+                    style="@style/InputText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btnGetCode"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/EditText"
+                        android:backgroundTint="@color/white"
+                        android:hint="@string/phone"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/otp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/icons8_pin_code_24px_1"
+                style="@style/InputText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/EditText"
+                    android:hint="@string/verify_code"
+                    android:backgroundTint="@color/white"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnLoginPhone"
+                android:layout_width="match_parent"
+                style="@style/RoundedButton"
+                android:text="@string/login"
+                android:layout_marginTop="20dp"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/pgPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/or"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/or"
+            style="@style/TextNormal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/byEmail"/>
+
+        <Button
+            android:id="@+id/btnLoginWithGoogle"
+            android:layout_width="match_parent"
+            style="@style/BorderlessButton"
+            android:layout_below="@id/or"
+            android:layout_marginTop="10dp"
+            android:text="@string/login_with_google"
+            android:textColor="@color/secondary"
+            android:textAllCaps="false"
+            android:fontFamily="serif"
+            android:textStyle="bold"
+            app:icon="@drawable/googleg_standard_color_18"
+            app:iconGravity="textStart"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_below="@id/btnLoginWithGoogle"
+            android:layout_marginTop="24dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_not_yet"
+                style="@style/TextNormal"/>
+            <TextView
+                android:id="@+id/toRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register"
+                android:layout_marginStart="10dp"
+                style="@style/TextNormal"
+                android:textColor="@color/main"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

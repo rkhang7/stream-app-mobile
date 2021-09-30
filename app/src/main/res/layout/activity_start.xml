@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.StartActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_alignParentTop="true">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -43,30 +44,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp">
 
         <Button
             android:id="@+id/sign_in_btn"
             android:layout_width="250dp"
-            android:layout_height="60dp"
             android:text="@string/sign_in_btn"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            style="@style/RoundedButton"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/register_btn"
             android:layout_marginTop="16dp"
             android:layout_width="250dp"
-            android:layout_height="60dp"
             android:text="@string/register"
             android:textSize="18sp"
-            style="?attr/materialButtonOutlinedStyle"/>
+            style="@style/OutlineButton"/>
 
 
     </LinearLayout>
 
 
 
-</LinearLayout>
+</RelativeLayout>
