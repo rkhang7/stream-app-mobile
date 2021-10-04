@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,14 +31,25 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
+import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.models.User;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     // firebase
@@ -60,6 +72,11 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout layoutFirstName;
     private TextInputLayout layoutBirthDate;
     private final long OTP_LIFE_TIME = 120L;
+    private static final int EMAIL_TYPE = 1;
+    private static final int PHONE_NUMBER_TYPE = 2;
+
+
+
 
     public RegisterActivity() {
     }
@@ -70,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+
 
         // views
         EditText edtBirthdate = findViewById(R.id.txtBirthDate);
@@ -95,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.white_smoke));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
                 lnEmail.setVisibility(lnEmail.getVisibility() == View.INVISIBLE ? View.VISIBLE : View.INVISIBLE);
                 lnPhone.setVisibility(lnPhone.getVisibility() == View.INVISIBLE ? View.VISIBLE : View.INVISIBLE);
             }
@@ -103,13 +121,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.main));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.white));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.white));
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.white_smoke));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
             }
         });
 
@@ -136,16 +154,17 @@ public class RegisterActivity extends AppCompatActivity {
                 .build();
 
         picker.addOnDismissListener(dialog -> {
-            if(picker.getSelection() != null) {
+            if (picker.getSelection() != null) {
                 edtBirthdate.setText(
                         new SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi"))
-                        .format(new Date(picker.getSelection()))
+                                .format(new Date(picker.getSelection()))
                 );
             }
         });
 
         edtBirthdate.setOnClickListener(v -> picker.show(getSupportFragmentManager(), "tag"));
     }
+
 
     private boolean checkValidInput() {
         String fName = edtFirstName.getText().toString().trim();
@@ -154,21 +173,24 @@ public class RegisterActivity extends AppCompatActivity {
 
         boolean flag = true;
 
-        if(fName.isEmpty()) {
+        if (fName.isEmpty()) {
             layoutFirstName.setError("Tên chưa hợp lệ");
             flag = false;
         } else {
             layoutFirstName.setError("");
         }
-        if(birthDate.isEmpty()) {
+        if (birthDate.isEmpty()) {
             layoutBirthDate.setError("Chưa chọn ngày sinh");
             flag = false;
         } else {
             layoutBirthDate.setError("");
         }
 
+
+
         return flag;
     }
+
 
     private void addByPhone() {
         TextInputEditText edtPhone = findViewById(R.id.txtPhone);
@@ -198,7 +220,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .setActivity(this)
                         .setCallbacks(mCallback);
 
-                if(mResendToken != null)
+                if (mResendToken != null)
                     builder.setForceResendingToken(mResendToken);
 
                 PhoneAuthOptions options = builder.build();
@@ -213,7 +235,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnLoginPhone.setOnClickListener(v -> {
             String code = Objects.requireNonNull(edtOtpCode.getText()).toString().trim();
 
-            if(code.length() == 6) {
+            if (code.length() == 6) {
                 PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
 
                 pgPhone.setVisibility(View.VISIBLE);
@@ -249,7 +271,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 layoutPhone.setError("");
 
-                new CountDownTimer(OTP_LIFE_TIME * 1000,1000){
+                new CountDownTimer(OTP_LIFE_TIME * 1000, 1000) {
                     @Override
                     public void onTick(long l) {
                         layoutPhone.setHelperText("Mã hết hạn trong: " + l / 1000);
@@ -288,13 +310,11 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     pgPhone.setVisibility(View.INVISIBLE);
                     if (task.isSuccessful()) {
-                        if(task.getResult().getAdditionalUserInfo() != null && !task.getResult().getAdditionalUserInfo().isNewUser()) {
+                        if (task.getResult().getAdditionalUserInfo() != null && !task.getResult().getAdditionalUserInfo().isNewUser()) {
                             //User already exist => Register fail
                             Toast.makeText(this, "Số điện thoại đã được sử dụng, vui lòng dùng số khác!", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(this, MainActivity.class);
-                            startActivity(intent);
+                            saveUserToDatabase(task.getResult().getUser().getUid(), PHONE_NUMBER_TYPE);
                         }
 
                     } else {
@@ -332,29 +352,29 @@ public class RegisterActivity extends AppCompatActivity {
 
             flag = checkValidInput();
 
-            if(!email.matches("^[a-z][a-z0-9_\\.]{5,32}@[a-z0-9]{2,}(\\.[a-z0-9]{2,4}){1,2}$")) {
+            if (!email.matches("^[a-z][a-z0-9_\\.]{5,32}@[a-z0-9]{2,}(\\.[a-z0-9]{2,4}){1,2}$")) {
                 layoutEmail.setError("Email không hợp lệ!");
                 flag = false;
             }
-            if(password.length() < 6) {
+            if (password.length() < 6) {
                 layoutPassword.setError("Mật khẩu không hợp lệ!");
                 flag = false;
             }
-            if(!password.equals(rePassword)) {
+            if (!password.equals(rePassword)) {
                 layoutRePassword.setError("Mật khẩu không khớp!");
                 flag = false;
             }
 
-            if (flag){
+            if (flag) {
                 pbEmailRegister.setVisibility(View.VISIBLE);
                 //Register account
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
                             pbEmailRegister.setVisibility(View.GONE);
-                            if(task.isSuccessful()) {
-                                Toast.makeText(this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(this, SignInActivity.class);
-                                startActivity(intent);
+                            if (task.isSuccessful()) {
+                                String uid = task.getResult().getUser().getUid();
+                                saveUserToDatabase(uid, EMAIL_TYPE);
+
                             } else {
                                 Toast.makeText(this, "Không thể tạo tài khoản, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
                             }
@@ -362,10 +382,82 @@ public class RegisterActivity extends AppCompatActivity {
                         .addOnFailureListener(e -> {
                             pbEmailRegister.setVisibility(View.GONE);
                             Log.e("CE", "create by email: ", e);
-                            Toast.makeText(this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Tạo tài khoản thất bại", Toast.LENGTH_SHORT).show();
                         });
 
             }
         });
+    }
+
+    private void saveUserToDatabase(String uid, int type) {
+
+
+        String firstName = edtFirstName.getText().toString().trim();
+        String lastName = edtLastName.getText().toString().trim();
+
+        // get gender
+        radGroupGender = findViewById(R.id.gender);
+        int radioId = radGroupGender.getCheckedRadioButtonId();
+        RadioButton rdGender = findViewById(radioId);
+        String gender = rdGender.getText().toString();
+
+        // get dob
+        EditText edtBirthdate = findViewById(R.id.txtBirthDate);
+        Date dob = null;
+        try {
+            dob = new SimpleDateFormat("dd/MM/yyyy").parse(edtBirthdate.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String imageUrl = "";
+
+         //get lastOnline
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date lastOnline = new Date(timestamp.getTime());
+//
+        List<String> contacts = new ArrayList<>();
+
+        boolean isActive = true;
+        boolean isOnline = true;
+
+        String email = null;
+        String phoneNumber = null;
+
+        if (type == EMAIL_TYPE) {
+            EditText txtEmail = findViewById(R.id.txtEmail);
+            email = txtEmail.getText().toString();
+        } else if (type == PHONE_NUMBER_TYPE) {
+            EditText txtPhoneNumber = findViewById(R.id.txtPhone);
+            phoneNumber = txtPhoneNumber.getText().toString();
+        }
+
+
+
+        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, isOnline, isActive, contacts);
+
+
+        RetrofitService.getInstance.saveUser(user, uid).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User resUser = response.body();
+                if(resUser == null){
+                    Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

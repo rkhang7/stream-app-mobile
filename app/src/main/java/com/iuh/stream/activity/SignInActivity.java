@@ -35,15 +35,25 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
+import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.dialog.ResetPasswordDialog;
+import com.iuh.stream.models.User;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -89,6 +99,7 @@ public class SignInActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
+        configGoogleSignIn();
 
         findViewById(R.id.toRegister).setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterActivity.class);
@@ -100,9 +111,8 @@ public class SignInActivity extends AppCompatActivity {
 
         //Google login
         findViewById(R.id.btnLoginWithGoogle).setOnClickListener(v -> {
-            configGoogleSignIn(this);
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-            ((Activity)this).startActivityForResult(signInIntent, RC_SIGN_IN);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
         });
     }
 
@@ -213,7 +223,7 @@ public class SignInActivity extends AppCompatActivity {
         mCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                Log.d("AA", "onVerificationCompleted: ");
+
             }
 
             @Override
@@ -300,24 +310,17 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-
-
-
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-
-
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-
                 // Google Sign In failed, update UI appropriately
             }
         }
@@ -332,7 +335,8 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // if user signing in first time then get and show user info from gg account
                             if (task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                // save data to database
+                                FirebaseUser user =  task.getResult().getUser();
+                                saveUserToDatabase(user);
 
                             }
                             // Sign in success, update UI with the signed-in user's information
@@ -352,13 +356,51 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    private void configGoogleSignIn(Activity activity) {
+    private void saveUserToDatabase(FirebaseUser user) {
+        String uid = user.getUid();
+        String[] s = user.getDisplayName().split(" ");
+        List<String> displayName = Arrays.asList(s);
+
+        String firstName = displayName.get(0);
+        String lastName = "";
+        for(int i = 1;i < displayName.size();i++){
+            lastName += displayName.get(i);
+        }
+
+        String gender = null;
+        String imageURL = user.getPhotoUrl().toString();
+        String phoneNumber = user.getPhoneNumber();
+        String email = user.getEmail();
+        List<String> contacts = new ArrayList<>();
+
+
+        User mUser = new User(uid, firstName, lastName,gender, imageURL, phoneNumber, email, true, true, contacts);
+
+        RetrofitService.getInstance.saveUser(mUser, uid).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User resUser = response.body();
+                if(resUser == null){
+                    Toast.makeText(SignInActivity.this, "Đã xãy ra lỗi", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(SignInActivity.this, "Đã xảy ta lỗi", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void configGoogleSignIn() {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(activity.getString((R.string.default_client_id)))
+                .requestIdToken(getString((R.string.default_client_id)))
                 .requestEmail()
                 .build();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(SignInActivity.this, gso);
     }
 }
