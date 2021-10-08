@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -18,4 +19,8 @@ public interface RetrofitService {
 
     @POST("users/{uid}")
     Call<User> saveUser(@Body User user, @Path("uid") String uid);
+
+    @GET("users/phone/{phoneNumber}")
+    Call<User> getUserByPhoneNumber(@Path("phoneNumber") String phoneNumber);
+
 }

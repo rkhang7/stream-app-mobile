@@ -9,10 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
 import com.iuh.stream.models.Contact;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private Context mContext;
@@ -39,6 +42,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         Contact contact = contactList.get(position);
         if(contact != null){
             holder.phoneNameTv.setText(contact.getPhoneName());
+            holder.streamNameTv.setText("Tên stream: " + contact.getFirstName() + " " + contact.getLastName());
+            Glide.with(mContext).load(contact.getAvatar()).into(holder.avatarIv);
         }
     }
 
@@ -49,10 +54,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     public class ContactViewHolder extends RecyclerView.ViewHolder {
         private TextView phoneNameTv;
+        private TextView streamNameTv;
         private String phoneNumber;
+        private CircleImageView avatarIv;
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             phoneNameTv = itemView.findViewById(R.id.contact_name);
+            streamNameTv = itemView.findViewById(R.id.contact_stream_name);
+            avatarIv = itemView.findViewById(R.id.contact_avatar_iv);
         }
     }
 }

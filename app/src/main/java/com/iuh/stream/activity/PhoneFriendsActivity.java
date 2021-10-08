@@ -8,18 +8,31 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.ContactAdapter;
+import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.models.Contact;
+import com.iuh.stream.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PhoneFriendsActivity extends AppCompatActivity {
     private List<Contact> contactList;
     private ContactAdapter contactAdapter;
     private RecyclerView recyclerView;
+    private User tempUser;
+    // firebase
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +43,10 @@ public class PhoneFriendsActivity extends AppCompatActivity {
     private void addControls() {
         getSupportActionBar().setTitle("Bạn từ danh bạ máy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // init firebase
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
         // setting recyclerview
         contactList = new ArrayList<>();
@@ -58,7 +75,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         // check condition
         if(cursor.getCount() > 0){
             while(cursor.moveToNext()){
-
+                tempUser = null;
                 // get contact id
                 int temp = cursor.getColumnIndex(ContactsContract.Contacts._ID);
                 String id = cursor.getString(temp);
@@ -83,12 +100,53 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                     int temp3 = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                     String number = phoneCursor.getString(temp3);
 
-                    // init contact model
-                    Contact contact = new Contact();
-                    contact.setPhoneNumber(number);
-                    contact.setPhoneName(name);
+                    // convert (012) 345-6711 --->> 0123456711
+                    String phoneNumberConverted = "";
+                    for(int i = 0; i< number.length(); i++){
+                        if(i == 0 || i == 4 || i == 5 || i == 9){
+                            continue;
+                        }
+                        phoneNumberConverted+= number.charAt(i);
+                    }
 
-                    contactList.add(contact);
+                    if(phoneNumberConverted.length() == 10){
+                        // init contact model
+
+
+
+                        // get user by phone number
+                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted).enqueue(new Callback<User>() {
+                            @Override
+                            public void onResponse(Call<User> call, Response<User> response) {
+                                tempUser = response.body();
+                                if(tempUser != null){
+                                    if(!tempUser.get_id().equals(mUser.getUid())){
+                                        Contact contact = new Contact();
+                                        contact.setPhoneNumber(number);
+                                        contact.setPhoneName(name);
+                                        contact.setFirstName(tempUser.getFirstName());
+                                        contact.setLastName(tempUser.getFirstName());
+                                        contact.setId(tempUser.get_id());
+                                        contact.setAvatar(tempUser.getImageURL());
+                                        contactList.add(contact);
+                                    }
+                                }
+
+
+                                contactAdapter.setData(contactList);
+                                recyclerView.setAdapter(contactAdapter);
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<User> call, Throwable t) {
+                            }
+                        });
+
+
+
+                    }
+
                     // close cursor
                     phoneCursor.close();
                 }
@@ -98,10 +156,12 @@ public class PhoneFriendsActivity extends AppCompatActivity {
             cursor.close();
         }
 
-        contactAdapter.setData(contactList);
-        recyclerView.setAdapter(contactAdapter);
+
 
     }
+
+
+
 
     @Override
     public boolean onSupportNavigateUp() {
