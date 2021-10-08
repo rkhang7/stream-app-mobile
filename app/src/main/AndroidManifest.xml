@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iuh.stream">
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
         android:allowBackup="true"
@@ -11,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".activity.PhoneFriendsActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.SignInActivity"
             android:theme="@style/Theme.NoActionBar" />

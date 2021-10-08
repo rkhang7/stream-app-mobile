@@ -1,0 +1,58 @@
+package com.iuh.stream.adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.iuh.stream.R;
+import com.iuh.stream.models.Contact;
+
+import java.util.List;
+
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+    private Context mContext;
+    private List<Contact> contactList;
+
+    public ContactAdapter(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public void setData(List<Contact> contactList){
+        this.contactList = contactList;
+        notifyDataSetChanged();
+    }
+
+    @NonNull
+    @Override
+    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_row, parent, false);
+        return new ContactViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
+        Contact contact = contactList.get(position);
+        if(contact != null){
+            holder.phoneNameTv.setText(contact.getPhoneName());
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return contactList.size();
+    }
+
+    public class ContactViewHolder extends RecyclerView.ViewHolder {
+        private TextView phoneNameTv;
+        private String phoneNumber;
+        public ContactViewHolder(@NonNull View itemView) {
+            super(itemView);
+            phoneNameTv = itemView.findViewById(R.id.contact_name);
+        }
+    }
+}

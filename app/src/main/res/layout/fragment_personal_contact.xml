@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.PersonalContactFragment"
+    android:padding="8dp"
+    android:orientation="vertical">
+
+    <Button
+        android:text="Lời mời kết bạn"
+        android:layout_width="match_parent"
+        android:textAlignment="textStart"
+        android:layout_height="80dp"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_person"
+        android:textColor="@color/black"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+
+    <Button
+        android:id="@+id/friend_from_contact_btn"
+        android:text="Bạn từ danh bạ"
+        android:layout_width="match_parent"
+        android:textAlignment="textStart"
+        android:layout_height="80dp"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_contact"
+        android:textColor="@color/black"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+
+</LinearLayout>
