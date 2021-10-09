@@ -30,8 +30,11 @@
         <entry key="app/src/main/res/drawable-anydpi/ic_contact.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable-anydpi/ic_person.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable/button.xml" value="0.125" />
+        <entry key="app/src/main/res/drawable/search_contacts_bg.xml" value="0.1234375" />
+        <entry key="app/src/main/res/drawable/tab_left.xml" value="0.10677083333333333" />
+        <entry key="app/src/main/res/drawable/tab_left_8.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_phone_friends.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_phone_friends.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_register_phone_number.xml" value="0.21" />

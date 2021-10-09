@@ -8,7 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,18 +31,63 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PhoneFriendsActivity extends AppCompatActivity {
+    // views
     private List<Contact> contactList;
     private ContactAdapter contactAdapter;
     private RecyclerView recyclerView;
-    private User tempUser;
+    private EditText searchContactEt;
+    private TextView notFoundTv;
+
     // firebase
     FirebaseAuth mAuth;
     FirebaseUser mUser;
+
+    private User tempUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_friends);
         addControls();
+        addEvents();
+    }
+
+    private void addEvents() {
+        searchContactEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                filterContacts(editable.toString());
+            }
+        });
+    }
+
+    private void filterContacts(String key) {
+        List<Contact> filterContacts = new ArrayList<>();
+        for(Contact contact : contactList){
+            if(contact.getFirstName().toLowerCase().contains(key)
+                    || contact.getLastName().toLowerCase().contains(key) || contact.getPhoneName().toLowerCase().contains(key)){
+                filterContacts.add(contact);
+            }
+        }
+
+        if(filterContacts.size() > 0){
+            recyclerView.setVisibility(View.VISIBLE);
+            notFoundTv.setVisibility(View.GONE);
+            contactAdapter.setData(filterContacts);
+        }
+        else{
+            recyclerView.setVisibility(View.GONE);
+            notFoundTv.setVisibility(View.VISIBLE);
+        }
     }
 
     private void addControls() {
@@ -48,13 +98,17 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
-        // setting recyclerview
+        // init recyclerview
         contactList = new ArrayList<>();
         contactAdapter = new ContactAdapter(this);
         contactAdapter.setData(contactList);
         recyclerView = findViewById(R.id.contact_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(contactAdapter);
+
+        // init views
+        searchContactEt = findViewById(R.id.search_contact_et);
+        notFoundTv = findViewById(R.id.not_found_tv);
 
         getContactList();
     }
