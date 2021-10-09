@@ -14,15 +14,17 @@ import android.widget.Button;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
+import com.iuh.stream.activity.FriendInvitationActivity;
 import com.iuh.stream.activity.PhoneFriendsActivity;
 
 import java.util.List;
 
 
 public class PersonalContactFragment extends Fragment {
-
+    // views
     private View view;
     private Button friendFromContactBtn;
+    private Button friendInvitationBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,9 +63,19 @@ public class PersonalContactFragment extends Fragment {
 
             }
         });
+
+        friendInvitationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), FriendInvitationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addControls() {
+        // init views
         friendFromContactBtn = view.findViewById(R.id.friend_from_contact_btn);
+        friendInvitationBtn = view.findViewById(R.id.friend_invitation_btn);
     }
 }

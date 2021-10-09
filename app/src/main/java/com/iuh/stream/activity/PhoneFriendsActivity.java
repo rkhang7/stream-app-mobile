@@ -91,6 +91,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
     }
 
     private void addControls() {
+        // set title
         getSupportActionBar().setTitle("Bạn từ danh bạ máy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -219,7 +220,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        onBackPressed(); // allow back previous activity
         return super.onSupportNavigateUp();
     }
 }

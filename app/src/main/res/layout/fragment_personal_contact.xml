@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/friend_invitation_btn"
         android:text="Lời mời kết bạn"
         android:layout_width="match_parent"
         android:textAlignment="textStart"

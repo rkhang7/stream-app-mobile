@@ -8,22 +8,30 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.iuh.stream.fragment.GroupContactFragment;
 import com.iuh.stream.fragment.PersonalContactFragment;
 
-public class ContactFragmentAdapter extends FragmentStateAdapter {
-    public ContactFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyFragmentAdapter extends FragmentStateAdapter {
+
+    private List<Fragment> fragmentList;
+
+    public MyFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+        fragmentList = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if(position == 1){
-            return new GroupContactFragment();
-        }
-        return new PersonalContactFragment();
+       return fragmentList.get(position);
+    }
+
+    public void addFragment(Fragment fragment){
+        fragmentList.add(fragment);
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return fragmentList.size();
     }
 }

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iuh.stream.R;
-import com.iuh.stream.adapter.ContactFragmentAdapter;
+import com.iuh.stream.adapter.MyFragmentAdapter;
 
 
 public class ContactFragment extends Fragment {
@@ -21,7 +21,7 @@ public class ContactFragment extends Fragment {
     private View view;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    private ContactFragmentAdapter contactFragmentAdapter;
+    private MyFragmentAdapter myFragmentAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -34,8 +34,10 @@ public class ContactFragment extends Fragment {
     private void addControls() {
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager2 = view.findViewById(R.id.pager);
-        contactFragmentAdapter = new ContactFragmentAdapter(this.getActivity());
-        viewPager2.setAdapter(contactFragmentAdapter);
+        myFragmentAdapter = new MyFragmentAdapter(this.getActivity());
+        myFragmentAdapter.addFragment(new PersonalContactFragment());
+        myFragmentAdapter.addFragment(new GroupContactFragment());
+        viewPager2.setAdapter(myFragmentAdapter);
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
