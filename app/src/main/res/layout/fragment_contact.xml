@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ContactFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.ContactFragment"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main">
+
+        <Button
+            android:id="@+id/search_iv"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            app:icon="@drawable/search_white"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="18dp"
+            android:layout_toEndOf="@id/search_iv"
+            android:text="Tìm bạn bè"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+
+        <Button
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:id="@+id/add_friend_btn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            app:icon="@drawable/iperson_add_white_32"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </RelativeLayout>
 
 
     <com.google.android.material.tabs.TabLayout
@@ -18,4 +58,4 @@
         android:layout_below="@+id/tab_layout"
         android:layout_weight="1" />
 
-</RelativeLayout>
+</LinearLayout>

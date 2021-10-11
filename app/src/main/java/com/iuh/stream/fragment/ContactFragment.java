@@ -1,5 +1,6 @@
 package com.iuh.stream.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,29 +10,41 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iuh.stream.R;
+import com.iuh.stream.activity.AddFriendActivity;
 import com.iuh.stream.adapter.MyFragmentAdapter;
 
 
 public class ContactFragment extends Fragment {
-
+    // views
     private View view;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private MyFragmentAdapter myFragmentAdapter;
+    private Button addFiendBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_contact, container, false);
         addControls();
+        addEvents();
         return view;
     }
 
+    private void addEvents() {
+        addFiendBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), AddFriendActivity.class);
+            startActivity(intent);
+        });
+    }
+
     private void addControls() {
+        // init views
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager2 = view.findViewById(R.id.pager);
         myFragmentAdapter = new MyFragmentAdapter(this.getActivity());
@@ -51,5 +64,8 @@ public class ContactFragment extends Fragment {
                 }
             }
         }).attach();
+
+        addFiendBtn = view.findViewById(R.id.add_friend_btn);
+
     }
 }

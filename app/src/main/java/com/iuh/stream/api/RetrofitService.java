@@ -23,4 +23,7 @@ public interface RetrofitService {
     @GET("users/phone/{phoneNumber}")
     Call<User> getUserByPhoneNumber(@Path("phoneNumber") String phoneNumber);
 
+    @GET("users/email/{email}")
+    Call<User> getUserByEmail(@Path("email") String email);
+
 }

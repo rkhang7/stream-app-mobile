@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.AddFriendActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#e5e7e7"
+        android:padding="12dp"
+        android:text="Thêm bạn bằng số điện thoại hoặc email"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/phone_error_tv"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/danger"
+        android:text="Số điện thoại không hợp lệ \n Vui lòng kiểm tra lại."
+        android:textAlignment="center"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/email_error_tv"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/danger"
+        android:text="Email không hợp lệ \n Vui lòng kiểm tra lại."
+        android:textAlignment="center"/>
+
+    <RelativeLayout
+        android:id="@+id/input_layout"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/phone_or_email_et"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@id/search_users_btn"
+            android:background="@color/white"
+            android:hint="Nhập số điện thoại hoặc email"
+            android:inputType="textEmailAddress"
+            android:maxLines="1" />
+
+
+        <Button
+            android:id="@+id/search_users_btn"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/corners_button"
+            android:text="Tìm" />
+
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/add_friend_from_contacts_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="Thêm bạn từ danh bạ"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_contact" />
+
+
+</LinearLayout>

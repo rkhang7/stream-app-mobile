@@ -10,7 +10,7 @@
 
     <EditText
         android:drawablePadding="10dp"
-        android:drawableLeft="@drawable/search_32"
+        android:drawableLeft="@drawable/search_black_32"
         android:hint="Tìm kiếm"
         android:inputType="textFilter"
         android:id="@+id/search_contact_et"

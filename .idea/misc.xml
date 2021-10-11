@@ -27,13 +27,18 @@
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/layout/tab_email.xml" value="0.1921875" />
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/layout/tab_item.xml" value="0.1921875" />
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/layout/tab_phone.xml" value="0.1921875" />
+        <entry key="app/src/main/res/drawable-anydpi/add_white.xml" value="0.12027027027027028" />
         <entry key="app/src/main/res/drawable-anydpi/ic_contact.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable-anydpi/ic_person.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable/button.xml" value="0.125" />
+        <entry key="app/src/main/res/drawable/corners_button.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/inbox_btn_bg.xml" value="0.10641891891891891" />
         <entry key="app/src/main/res/drawable/search_contacts_bg.xml" value="0.1234375" />
         <entry key="app/src/main/res/drawable/tab_left.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/drawable/tab_left_8.xml" value="0.10677083333333333" />
+        <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_friend_invitation.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.16" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_phone_friends.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.21" />
@@ -43,13 +48,15 @@
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
         <entry key="app/src/main/res/layout/contact_row.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.12" />
+        <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.15" />
         <entry key="app/src/main/res/layout/fragment_group_contact.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_recived.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_sent.xml" value="0.10416666666666667" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
         <entry key="app/src/main/res/layout/fragment_personal_contact.xml" value="0.14" />
         <entry key="app/src/main/res/layout/show_login_method_dialog.xml" value="0.175" />
+        <entry key="app/src/main/res/menu/main_menu.xml" value="0.2" />
       </map>
     </option>
   </component>

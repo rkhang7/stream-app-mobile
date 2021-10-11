@@ -14,6 +14,13 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.FriendProfileActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".activity.AddFriendActivity"
+            android:exported="true"
+            android:label="Thêm bạn"/>
+        <activity
             android:name=".activity.FriendInvitationActivity"
             android:exported="true" />
         <activity
@@ -24,7 +31,6 @@
             android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.MainActivity"
-            android:parentActivityName=".activity.StartActivity"
             android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.StartActivity"
