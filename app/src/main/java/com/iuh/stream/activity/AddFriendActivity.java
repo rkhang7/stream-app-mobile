@@ -23,6 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.models.User;
@@ -40,6 +42,10 @@ public class AddFriendActivity extends AppCompatActivity {
     private TextView emailErrorTv;
     private RelativeLayout inputLayout;
     public static final String USER_KEY = AddFriendActivity.class.getName();
+
+    // firebase
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,6 +192,10 @@ public class AddFriendActivity extends AppCompatActivity {
         emailErrorTv = findViewById(R.id.email_error_tv);
         phoneErrorTv = findViewById(R.id.phone_error_tv);
         inputLayout = findViewById(R.id.input_layout);
+
+        // init firebase
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
 
     @Override

@@ -14,7 +14,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.iuh.stream.R;
 import com.iuh.stream.fragment.ChatFragment;
 import com.iuh.stream.fragment.ContactFragment;
-import com.iuh.stream.fragment.PersonFragment;
+import com.iuh.stream.fragment.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     // views
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ContactFragment();
                         break;
                     case R.id.person_menu:
-                        fragment = new PersonFragment();
+                        fragment = new ProfileFragment();
                         break;
                 }
 

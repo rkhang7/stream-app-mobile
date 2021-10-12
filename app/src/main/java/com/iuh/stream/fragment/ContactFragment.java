@@ -45,9 +45,9 @@ public class ContactFragment extends Fragment {
 
     private void addControls() {
         // init views
-        tabLayout = view.findViewById(R.id.tab_layout);
-        viewPager2 = view.findViewById(R.id.pager);
-        myFragmentAdapter = new MyFragmentAdapter(this.getActivity());
+        tabLayout = view.findViewById(R.id.contacts_tab_layout);
+        viewPager2 = view.findViewById(R.id.contacts_pager2);
+        myFragmentAdapter = new MyFragmentAdapter(getActivity());
         myFragmentAdapter.addFragment(new PersonalContactFragment());
         myFragmentAdapter.addFragment(new GroupContactFragment());
         viewPager2.setAdapter(myFragmentAdapter);
@@ -56,7 +56,7 @@ public class ContactFragment extends Fragment {
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0:
-                        tab.setText("Danh dạ");
+                        tab.setText("Danh bạ");
                         break;
                     case 1:
                         tab.setText("Nhóm");
@@ -64,7 +64,6 @@ public class ContactFragment extends Fragment {
                 }
             }
         }).attach();
-
         addFiendBtn = view.findViewById(R.id.add_friend_btn);
 
     }
