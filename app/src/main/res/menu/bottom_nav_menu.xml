@@ -9,5 +9,8 @@
     <item android:id="@+id/person_menu"
         android:title="Cá nhân"
         android:icon="@drawable/ic_person"/>
+    <item android:id="@+id/setting_menu"
+        android:title="Cài đặt"
+        android:icon="@drawable/setting_white"/>
 
 </menu>
