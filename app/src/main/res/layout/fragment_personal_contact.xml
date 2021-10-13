@@ -10,25 +10,25 @@
 
     <Button
         android:id="@+id/friend_invitation_btn"
-        android:text="Lời mời kết bạn"
+        android:text=" Lời mời kết bạn"
         android:layout_width="match_parent"
         android:textAlignment="textStart"
         android:layout_height="80dp"
         android:textAllCaps="false"
-        android:textSize="18sp"
-        app:icon="@drawable/ic_person"
+        android:textSize="17sp"
+        app:icon="@drawable/icons8_add_user_male_48"
         android:textColor="@color/black"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 
     <Button
         android:id="@+id/friend_from_contact_btn"
-        android:text="Bạn từ danh bạ"
+        android:text=" Bạn từ danh bạ máy"
         android:layout_width="match_parent"
         android:textAlignment="textStart"
         android:layout_height="80dp"
         android:textAllCaps="false"
-        android:textSize="18sp"
-        app:icon="@drawable/ic_contact"
+        android:textSize="17sp"
+        app:icon="@drawable/icons8_contact_48"
         android:textColor="@color/black"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 

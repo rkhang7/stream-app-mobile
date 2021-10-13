@@ -35,14 +35,14 @@
 
 
         <Button
-            style="@style/Widget.MaterialComponents.Button.Icon"
             android:id="@+id/add_friend_btn"
+            style="@style/Widget.MaterialComponents.Button.Icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
-            app:icon="@drawable/iperson_add_white_32"
+            app:icon="@drawable/icons8_add_user_32"
             tools:ignore="SpeakableTextPresentCheck" />
     </RelativeLayout>
 
