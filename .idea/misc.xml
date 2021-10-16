@@ -13,12 +13,14 @@
         <entry key="app/src/main/res/drawable/tab_right_8.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/wave.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.19025641025641027" />
+        <entry key="app/src/main/res/layout/activity_phone_friends.xml" value="0.10364583333333334" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_register_phone_number.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/contact_header.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.19025641025641027" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
         <entry key="app/src/main/res/layout/fragment_personal_contact.xml" value="0.21" />
