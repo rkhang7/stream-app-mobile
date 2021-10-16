@@ -4,42 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_smoke"
     tools:context=".fragment.ProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/white_smoke"
         android:padding="10dp">
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/showInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cover_iv"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/bgImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/u_sky"/>
-
-            </com.google.android.material.card.MaterialCardView>
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:flexDirection="row"
+            app:alignItems="center"
+            android:clickable="true"
+            android:background="@drawable/rounded_selectable_bg">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/avt_iv"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 app:layout_constraintBottom_toBottomOf="@+id/cover_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cover_iv"
-                app:cardCornerRadius="60dp">
+                app:cardCornerRadius="24dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -49,189 +39,167 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/name_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Điểu Long"
-            android:textAlignment="center"
-            style="@style/Heading2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avt_iv" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/name_tv"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:background="@drawable/custom_rounded_background">
-
             <com.google.android.flexbox.FlexboxLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:alignItems="center"
-                app:flexWrap="wrap"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icons8_account_32px_1"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Họ tên"
-                    android:layout_marginLeft="5dp"
-                    style="@style/TextNormalBold"/>
+                app:flexDirection="column"
+                app:layout_flexGrow="1"
+                android:layout_marginStart="10dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Điểu Long"
+                    style="@style/TextNormal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem thông tin cá nhân"
                     style="@style/TextNormal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="37dp"
-                    app:layout_wrapBefore="true"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_50"
-                    android:layout_marginTop="5dp"/>
+                    android:textSize="12sp"
+                    android:textColor="@color/gray"/>
+
             </com.google.android.flexbox.FlexboxLayout>
             <com.google.android.flexbox.FlexboxLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:alignItems="center"
-                app:flexWrap="wrap"
-                android:padding="10dp">
-                <ImageView
+                app:flexDirection="column"
+                app:alignItems="center">
+                <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icons8_calendar_32px_1"/>
+                    android:src="@drawable/icons8_exit_32px"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ngày sinh"
-                    android:layout_marginLeft="5dp"
-                    style="@style/TextNormalBold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="07/07/2000"
+                    android:text="Đăng xuất"
                     style="@style/TextNormal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="37dp"
-                    app:layout_wrapBefore="true"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_50"
-                    android:layout_marginTop="5dp"/>
+                    android:textSize="11sp"
+                    android:textColor="@color/gray"/>
             </com.google.android.flexbox.FlexboxLayout>
-            <com.google.android.flexbox.FlexboxLayout
-                android:layout_width="match_parent"
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:flexDirection="row"
+            app:alignItems="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_selectable_bg"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icons8_query_48px" />
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:alignItems="center"
-                app:flexWrap="wrap"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icons8_gender_32px"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Giới tính"
-                    android:layout_marginLeft="5dp"
-                    style="@style/TextNormalBold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nam"
-                    style="@style/TextNormal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="37dp"
-                    app:layout_wrapBefore="true"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_50"
-                    android:layout_marginTop="5dp"/>
-            </com.google.android.flexbox.FlexboxLayout>
-            <com.google.android.flexbox.FlexboxLayout
-                android:layout_width="match_parent"
+                android:text="Phương thức đăng nhập"
+                android:layout_marginStart="10dp"
+                style="@style/TextNormal"
+                app:layout_flexGrow="1"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons8_forward_24px"/>
+
+        </com.google.android.flexbox.FlexboxLayout>
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:flexDirection="row"
+            app:alignItems="center"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:background="@drawable/rounded_selectable_bg">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icons8_delete_user_male_48px_2" />
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:alignItems="center"
-                app:flexWrap="wrap"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icons8_email_sign_32px"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:layout_marginLeft="5dp"
-                    style="@style/TextNormalBold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="long1234@gmail.com"
-                    style="@style/TextNormal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="37dp"
-                    app:layout_wrapBefore="true"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_50"
-                    android:layout_marginTop="5dp"/>
-            </com.google.android.flexbox.FlexboxLayout>
-            <com.google.android.flexbox.FlexboxLayout
-                android:layout_width="match_parent"
+                android:text="Xóa tài khoản"
+                android:layout_marginStart="10dp"
+                style="@style/TextNormal"
+                app:layout_flexGrow="1"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons8_forward_24px"/>
+
+        </com.google.android.flexbox.FlexboxLayout>
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:flexDirection="row"
+            app:alignItems="center"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:background="@drawable/rounded_selectable_bg">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/icons8_horn_48px"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:flexDirection="row"
-                app:alignItems="center"
-                app:flexWrap="wrap"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icons8_phone_32px_1"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Số điện thoại"
-                    android:layout_marginLeft="5dp"
-                    style="@style/TextNormalBold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Không có"
-                    style="@style/TextNormal"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="37dp"
-                    app:layout_wrapBefore="true"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_50"
-                    android:layout_marginTop="5dp"/>
-            </com.google.android.flexbox.FlexboxLayout>
-        </LinearLayout>
+                android:text="Chuông và âm thanh"
+                android:layout_marginStart="10dp"
+                style="@style/TextNormal"
+                app:layout_flexGrow="1"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons8_forward_24px"/>
+
+        </com.google.android.flexbox.FlexboxLayout>
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:flexDirection="row"
+            app:alignItems="center"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:background="@drawable/rounded_selectable_bg">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icons8_notification_48px_1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cài đặt thông báo"
+                android:layout_marginStart="10dp"
+                style="@style/TextNormal"
+                app:layout_flexGrow="1"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons8_forward_24px"/>
+
+        </com.google.android.flexbox.FlexboxLayout>
+
 
     </LinearLayout>
 

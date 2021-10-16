@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/main_50</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="Theme.AppCompat" parent="Theme.AppCompat.DayNight.DarkActionBar">
@@ -23,7 +23,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/main_50</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="Theme.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -36,7 +36,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/main_50</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="RoundedButton">
