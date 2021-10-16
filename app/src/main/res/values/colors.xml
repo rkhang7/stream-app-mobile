@@ -9,12 +9,15 @@
     <color name="white">#FFFFFFFF</color>
 <!--    <color name="main">#049DD9</color>-->
     <color name="main">#003F63</color>
+    <color name="main_50">#80003F63</color>
     <color name="danger">#D50000</color>
     <color name="info">#00C853</color>
     <color name="gray">#A1A1A1</color>
+    <color name="gray_50">#80A1A1A1</color>
     <color name="secondary">#4D4C4C</color>
     <color name="white_smoke">#F2F2F2</color>
     <color name="c_yellow">#F2C166</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="white_85">#D9FFFFFF</color>
 
 </resources>

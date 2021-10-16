@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
-import com.iuh.stream.activity.StartActivity;
+import com.iuh.stream.activity.UserInfoActivity;
 
 
 public class ProfileFragment extends Fragment {
@@ -23,6 +23,11 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+
+
+        view.findViewById(R.id.showInfo).setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), UserInfoActivity.class));
+        });
 
         return view;
 
