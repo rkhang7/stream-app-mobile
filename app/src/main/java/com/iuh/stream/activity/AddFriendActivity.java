@@ -3,6 +3,7 @@ package com.iuh.stream.activity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,9 +26,13 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.models.User;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,7 +61,27 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
-        addFriendFromContactsBtn.setOnClickListener(view -> startActivity(new Intent(AddFriendActivity.this, PhoneFriendsActivity.class)));
+        addFriendFromContactsBtn.setOnClickListener(view -> {
+            PermissionListener permissionlistener = new PermissionListener() {
+
+                @Override
+                public void onPermissionGranted() {
+                    Intent intent = new Intent(AddFriendActivity.this, PhoneFriendsActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onPermissionDenied(List<String> deniedPermissions) {
+
+                }
+            };
+
+            TedPermission.create()
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("Nếu bạn không cấp quyền, bạn sẽ không thể sử dụng dịch vụ này\n\nVui lòng cấp quyền tại [Cài đặt] -> [Quyền hạn]")
+                    .setPermissions(Manifest.permission.READ_CONTACTS)
+                    .check();
+        });
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override

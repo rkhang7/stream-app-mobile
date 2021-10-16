@@ -17,11 +17,13 @@ public class User implements Serializable {
     private boolean isOnline;
     private boolean isActive;
     private List<String> contacts;
+    private List<String> friendRequests;
+    private List<String> friendInvitations;
 
     public User() {
     }
 
-    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, String email, Date lastOnline, boolean isOnline, boolean isActive, List<String> contacts) {
+    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, String email, Date lastOnline, boolean isOnline, boolean isActive, List<String> contacts, List<String> friendRequests, List<String> friendInvitations) {
         this._id = _id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,35 +36,10 @@ public class User implements Serializable {
         this.isOnline = isOnline;
         this.isActive = isActive;
         this.contacts = contacts;
+        this.friendRequests = friendRequests;
+        this.friendInvitations = friendInvitations;
     }
 
-
-
-    public User(String _id, String firstName, String lastName, String gender, String phoneNumber, String email, boolean isOnline, boolean isActive, List<String> contacts) {
-        this._id = _id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.isOnline = isOnline;
-        this.isActive = isActive;
-        this.contacts = contacts;
-    }
-
-
-    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String phoneNumber, String email, boolean isOnline, boolean isActive, List<String> contacts) {
-        this._id = _id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.isOnline = isOnline;
-        this.isActive = isActive;
-        this.contacts = contacts;
-    }
 
     public User(String _id, String firstName, String lastName, String gender, String imageURL, String phoneNumber, String email, boolean isOnline, boolean isActive, List<String> contacts) {
         this._id = _id;
@@ -75,6 +52,17 @@ public class User implements Serializable {
         this.isOnline = isOnline;
         this.isActive = isActive;
         this.contacts = contacts;
+    }
+
+    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String phoneNumber, String email, boolean isOnline) {
+        this._id = _id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.isOnline = isOnline;
     }
 
     public String get_id() {

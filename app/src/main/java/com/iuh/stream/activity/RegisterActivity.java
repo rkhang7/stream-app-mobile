@@ -3,12 +3,15 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,6 +21,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -27,11 +32,15 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.models.IdToken;
+import com.iuh.stream.models.Token;
 import com.iuh.stream.models.User;
 
 import java.sql.Timestamp;
@@ -372,7 +381,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             pbEmailRegister.setVisibility(View.GONE);
                             if (task.isSuccessful()) {
-                                String uid = task.getResult().getUser().getUid();
+                                String uid = Objects.requireNonNull(task.getResult().getUser()).getUid();
                                 saveUserToDatabase(uid, EMAIL_TYPE);
 
                             } else {
@@ -390,8 +399,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void saveUserToDatabase(String uid, int type) {
-
-
         String firstName = edtFirstName.getText().toString().trim();
         String lastName = edtLastName.getText().toString().trim();
 
@@ -418,7 +425,6 @@ public class RegisterActivity extends AppCompatActivity {
 //
         List<String> contacts = new ArrayList<>();
 
-        boolean isActive = true;
         boolean isOnline = true;
 
         String email = null;
@@ -434,9 +440,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, isOnline, isActive, contacts);
-
-
+        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, isOnline);
         RetrofitService.getInstance.saveUser(user, uid).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -445,9 +449,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    handleGetToken();
                 }
 
 
@@ -459,5 +461,42 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void handleGetToken() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+            @Override
+            public void onComplete(@NonNull Task<GetTokenResult> task) {
+                if(task.isSuccessful()){
+                    IdToken idToken = new IdToken(task.getResult().getToken());
+                    RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
+                        @Override
+                        public void onResponse(Call<Token> call, Response<Token> response) {
+                            Token token = response.body();
+                            Log.e("TAG", "onResponse: " + token );
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Token> call, Throwable t) {
+
+                        }
+                    });
+
+                }
+            }
+        });
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // hide keyboard
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

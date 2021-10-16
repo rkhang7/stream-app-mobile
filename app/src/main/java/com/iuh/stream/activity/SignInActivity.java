@@ -36,6 +36,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
@@ -43,6 +44,8 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.dialog.ResetPasswordDialog;
+import com.iuh.stream.models.IdToken;
+import com.iuh.stream.models.Token;
 import com.iuh.stream.models.User;
 
 import java.util.ArrayList;
@@ -75,6 +78,7 @@ public class SignInActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         LinearLayout lnEmail = findViewById(R.id.byEmail);
         LinearLayout lnPhone = findViewById(R.id.byPhone);
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -152,8 +156,8 @@ public class SignInActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             pgEmail.setVisibility(View.INVISIBLE);
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(this, MainActivity.class);
-                                startActivity(intent);
+                                handleGetToken();
+
                             } else {
                                 Toast.makeText(this, "Email hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
                             }
@@ -162,6 +166,34 @@ public class SignInActivity extends AppCompatActivity {
                             pgEmail.setVisibility(View.INVISIBLE);
                             Toast.makeText(this, "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
                         });
+            }
+        });
+    }
+
+    private void handleGetToken() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+            @Override
+            public void onComplete(@NonNull Task<GetTokenResult> task) {
+                if(task.isSuccessful()){
+                    IdToken idToken = new IdToken(task.getResult().getToken());
+                    RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
+                        @Override
+                        public void onResponse(Call<Token> call, Response<Token> response) {
+                            Token token = response.body();
+                            Log.e("TAG", "onResponse: " + token );
+                            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Token> call, Throwable t) {
+
+                        }
+                    });
+
+                }
             }
         });
     }
@@ -291,9 +323,7 @@ public class SignInActivity extends AppCompatActivity {
                             //User's not exist
                             Toast.makeText(this, "Số điện thoại chưa được đăng ký, vui lòng thử lại!", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(this, MainActivity.class);
-                            startActivity(intent);
+                            handleGetToken();
                         }
 
                     } else {
@@ -340,8 +370,7 @@ public class SignInActivity extends AppCompatActivity {
 
                             }
                             // Sign in success, update UI with the signed-in user's information
-                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                            finish();
+                            handleGetToken();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(SignInActivity.this, "signInWithCredential:failure" + task.getException(), Toast.LENGTH_SHORT).show();

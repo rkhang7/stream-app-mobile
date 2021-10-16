@@ -15,6 +15,7 @@ import com.iuh.stream.R;
 import com.iuh.stream.fragment.ChatFragment;
 import com.iuh.stream.fragment.ContactFragment;
 import com.iuh.stream.fragment.ProfileFragment;
+import com.iuh.stream.fragment.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
     // views
@@ -45,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.person_menu:
                         fragment = new ProfileFragment();
                         break;
+                    case R.id.setting_menu:
+                        fragment = new SettingFragment();
+                        break;
+
                 }
 
                 getSupportFragmentManager().beginTransaction()

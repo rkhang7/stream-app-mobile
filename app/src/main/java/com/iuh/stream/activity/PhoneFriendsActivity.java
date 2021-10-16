@@ -23,6 +23,8 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.models.Contact;
 import com.iuh.stream.models.User;
 
+import org.zakariya.stickyheaders.StickyHeaderLayoutManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +106,9 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         contactAdapter = new ContactAdapter(this);
         contactAdapter.setData(contactList);
         recyclerView = findViewById(R.id.contact_rv);
+        StickyHeaderLayoutManager stickyHeaderLayoutManager = new StickyHeaderLayoutManager();
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(contactAdapter);
 

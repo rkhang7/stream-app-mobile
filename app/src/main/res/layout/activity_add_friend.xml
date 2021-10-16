@@ -78,8 +78,8 @@
         android:textAlignment="textStart"
         android:textAllCaps="false"
         android:textColor="@color/black"
-        android:textSize="18sp"
-        app:icon="@drawable/ic_contact" />
+        android:textSize="17sp"
+        app:icon="@drawable/icons8_contact_48" />
 
 
 </LinearLayout>

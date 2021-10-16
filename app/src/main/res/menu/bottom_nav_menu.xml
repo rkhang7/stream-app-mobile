@@ -2,12 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/chat_menu"
         android:title="Nhắn tin"
-        android:icon="@drawable/ic_chat"/>
+        android:icon="@drawable/icons8_speech_48"/>
     <item android:id="@+id/contacts_menu"
         android:title="Danh bạ"
-        android:icon="@drawable/ic_contact"/>
+        android:icon="@drawable/icons8_duplicate_contacts_48"/>
     <item android:id="@+id/person_menu"
         android:title="Cá nhân"
-        android:icon="@drawable/ic_person"/>
+        android:icon="@drawable/icons8_account_48"/>
+    <item android:id="@+id/setting_menu"
+        android:title="Cài đặt"
+        android:icon="@drawable/icons8_settings_48"/>
 
 </menu>

@@ -1,5 +1,7 @@
 package com.iuh.stream.api;
 
+import com.iuh.stream.models.IdToken;
+import com.iuh.stream.models.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Utils;
 
@@ -25,5 +27,9 @@ public interface RetrofitService {
 
     @GET("users/email/{email}")
     Call<User> getUserByEmail(@Path("email") String email);
+
+    @POST("auth/idtoken")
+    Call<Token> getToken(@Body IdToken idToken);
+
 
 }
