@@ -1,7 +1,7 @@
 package com.iuh.stream.api;
 
-import com.iuh.stream.models.IdToken;
-import com.iuh.stream.models.Token;
+import com.iuh.stream.models.jwt.IdToken;
+import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Utils;
 
@@ -10,6 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -23,10 +24,10 @@ public interface RetrofitService {
     Call<User> saveUser(@Body User user, @Path("uid") String uid);
 
     @GET("users/phone/{phoneNumber}")
-    Call<User> getUserByPhoneNumber(@Path("phoneNumber") String phoneNumber);
+    Call<User> getUserByPhoneNumber(@Path("phoneNumber") String phoneNumber, @Header("Authorization") String accessToken);
 
     @GET("users/email/{email}")
-    Call<User> getUserByEmail(@Path("email") String email);
+    Call<User> getUserByEmail(@Path("email") String email, @Header("Authorization") String accessToken);
 
     @POST("auth/idtoken")
     Call<Token> getToken(@Body IdToken idToken);

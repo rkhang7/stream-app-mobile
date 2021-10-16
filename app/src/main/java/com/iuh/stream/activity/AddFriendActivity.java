@@ -30,7 +30,9 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.User;
+import com.iuh.stream.utils.Utils;
 
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class AddFriendActivity extends AppCompatActivity {
     // firebase
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private String accessToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,13 +116,13 @@ public class AddFriendActivity extends AppCompatActivity {
                     phoneErrorTv.setVisibility(View.GONE);
                     emailErrorTv.setVisibility(View.GONE);
 
-                    findUserByEmail(keyword);
+                    findUserByEmail(keyword, accessToken);
                 }
 
                 else if(Patterns.PHONE.matcher(keyword).matches()){
                     if(keyword.length() == 10 && keyword.charAt(0) == '0'){
                         phoneErrorTv.setVisibility(View.GONE);
-                        findUserByPhoneNumber(keyword);
+                        findUserByPhoneNumber(keyword, accessToken);
                     }
                     else{
                         phoneErrorTv.setVisibility(View.VISIBLE);
@@ -136,8 +139,8 @@ public class AddFriendActivity extends AppCompatActivity {
 
     }
 
-    private void findUserByPhoneNumber(String keyword) {
-        RetrofitService.getInstance.getUserByPhoneNumber(keyword).enqueue(new Callback<User>() {
+    private void findUserByPhoneNumber(String keyword, String accessToken) {
+        RetrofitService.getInstance.getUserByPhoneNumber(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
@@ -171,11 +174,10 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
 
-    private void findUserByEmail(String keyword) {
-        RetrofitService.getInstance.getUserByEmail(keyword).enqueue(new Callback<User>() {
+    private void findUserByEmail(String keyword, String accessToken) {
+        RetrofitService.getInstance.getUserByEmail(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-
                 User user = response.body();
                 if(user != null){
                     Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
@@ -221,6 +223,9 @@ public class AddFriendActivity extends AppCompatActivity {
         // init firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
+        // assign accessToken
+        accessToken = DataLocalManager.getStringValue(Utils.ACCESS_TOKEN);
     }
 
     @Override

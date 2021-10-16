@@ -1,4 +1,4 @@
-package com.iuh.stream.models;
+package com.iuh.stream.models.jwt;
 
 public class Token {
     private String accessToken;

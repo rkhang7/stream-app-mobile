@@ -39,14 +39,15 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
-import com.iuh.stream.models.IdToken;
-import com.iuh.stream.models.Token;
+import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.models.jwt.IdToken;
+import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
+import com.iuh.stream.utils.Utils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -474,7 +475,7 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<Token> call, Response<Token> response) {
                             Token token = response.body();
-                            Log.e("TAG", "onResponse: " + token );
+                            saveTokenToDataLocal(token);
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -489,6 +490,10 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void saveTokenToDataLocal(Token token) {
+        DataLocalManager.putStringValue(Utils.ACCESS_TOKEN,token.getAccessToken());
+        DataLocalManager.putStringValue(Utils.REFRESH_TOKEN,token.getRefreshToken());
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

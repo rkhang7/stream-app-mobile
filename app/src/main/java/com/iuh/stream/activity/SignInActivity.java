@@ -1,10 +1,8 @@
 package com.iuh.stream.activity;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -43,10 +41,12 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.ResetPasswordDialog;
-import com.iuh.stream.models.IdToken;
-import com.iuh.stream.models.Token;
+import com.iuh.stream.models.jwt.IdToken;
+import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
+import com.iuh.stream.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +69,7 @@ public class SignInActivity extends AppCompatActivity {
     private LinearProgressIndicator pgPhone;
     private GoogleSignInClient mGoogleSignInClient;
     public static final int RC_SIGN_IN = 100;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +182,7 @@ public class SignInActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<Token> call, Response<Token> response) {
                             Token token = response.body();
+                            saveTokenToDataLocal(token);
                             Log.e("TAG", "onResponse: " + token );
                             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -196,6 +198,11 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void saveTokenToDataLocal(Token token) {
+        DataLocalManager.putStringValue(Utils.ACCESS_TOKEN,token.getAccessToken());
+        DataLocalManager.putStringValue(Utils.REFRESH_TOKEN,token.getRefreshToken());
     }
 
     private void loginPhonePart() {

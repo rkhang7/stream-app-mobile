@@ -20,8 +20,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.ContactAdapter;
 import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.Contact;
 import com.iuh.stream.models.User;
+import com.iuh.stream.utils.Utils;
 
 import org.zakariya.stickyheaders.StickyHeaderLayoutManager;
 
@@ -117,6 +119,9 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         notFoundTv = findViewById(R.id.not_found_tv);
 
         getContactList();
+
+        Log.e("TAG", "ACCESS_TOKEN: " + DataLocalManager.getStringValue(Utils.ACCESS_TOKEN));
+        Log.e("TAG", "REFRESH_TOKEN: " + DataLocalManager.getStringValue(Utils.REFRESH_TOKEN));
     }
 
     private void getContactList() {
@@ -175,7 +180,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
 
                         // get user by phone number
-                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted).enqueue(new Callback<User>() {
+                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Utils.ACCESS_TOKEN)).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 tempUser = response.body();
