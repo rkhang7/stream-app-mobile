@@ -418,15 +418,12 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String imageUrl = "";
 
          //get lastOnline
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Date lastOnline = new Date(timestamp.getTime());
-//
-        List<String> contacts = new ArrayList<>();
 
-        boolean isOnline = true;
+
+        boolean online = true;
 
         String email = null;
         String phoneNumber = null;
@@ -441,23 +438,23 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, isOnline);
+        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, online);
+        Log.e("TAG", "saveUserToDatabase: " + user );
         RetrofitService.getInstance.saveUser(user, uid).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User resUser = response.body();
                 if(resUser == null){
-                    Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Lỗi lưu vào db", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     handleGetToken();
                 }
-
-
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                Log.e("TAG", "onFailure: " + t.getMessage() );
                 Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
             }
         });

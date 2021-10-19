@@ -14,8 +14,7 @@ public class User implements Serializable {
     private String phoneNumber;
     private String email;
     private Date lastOnline;
-    private boolean isOnline;
-    private boolean isActive;
+    private boolean online;
     private List<String> contacts;
     private List<String> friendRequests;
     private List<String> friendInvitations;
@@ -23,7 +22,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, String email, Date lastOnline, boolean isOnline, boolean isActive, List<String> contacts, List<String> friendRequests, List<String> friendInvitations) {
+    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, String email, Date lastOnline, boolean online, List<String> contacts, List<String> friendRequests, List<String> friendInvitations) {
         this._id = _id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -33,15 +32,13 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.lastOnline = lastOnline;
-        this.isOnline = isOnline;
-        this.isActive = isActive;
+        this.online = online;
         this.contacts = contacts;
         this.friendRequests = friendRequests;
         this.friendInvitations = friendInvitations;
     }
 
-
-    public User(String _id, String firstName, String lastName, String gender, String imageURL, String phoneNumber, String email, boolean isOnline, boolean isActive, List<String> contacts) {
+    public User(String _id, String firstName, String lastName, String gender, String imageURL, String phoneNumber, String email, boolean online, List<String> contacts) {
         this._id = _id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -49,12 +46,11 @@ public class User implements Serializable {
         this.imageURL = imageURL;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.isOnline = isOnline;
-        this.isActive = isActive;
+        this.online = online;
         this.contacts = contacts;
     }
 
-    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String phoneNumber, String email, boolean isOnline) {
+    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String phoneNumber, String email, boolean online) {
         this._id = _id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -62,7 +58,7 @@ public class User implements Serializable {
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.isOnline = isOnline;
+        this.online = online;
     }
 
     public String get_id() {
@@ -138,19 +134,27 @@ public class User implements Serializable {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
     public void setOnline(boolean online) {
-        isOnline = online;
+        this.online = online;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public List<String> getFriendRequests() {
+        return friendRequests;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setFriendRequests(List<String> friendRequests) {
+        this.friendRequests = friendRequests;
+    }
+
+    public List<String> getFriendInvitations() {
+        return friendInvitations;
+    }
+
+    public void setFriendInvitations(List<String> friendInvitations) {
+        this.friendInvitations = friendInvitations;
     }
 
     public List<String> getContacts() {
@@ -173,9 +177,10 @@ public class User implements Serializable {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", lastOnline=" + lastOnline +
-                ", isOnline=" + isOnline +
-                ", isActive=" + isActive +
+                ", online=" + online +
                 ", contacts=" + contacts +
+                ", friendRequests=" + friendRequests +
+                ", friendInvitations=" + friendInvitations +
                 '}';
     }
 }

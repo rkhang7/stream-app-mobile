@@ -410,7 +410,7 @@ public class SignInActivity extends AppCompatActivity {
         List<String> contacts = new ArrayList<>();
 
 
-        User mUser = new User(uid, firstName, lastName,gender, imageURL, phoneNumber, email, true, true, contacts);
+        User mUser = new User(uid, firstName, lastName,gender, imageURL, phoneNumber, email, true, contacts);
 
         RetrofitService.getInstance.saveUser(mUser, uid).enqueue(new Callback<User>() {
             @Override
