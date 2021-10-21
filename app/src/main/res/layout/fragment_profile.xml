@@ -13,6 +13,7 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/showInfo"
             android:layout_width="match_parent"
@@ -31,7 +32,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:cardCornerRadius="24dp">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_avatar_iv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -47,6 +49,7 @@
                 android:layout_marginStart="10dp">
 
                 <TextView
+                    android:id="@+id/profile_name_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Điểu Long"
@@ -67,6 +70,7 @@
                 app:flexDirection="column"
                 app:alignItems="center">
                 <ImageButton
+                    android:id="@+id/profile_logout_btn"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:src="@drawable/icons8_exit_32px"/>

@@ -7,16 +7,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +29,8 @@ import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Utils;
+import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.Util;
 
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class AddFriendActivity extends AppCompatActivity {
     // firebase
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private String accessToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,14 +113,15 @@ public class AddFriendActivity extends AppCompatActivity {
                 if(Patterns.EMAIL_ADDRESS.matcher(keyword).matches()){
                     phoneErrorTv.setVisibility(View.GONE);
                     emailErrorTv.setVisibility(View.GONE);
-
-                    findUserByEmail(keyword, accessToken);
+                    String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    findUserByEmail(keyword, ACCESS_TOKEN);
                 }
 
                 else if(Patterns.PHONE.matcher(keyword).matches()){
                     if(keyword.length() == 10 && keyword.charAt(0) == '0'){
                         phoneErrorTv.setVisibility(View.GONE);
-                        findUserByPhoneNumber(keyword, accessToken);
+                        String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                        findUserByPhoneNumber(keyword, ACCESS_TOKEN);
                     }
                     else{
                         phoneErrorTv.setVisibility(View.VISIBLE);
@@ -143,27 +142,31 @@ public class AddFriendActivity extends AppCompatActivity {
         RetrofitService.getInstance.getUserByPhoneNumber(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-
-                User user = response.body();
-                if(user != null){
-                    Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
-                    intent.putExtra(USER_KEY, user);
-                    startActivity(intent);
+                if(response.code() == 403){
+                    String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
+                    Util.refreshToken(REFRESH_TOKEN);
+                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
                 }
-                else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
-                    builder.setTitle("Thông báo");
-                    builder.setMessage("Số điện thoại này chưa kích hoạt Stream.");
-                    builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
-
-                    builder.create().show();
+                else {
+                    User user = response.body();
+                    if(user != null){
+                        Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
+                        intent.putExtra(USER_KEY, user);
+                        startActivity(intent);
+                    }
+                    else{
+                        AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
+                        builder.setTitle("Thông báo");
+                        builder.setMessage("Số điện thoại này chưa kích hoạt Stream.");
+                        builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                        builder.create().show();
+                    }
                 }
-
             }
 
             @Override
@@ -178,31 +181,39 @@ public class AddFriendActivity extends AppCompatActivity {
         RetrofitService.getInstance.getUserByEmail(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                User user = response.body();
-                if(user != null){
-                    Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
-                    intent.putExtra(USER_KEY, user);
-                    startActivity(intent);
+                if(response.code() == 403){
+                    String REFRESH_TOKEN = DataLocalManager.getStringValue(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                    Util.refreshToken(REFRESH_TOKEN);
+                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
                 }
-                else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
-                    builder.setTitle("Thông báo");
-                    builder.setMessage("Email này chưa kích hoạt Stream.");
-                    builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
+                else {
+                    User user = response.body();
+                    if(user != null){
+                        Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
+                        intent.putExtra(USER_KEY, user);
+                        startActivity(intent);
+                    }
+                    else{
+                        AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
+                        builder.setTitle("Thông báo");
+                        builder.setMessage("Email này chưa kích hoạt Stream.");
+                        builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
 
-                    builder.create().show();
+                        builder.create().show();
+                    }
                 }
+
 
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -224,8 +235,6 @@ public class AddFriendActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        // assign accessToken
-        accessToken = DataLocalManager.getStringValue(Utils.ACCESS_TOKEN);
     }
 
     @Override
@@ -234,9 +243,10 @@ public class AddFriendActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
+
+    // hide keyboard
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        // hide keyboard
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);

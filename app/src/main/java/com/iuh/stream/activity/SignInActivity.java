@@ -46,7 +46,7 @@ import com.iuh.stream.dialog.ResetPasswordDialog;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Utils;
+import com.iuh.stream.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -201,8 +201,8 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void saveTokenToDataLocal(Token token) {
-        DataLocalManager.putStringValue(Utils.ACCESS_TOKEN,token.getAccessToken());
-        DataLocalManager.putStringValue(Utils.REFRESH_TOKEN,token.getRefreshToken());
+        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN,token.getAccessToken());
+        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN,token.getRefreshToken());
     }
 
     private void loginPhonePart() {

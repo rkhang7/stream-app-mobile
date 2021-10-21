@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +24,8 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.Contact;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Utils;
+import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.Util;
 
 import org.zakariya.stickyheaders.StickyHeaderLayoutManager;
 
@@ -47,6 +49,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
     FirebaseUser mUser;
 
     private User tempUser;
+    private String phoneNumberConverted = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,8 +123,6 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
         getContactList();
 
-        Log.e("TAG", "ACCESS_TOKEN: " + DataLocalManager.getStringValue(Utils.ACCESS_TOKEN));
-        Log.e("TAG", "REFRESH_TOKEN: " + DataLocalManager.getStringValue(Utils.REFRESH_TOKEN));
     }
 
     private void getContactList() {
@@ -166,7 +167,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                     String number = phoneCursor.getString(temp3);
 
                     // convert (012) 345-6711 --->> 0123456711
-                    String phoneNumberConverted = "";
+
                     for(int i = 0; i< number.length(); i++){
                         if(i == 0 || i == 4 || i == 5 || i == 9){
                             continue;
@@ -177,34 +178,64 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                     if(phoneNumberConverted.length() == 10){
                         // init contact model
 
-
-
                         // get user by phone number
-                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Utils.ACCESS_TOKEN)).enqueue(new Callback<User>() {
+                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
-                                tempUser = response.body();
-                                if(tempUser != null){
-                                    if(!tempUser.get_id().equals(mUser.getUid())){
-                                        Contact contact = new Contact();
-                                        contact.setPhoneNumber(number);
-                                        contact.setPhoneName(name);
-                                        contact.setFirstName(tempUser.getFirstName());
-                                        contact.setLastName(tempUser.getFirstName());
-                                        contact.setId(tempUser.get_id());
-                                        contact.setAvatar(tempUser.getImageURL());
-                                        contactList.add(contact);
+                                if(response.code() == 403){
+                                    String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
+                                    Util.refreshToken(REFRESH_TOKEN);
+                                    RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                                            .enqueue(new Callback<User>() {
+                                                @Override
+                                                public void onResponse(Call<User> call, Response<User> response) {
+                                                    tempUser = response.body();
+                                                    if(tempUser != null){
+                                                        if(!tempUser.get_id().equals(mUser.getUid())){
+                                                            Contact contact = new Contact();
+                                                            contact.setPhoneNumber(number);
+                                                            contact.setPhoneName(name);
+                                                            contact.setFirstName(tempUser.getFirstName());
+                                                            contact.setLastName(tempUser.getFirstName());
+                                                            contact.setId(tempUser.get_id());
+                                                            contact.setAvatar(tempUser.getImageURL());
+                                                            contactList.add(contact);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<User> call, Throwable t) {
+                                                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                                else{
+                                    tempUser = response.body();
+                                    if(tempUser != null){
+                                        if(!tempUser.get_id().equals(mUser.getUid())){
+                                            Contact contact = new Contact();
+                                            contact.setPhoneNumber(number);
+                                            contact.setPhoneName(name);
+                                            contact.setFirstName(tempUser.getFirstName());
+                                            contact.setLastName(tempUser.getFirstName());
+                                            contact.setId(tempUser.get_id());
+                                            contact.setAvatar(tempUser.getImageURL());
+                                            contactList.add(contact);
+                                        }
                                     }
+
+
+                                    contactAdapter.setData(contactList);
+                                    recyclerView.setAdapter(contactAdapter);
                                 }
 
-
-                                contactAdapter.setData(contactList);
-                                recyclerView.setAdapter(contactAdapter);
 
                             }
 
                             @Override
                             public void onFailure(Call<User> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
 

@@ -43,15 +43,13 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Utils;
+import com.iuh.stream.utils.Constants;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -439,13 +437,13 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, online);
-        Log.e("TAG", "saveUserToDatabase: " + user );
+
         RetrofitService.getInstance.saveUser(user, uid).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User resUser = response.body();
                 if(resUser == null){
-                    Toast.makeText(RegisterActivity.this, "Lỗi lưu vào db", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     handleGetToken();
@@ -454,7 +452,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.e("TAG", "onFailure: " + t.getMessage() );
                 Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
             }
         });
@@ -489,8 +486,8 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
     private void saveTokenToDataLocal(Token token) {
-        DataLocalManager.putStringValue(Utils.ACCESS_TOKEN,token.getAccessToken());
-        DataLocalManager.putStringValue(Utils.REFRESH_TOKEN,token.getRefreshToken());
+        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN,token.getAccessToken());
+        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN,token.getRefreshToken());
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

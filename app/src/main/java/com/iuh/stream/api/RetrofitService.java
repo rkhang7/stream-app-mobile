@@ -3,20 +3,24 @@ package com.iuh.stream.api;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Utils;
+import com.iuh.stream.models.jwt.TokenResponse;
+import com.iuh.stream.utils.Constants;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface RetrofitService {
+
     RetrofitService getInstance = new Retrofit.Builder()
-            .baseUrl(Utils.BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(RetrofitService.class);
 
@@ -32,5 +36,11 @@ public interface RetrofitService {
     @POST("auth/idtoken")
     Call<Token> getToken(@Body IdToken idToken);
 
+    @GET("users/me/info")
+    Call<User> getMeInfo(@Header("Authorization") String accessToken);
+    
+    @POST("auth/token")
+    @FormUrlEncoded
+    Call<TokenResponse> refreshToken(@Field("token") String refreshToken);
 
 }
