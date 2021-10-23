@@ -26,6 +26,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private CircleImageView avtIv;
     private TextView nameTv, genderTv, phoneNumberTv, emailTv,dobTv;
     private FlexboxLayout emailLayout, phoneNumberLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

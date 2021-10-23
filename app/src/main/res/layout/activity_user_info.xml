@@ -109,24 +109,67 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Họ tên"
+                    android:text="Họ"
                     android:layout_marginLeft="5dp"
                     style="@style/TextNormalBold"
                     app:layout_flexGrow="1"/>
                 <ImageButton
+                    android:id="@+id/edit_first_name_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/icons8_pen_24px_1"
                     android:background="@color/white"/>
                 <EditText
-                    android:id="@+id/user_info_name_et"
+                    android:id="@+id/user_info_first_name_et"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/TextNormal"
                     app:layout_wrapBefore="true"
                     android:padding="5dp"
                     android:background="@color/white"
-                    android:text="Điểu Long"
+                    android:text="abc"
+                    android:layout_marginStart="32dp"
+                    android:enabled="false"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray_50"
+                    android:layout_marginTop="5dp"/>
+            </com.google.android.flexbox.FlexboxLayout>
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flexDirection="row"
+                app:alignItems="center"
+                app:flexWrap="wrap"
+                android:padding="10dp">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/icons8_account_32px"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên"
+                    android:layout_marginLeft="5dp"
+                    style="@style/TextNormalBold"
+                    app:layout_flexGrow="1"/>
+                <ImageButton
+                    android:id="@+id/edit_last_name_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icons8_pen_24px_1"
+                    android:background="@color/white"/>
+                <EditText
+                    android:id="@+id/user_info_last_name_et"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextNormal"
+                    app:layout_wrapBefore="true"
+                    android:padding="5dp"
+                    android:background="@color/white"
+                    android:text="abc"
                     android:layout_marginStart="32dp"
                     android:enabled="false"/>
                 <View
@@ -155,6 +198,7 @@
                     style="@style/TextNormalBold"
                     app:layout_flexGrow="1"/>
                 <ImageButton
+                    android:id="@+id/edit_dob_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/icons8_pen_24px_1"
@@ -218,6 +262,7 @@
                     android:layout_marginTop="5dp"/>
             </com.google.android.flexbox.FlexboxLayout>
             <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/email_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:flexDirection="row"
@@ -236,11 +281,6 @@
                     android:layout_marginLeft="5dp"
                     style="@style/TextNormalBold"
                     app:layout_flexGrow="1"/>
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/icons8_pen_24px_1"
-                    android:background="@color/white"/>
                 <EditText
                     android:id="@+id/user_info_email_et"
                     android:layout_width="wrap_content"
@@ -259,6 +299,7 @@
                     android:layout_marginTop="5dp"/>
             </com.google.android.flexbox.FlexboxLayout>
             <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/phone_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:flexDirection="row"
@@ -277,11 +318,6 @@
                     android:layout_marginLeft="5dp"
                     style="@style/TextNormalBold"
                     app:layout_flexGrow="1"/>
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/icons8_pen_24px_1"
-                    android:background="@color/white"/>
                 <EditText
                     android:id="@+id/user_info_phone_et"
                     android:layout_width="wrap_content"
@@ -294,6 +330,7 @@
                     android:layout_marginStart="32dp"
                     android:enabled="false"/>
             </com.google.android.flexbox.FlexboxLayout>
+
         </LinearLayout>
 
     </LinearLayout>
