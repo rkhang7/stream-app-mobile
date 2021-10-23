@@ -167,6 +167,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                     String number = phoneCursor.getString(temp3);
 
                     // convert (012) 345-6711 --->> 0123456711
+                    phoneNumberConverted = "";
 
                     for(int i = 0; i< number.length(); i++){
                         if(i == 0 || i == 4 || i == 5 || i == 9){
@@ -202,6 +203,8 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                             contactList.add(contact);
                                                         }
                                                     }
+                                                    contactAdapter.setData(contactList);
+                                                    recyclerView.setAdapter(contactAdapter);
                                                 }
 
                                                 @Override
@@ -224,13 +227,9 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                             contactList.add(contact);
                                         }
                                     }
-
-
                                     contactAdapter.setData(contactList);
                                     recyclerView.setAdapter(contactAdapter);
                                 }
-
-
                             }
 
                             @Override

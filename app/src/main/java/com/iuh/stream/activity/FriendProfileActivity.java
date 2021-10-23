@@ -6,10 +6,12 @@ import androidx.constraintlayout.widget.Guideline;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexboxLayout;
 import com.iuh.stream.R;
 import com.iuh.stream.models.User;
 
@@ -22,8 +24,8 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     // views
     private CircleImageView avtIv;
-    private TextView nameTv, dobTv, genderTv, phoneNumberTv, emailTv;
-    private LinearLayout emailLayout, phoneNumberLayout;
+    private TextView nameTv, genderTv, phoneNumberTv, emailTv,dobTv;
+    private FlexboxLayout emailLayout, phoneNumberLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,17 +45,17 @@ public class FriendProfileActivity extends AppCompatActivity {
         nameTv = findViewById(R.id.name_tv);
         nameTv.setText(user.getFirstName() + " " +  user.getLastName());
 
-        dobTv = findViewById(R.id.dob_tv);
+        dobTv = findViewById(R.id.friend_info_dob_et);
         // datetime format
         String pattern = "dd-MM-yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         dobTv.setText(simpleDateFormat.format(user.getDateOfBirth()));
 
-        genderTv = findViewById(R.id.gender_tv);
+        genderTv = findViewById(R.id.friend_info_gender_tv);
         genderTv.setText(user.getGender());
 
-        phoneNumberTv = findViewById(R.id.phone_number_tv);
-        emailTv = findViewById(R.id.email_tv);
+        phoneNumberTv = findViewById(R.id.friend_info_phone_tv);
+        emailTv = findViewById(R.id.friend_info_email_tv);
         phoneNumberLayout = findViewById(R.id.phone_layout);
         emailLayout = findViewById(R.id.email_layout);
         if(user.getPhoneNumber() != null){
@@ -67,11 +69,6 @@ public class FriendProfileActivity extends AppCompatActivity {
             phoneNumberLayout.setVisibility(View.GONE);
             emailTv.setText(user.getEmail());
         }
-
-
-
-
-
     }
 
     @Override

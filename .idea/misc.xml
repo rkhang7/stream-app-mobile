@@ -43,13 +43,19 @@
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1921875" />
         <entry key="app/src/main/res/drawable-anydpi/ic_contact.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable-anydpi/ic_person.xml" value="0.10520833333333333" />
+        <entry key="app/src/main/res/drawable/arrow_white_24.xml" value="0.14114583333333333" />
+        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_register_phone_number.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_user_info.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1421875" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
+        <entry key="app/src/main/res/layout/fragment_personal_contact.xml" value="0.1421875" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.2" />
         <entry key="app/src/main/res/layout/show_login_method_dialog.xml" value="0.175" />
       </map>

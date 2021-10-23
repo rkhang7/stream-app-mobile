@@ -374,7 +374,6 @@ public class SignInActivity extends AppCompatActivity {
                             if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                                 FirebaseUser user =  task.getResult().getUser();
                                 saveUserToDatabase(user);
-
                             }
                             // Sign in success, update UI with the signed-in user's information
                             handleGetToken();

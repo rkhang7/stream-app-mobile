@@ -36,15 +36,17 @@
             android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.StartActivity"
-            android:theme="@style/Theme.NoActionBar" />
-        <activity
-            android:name=".activity.MainActivity"
-            android:theme="@style/Theme.NoActionBar">
+            android:theme="@style/Theme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:theme="@style/Theme.NoActionBar">
+
         </activity>
         <activity
             android:name=".activity.RegisterActivity"

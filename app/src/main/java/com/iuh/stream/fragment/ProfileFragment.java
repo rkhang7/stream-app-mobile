@@ -16,6 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.StartActivity;
@@ -26,6 +29,7 @@ import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
+import com.victor.loading.newton.NewtonCradleLoading;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -39,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private CircleImageView avatar;
     private TextView nameTv;
     private View view;
+    private NewtonCradleLoading newtonCradleLoading;
 
     // firebase
     private FirebaseAuth mAuth;
@@ -83,8 +88,21 @@ public class ProfileFragment extends Fragment {
                 builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mAuth.signOut();
-                        startActivity(new Intent(getContext(), StartActivity.class));
+                        //Sign out firebase account
+                        FirebaseAuth.getInstance().signOut();
+
+                        //SignOut google account
+                        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(getString((R.string.default_client_id)))
+                                .requestEmail()
+                                .build();
+
+                        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+                        mGoogleSignInClient.signOut();
+
+                        //Go to Start activity
+                        Intent intent = new Intent(getActivity(), StartActivity.class);
+                        getActivity().startActivity(intent);
                         getActivity().finish();
                     }
                 });
@@ -97,9 +115,10 @@ public class ProfileFragment extends Fragment {
     private void addControls() {
         avatar = view.findViewById(R.id.profile_avatar_iv);
         nameTv = view.findViewById(R.id.profile_name_tv);
+        newtonCradleLoading = view.findViewById(R.id.newton_cradle_loading);
+        newtonCradleLoading.setLoadingColor(R.color.main);
 
         getUserInfo();
-
         mAuth = FirebaseAuth.getInstance();
         logoutBtn = view.findViewById(R.id.profile_logout_btn);
     }
@@ -109,26 +128,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.code() == 403){
+                    newtonCradleLoading.setVisibility(View.VISIBLE);
+                    newtonCradleLoading.start();
                     String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
                     Util.refreshToken(REFRESH_TOKEN);
-                    RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                            .enqueue(new Callback<User>() {
-                                @Override
-                                public void onResponse(Call<User> call, Response<User> response) {
-                                    user = response.body();
-                                    if(user != null){
-                                        // set info
-                                        Glide.with(getContext()).load(user.getImageURL()).into(avatar);
-                                        nameTv.setText(user.getFirstName() + " " + user.getFirstName());
-                                    }
-                                }
-                                @Override
-                                public void onFailure(Call<User> call, Throwable t) {
-                                    Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    getUserInfo();
                 }
                 else {
+                    newtonCradleLoading.setVisibility(View.GONE);
                     user = response.body();
                     if(user != null){
                         // set info
@@ -142,5 +149,11 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 }

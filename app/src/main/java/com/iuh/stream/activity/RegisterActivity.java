@@ -382,7 +382,6 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 String uid = Objects.requireNonNull(task.getResult().getUser()).getUid();
                                 saveUserToDatabase(uid, EMAIL_TYPE);
-
                             } else {
                                 Toast.makeText(this, "Không thể tạo tài khoản, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
                             }
