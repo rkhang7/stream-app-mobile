@@ -4,6 +4,7 @@ import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
+import com.iuh.stream.models.responce.UpdateUserResponse;
 import com.iuh.stream.utils.Constants;
 
 import retrofit2.Call;
@@ -15,6 +16,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface RetrofitService {
@@ -42,5 +44,8 @@ public interface RetrofitService {
     @POST("auth/token")
     @FormUrlEncoded
     Call<TokenResponse> refreshToken(@Field("token") String refreshToken);
+
+    @PUT("/users/me/info")
+    Call<UpdateUserResponse> updateUser(@Body User user, @Header("Authorization") String accessToken);
 
 }

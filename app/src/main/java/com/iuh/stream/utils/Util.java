@@ -19,7 +19,6 @@ public class Util {
                     DataLocalManager.putStringValue(Constants.ACCESS_TOKEN, refreshToken);
                 }
             }
-
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
 

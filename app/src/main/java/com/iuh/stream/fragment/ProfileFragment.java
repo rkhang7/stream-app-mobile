@@ -140,7 +140,7 @@ public class ProfileFragment extends Fragment {
                     if(user != null){
                         // set info
                         Glide.with(getContext()).load(user.getImageURL()).into(avatar);
-                        nameTv.setText(user.getFirstName() + " " + user.getFirstName());
+                        nameTv.setText(user.getFirstName() + " " + user.getLastName());
                     }
                 }
             }

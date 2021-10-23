@@ -170,7 +170,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        edtBirthdate.setOnClickListener(v -> picker.show(getSupportFragmentManager(), "tag"));
+        edtBirthdate.setOnClickListener(v ->
+                picker.show(getSupportFragmentManager(), "tag"));
     }
 
 
