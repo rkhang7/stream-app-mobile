@@ -3,6 +3,7 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,12 +22,34 @@ public class MainActivity extends AppCompatActivity {
     // views
     private FrameLayout containerFrameLayout;
     private BottomNavigationView bottomNavigationView;
+    private ChatFragment chatFragment;
+    private ProfileFragment profileFragment;
+    private ContactFragment contactFragment;
+    private SettingFragment settingFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         addControls();
+        
+        chatFragment = new ChatFragment();
+        profileFragment = new ProfileFragment();
+        contactFragment = new ContactFragment();
+        settingFragment = new SettingFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, settingFragment)
+                .add(R.id.container, profileFragment)
+                .add(R.id.container, contactFragment)
+                .add(R.id.container, chatFragment)
+                .hide(settingFragment)
+                .hide(profileFragment)
+                .hide(contactFragment)
+                .show(chatFragment)
+                .commit();
+
         addEvents();
     }
 
@@ -38,23 +61,29 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.chat_menu:
-                        fragment = new ChatFragment();
+                        fragment = chatFragment;
                         break;
                     case R.id.contacts_menu:
-                        fragment = new ContactFragment();
+                        fragment = contactFragment;
                         break;
                     case R.id.person_menu:
-                        fragment = new ProfileFragment();
+                        fragment = profileFragment;
                         break;
                     case R.id.setting_menu:
-                        fragment = new SettingFragment();
+                        fragment = settingFragment;
                         break;
 
                 }
 
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, fragment)
-                        .commit();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                for(Fragment frag : getSupportFragmentManager().getFragments()) {
+                    if(!frag.equals(fragment))
+                        fragmentTransaction.hide(frag);
+                }
+
+                fragmentTransaction.show(fragment)
+                    .commit();
 
                 return true;
             }

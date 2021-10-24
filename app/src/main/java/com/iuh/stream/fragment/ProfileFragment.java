@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileFragment.this.getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

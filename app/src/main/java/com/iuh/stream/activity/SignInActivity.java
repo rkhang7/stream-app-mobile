@@ -42,6 +42,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.dialog.ResetPasswordDialog;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
@@ -85,7 +86,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.white_smoke));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
                 lnEmail.setVisibility(lnEmail.getVisibility() == View.INVISIBLE ? View.VISIBLE : View.INVISIBLE);
                 lnPhone.setVisibility(lnPhone.getVisibility() == View.INVISIBLE ? View.VISIBLE : View.INVISIBLE);
             }
@@ -93,13 +94,13 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.main));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.white));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.white));
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 tab.getCustomView().setBackgroundTintList(getResources().getColorStateList(R.color.white_smoke));
-                ((TextView)tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
+                ((TextView) tab.getCustomView().findViewById(R.id.tvText)).setTextColor(getResources().getColor(R.color.secondary));
             }
         });
 
@@ -160,12 +161,14 @@ public class SignInActivity extends AppCompatActivity {
                                 handleGetToken();
 
                             } else {
-                                Toast.makeText(this, "Email hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
+                                Log.d(Constants.TAG, "loginByEmailPart: \n" + task.getException());
+                                CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Email hoặc mật khẩu không đúng!");
                             }
                         })
                         .addOnFailureListener(e -> {
+                            Log.d(Constants.TAG, "loginByEmailPart: \n" + e);
                             pgEmail.setVisibility(View.INVISIBLE);
-                            Toast.makeText(this, "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
+                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi kết nối!");
                         });
             }
         });
@@ -176,22 +179,29 @@ public class SignInActivity extends AppCompatActivity {
         user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
             @Override
             public void onComplete(@NonNull Task<GetTokenResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     IdToken idToken = new IdToken(task.getResult().getToken());
                     RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
                         @Override
                         public void onResponse(Call<Token> call, Response<Token> response) {
-                            Token token = response.body();
-                            saveTokenToDataLocal(token);
-                            Log.e("TAG", "onResponse: " + token );
-                            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            if(response.isSuccessful()) {
+                                Token token = response.body();
+                                saveTokenToDataLocal(token);
+                                Log.e("TAG", "onResponse: " + token);
+                                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                            } else {
+                                CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Tài khoản không tồn tại!");
+                                Log.d(Constants.TAG, "getToken: \n" + response);
+                            }
                         }
 
                         @Override
                         public void onFailure(Call<Token> call, Throwable t) {
-
+                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Có lỗi đã xảy ra!");
+                            Log.d(Constants.TAG, "handleGetToken: \n" + t);
                         }
                     });
 
@@ -201,8 +211,8 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void saveTokenToDataLocal(Token token) {
-        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN,token.getAccessToken());
-        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN,token.getRefreshToken());
+        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN, token.getAccessToken());
+        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN, token.getRefreshToken());
     }
 
     private void loginPhonePart() {
@@ -233,7 +243,7 @@ public class SignInActivity extends AppCompatActivity {
                         .setActivity(this)
                         .setCallbacks(mCallback);
 
-                if(mResendToken != null)
+                if (mResendToken != null)
                     builder.setForceResendingToken(mResendToken);
 
                 PhoneAuthOptions options = builder.build();
@@ -248,7 +258,7 @@ public class SignInActivity extends AppCompatActivity {
         btnLoginPhone.setOnClickListener(v -> {
             String code = edtOtpCode.getText().toString().trim();
 
-            if(code.length() == 6) {
+            if (code.length() == 6) {
                 PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
 
                 pgPhone.setVisibility(View.VISIBLE);
@@ -269,7 +279,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 pgPhone.setVisibility(View.INVISIBLE);
                 btnGetOtp.setEnabled(true);
-                Log.e("CE", "onVerificationFailed: ", e);
+                Log.d(Constants.TAG, "onVerificationFailed: \n" + e);
             }
 
             @Override
@@ -281,11 +291,10 @@ public class SignInActivity extends AppCompatActivity {
                 btnGetOtp.setEnabled(true);
                 btnLoginPhone.setEnabled(true);
 
-
                 layoutPhone.setError("");
 
                 int seconds = 60;
-                new CountDownTimer(seconds * 1000,1000){
+                new CountDownTimer(seconds * 1000, 1000) {
                     @Override
                     public void onTick(long l) {
                         layoutPhone.setHelperText("Mã hết hạn trong: " + l / 1000);
@@ -326,9 +335,9 @@ public class SignInActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     pgPhone.setVisibility(View.INVISIBLE);
                     if (task.isSuccessful()) {
-                        if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                        if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                             //User's not exist
-                            Toast.makeText(this, "Số điện thoại chưa được đăng ký, vui lòng thử lại!", Toast.LENGTH_LONG).show();
+                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Số điện thoại chưa được đăng ký, vui lòng thử lại!");
                         } else {
                             handleGetToken();
                         }
@@ -338,11 +347,14 @@ public class SignInActivity extends AppCompatActivity {
 
                         if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                             // The verification code entered was invalid
-                            Toast.makeText(this, "Mã không hợp lệ, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Mã không hợp lệ, vui lòng thử lại!");
                         }
                     }
                 })
-                .addOnFailureListener(e -> pgPhone.setVisibility(View.INVISIBLE));
+                .addOnFailureListener(e -> {
+                    pgPhone.setVisibility(View.INVISIBLE);
+                    Log.d(Constants.TAG, "signInWithPhoneAuthCredential: \n" + e);
+                });
 
     }
 
@@ -358,7 +370,7 @@ public class SignInActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
+                Log.d(Constants.TAG, "onActivityResult: \n" + e);
             }
         }
     }
@@ -372,7 +384,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // if user signing in first time then get and show user info from gg account
                             if (task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                FirebaseUser user =  task.getResult().getUser();
+                                FirebaseUser user = task.getResult().getUser();
                                 saveUserToDatabase(user);
                             }
                             // Sign in success, update UI with the signed-in user's information
@@ -383,12 +395,14 @@ public class SignInActivity extends AppCompatActivity {
 
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignInActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + e);
+                        Toast.makeText(SignInActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void saveUserToDatabase(FirebaseUser user) {
@@ -398,7 +412,7 @@ public class SignInActivity extends AppCompatActivity {
 
         String firstName = displayName.get(0);
         String lastName = "";
-        for(int i = 1;i < displayName.size();i++){
+        for (int i = 1; i < displayName.size(); i++) {
             lastName += displayName.get(i);
         }
 
@@ -409,13 +423,13 @@ public class SignInActivity extends AppCompatActivity {
         List<String> contacts = new ArrayList<>();
 
 
-        User mUser = new User(uid, firstName, lastName,gender, imageURL, phoneNumber, email, true, contacts);
+        User mUser = new User(uid, firstName, lastName, gender, imageURL, phoneNumber, email, true, contacts);
 
         RetrofitService.getInstance.saveUser(mUser, uid).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User resUser = response.body();
-                if(resUser == null){
+                if (resUser == null) {
                     Toast.makeText(SignInActivity.this, "Đã xãy ra lỗi", Toast.LENGTH_SHORT).show();
                 }
 
@@ -423,6 +437,7 @@ public class SignInActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                Log.d(Constants.TAG, "saveUserToDatabase: \n" + t);
                 Toast.makeText(SignInActivity.this, "Đã xảy ta lỗi", Toast.LENGTH_SHORT).show();
             }
         });
