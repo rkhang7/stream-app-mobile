@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        addControls();
         
         chatFragment = new ChatFragment();
         profileFragment = new ProfileFragment();
@@ -54,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
+        bottomNavigationView = findViewById(R.id.navigation);
         // handle bottom navigation
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -88,20 +87,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    private void addControls() {
-        // init views
-        containerFrameLayout = findViewById(R.id.container);
-        bottomNavigationView = findViewById(R.id.navigation);
-
-        // set default fragment
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new ChatFragment())
-                .commit();
-
-        BadgeDrawable orCreateBadge = bottomNavigationView.getOrCreateBadge(R.id.chat_menu);
-        orCreateBadge.setVisible(true);
-        orCreateBadge.setNumber(99);
     }
 }

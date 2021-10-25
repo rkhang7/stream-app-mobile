@@ -5,50 +5,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.ChatFragment">
+    tools:context=".fragment.ChatFragment"
+    android:padding="10dp"
+    android:background="@color/white_smoke">
 
-    <RelativeLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/main">
+        app:flexDirection="row"
+        app:alignItems="stretch"
+        android:padding="5dp"
+        app:flexWrap="wrap">
 
-        <Button
-            android:id="@+id/search_iv"
-            style="@style/Widget.MaterialComponents.Button.Icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            app:icon="@drawable/search_white"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <TextView
-            android:layout_width="200dp"
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="18dp"
-            android:layout_toEndOf="@id/search_iv"
-            android:text="Tìm bạn bè"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            app:flexDirection="row"
+            app:alignItems="stretch"
+            app:layout_flexGrow="1"
+            android:background="@drawable/rounded_bg_8"
+            android:backgroundTint="@color/white">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/search_black_32"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/search_iv"
+                android:hint="@string/search"
+                style="@style/EditText"
+                app:layout_flexGrow="1"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/transparent"
+                android:textSize="16sp" />
+        </com.google.android.flexbox.FlexboxLayout>
 
 
-        <Button
-            style="@style/Widget.MaterialComponents.Button.Icon"
+        <ImageButton
+            style="@style/BorderlessButton"
             android:id="@+id/add_btn"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
-            app:icon="@drawable/add_white_32"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/btnLogout"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_32"/>
+    </com.google.android.flexbox.FlexboxLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Đăng xuất" />
+        android:layout_below="@id/linearLayout">
+
+        <TextView
+            android:id="@+id/textView2"
+            style="@style/TextDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tin nhắn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            android:layout_marginStart="5dp"
+            android:background="@color/secondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/textView2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </LinearLayout>

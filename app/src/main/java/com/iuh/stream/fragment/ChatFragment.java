@@ -43,24 +43,6 @@ public class ChatFragment extends Fragment {
     }
 
     private void addEvents() {
-        view.findViewById(R.id.btnLogout).setOnClickListener(v -> {
-            //Sign out firebase account
-            FirebaseAuth.getInstance().signOut();
-
-            //SignOut google account
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString((R.string.default_client_id)))
-                    .requestEmail()
-                    .build();
-
-            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-            mGoogleSignInClient.signOut();
-
-            //Go to Start activity
-            Intent intent = new Intent(getActivity(), StartActivity.class);
-            getActivity().startActivity(intent);
-            getActivity().finish();
-        });
     }
 
     private void addControls() { ;

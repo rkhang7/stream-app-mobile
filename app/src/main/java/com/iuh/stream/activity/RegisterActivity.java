@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -31,6 +33,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
@@ -40,6 +43,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
@@ -82,8 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
     private final long OTP_LIFE_TIME = 120L;
     private static final int EMAIL_TYPE = 1;
     private static final int PHONE_NUMBER_TYPE = 2;
-
-
+    private CountDownTimer countDownTimer;
 
 
     public RegisterActivity() {
@@ -280,7 +283,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                 layoutPhone.setError("");
 
-                new CountDownTimer(OTP_LIFE_TIME * 1000, 1000) {
+                if(countDownTimer != null) {
+                    countDownTimer.cancel();
+                }
+
+                countDownTimer =  new CountDownTimer(OTP_LIFE_TIME * 1000, 1000) {
                     @Override
                     public void onTick(long l) {
                         layoutPhone.setHelperText("Mã hết hạn trong: " + l / 1000);
@@ -321,7 +328,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         if (task.getResult().getAdditionalUserInfo() != null && !task.getResult().getAdditionalUserInfo().isNewUser()) {
                             //User already exist => Register fail
-                            Toast.makeText(this, "Số điện thoại đã được sử dụng, vui lòng dùng số khác!", Toast.LENGTH_SHORT).show();
+                            CustomAlert.showToast(this, CustomAlert.WARNING, "Số điện thoại đã được sử dụng, vui lòng dùng số khác!");
                         } else {
                             saveUserToDatabase(task.getResult().getUser().getUid(), PHONE_NUMBER_TYPE);
                         }
@@ -331,7 +338,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                             // The verification code entered was invalid
-                            Toast.makeText(this, "Mã không hợp lệ, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                            CustomAlert.showToast(this, CustomAlert.WARNING, "Mã không hợp lệ, vui lòng thử lại!");
                         }
                     }
                 })
@@ -365,8 +372,8 @@ public class RegisterActivity extends AppCompatActivity {
                 layoutEmail.setError("Email không hợp lệ!");
                 flag = false;
             }
-            if (password.length() < 6) {
-                layoutPassword.setError("Mật khẩu không hợp lệ!");
+            if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$")) {
+                layoutPassword.setError("Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số, tối thiểu 6 ký tự");
                 flag = false;
             }
             if (!password.equals(rePassword)) {
@@ -375,6 +382,10 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             if (flag) {
+                layoutEmail.setHelperText("");
+                layoutPassword.setHelperText("");
+                layoutRePassword.setHelperText("");
+
                 pbEmailRegister.setVisibility(View.VISIBLE);
                 //Register account
                 mAuth.createUserWithEmailAndPassword(email, password)
@@ -383,14 +394,34 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 String uid = Objects.requireNonNull(task.getResult().getUser()).getUid();
                                 saveUserToDatabase(uid, EMAIL_TYPE);
-                            } else {
-                                Toast.makeText(this, "Không thể tạo tài khoản, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+
+                                task.getResult().getUser().sendEmailVerification()
+                                        .addOnSuccessListener(unused -> {
+                                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.INFO, "Vui lòng kiểm tra email để xác nhận đăng kí tài khoản!");
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối mạng!");
+                                        });
+
                             }
                         })
                         .addOnFailureListener(e -> {
                             pbEmailRegister.setVisibility(View.GONE);
-                            Log.e("CE", "create by email: ", e);
-                            Toast.makeText(this, "Tạo tài khoản thất bại", Toast.LENGTH_SHORT).show();
+                            Log.e(Constants.TAG, "create by email: ", e);
+
+                            String message = "Tạo tài khoản thất bại!";
+                            if(e instanceof FirebaseAuthException) {
+                                FirebaseAuthException fae = (FirebaseAuthException) e;
+                                switch (fae.getErrorCode()) {
+                                    case "ERROR_EMAIL_ALREADY_IN_USE":
+                                        message = "Email đã được sử dụng!";
+                                        break;
+                                    case "ERROR_WEAK_PASSWORD":
+                                        message = "Mật khẩu quá yếu! Vui lòng sử dụng mật khẩu mạnh hơn.";
+                                        break;
+                                }
+                            }
+                            CustomAlert.showToast(this, CustomAlert.WARNING, message);
                         });
 
             }
@@ -443,16 +474,20 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 User resUser = response.body();
                 if(resUser == null){
-                    Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
+                    Log.d(Constants.TAG, "Save user: \n" + "Null");
+                    CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Không thể tạo tài khoản, vui lòng thử lại!");
                 }
                 else{
-                    handleGetToken();
+                    if(resUser.getPhoneNumber() != null) {
+                        //User create by phone, not email because email need to be verified
+                        handleGetToken();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
+                CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Không thể tạo tài khoản, vui lòng thử lại!");
             }
         });
 
@@ -460,28 +495,28 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void handleGetToken() {
         FirebaseUser user = mAuth.getCurrentUser();
-        user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-            @Override
-            public void onComplete(@NonNull Task<GetTokenResult> task) {
-                if(task.isSuccessful()){
-                    IdToken idToken = new IdToken(task.getResult().getToken());
-                    RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
-                        @Override
-                        public void onResponse(Call<Token> call, Response<Token> response) {
-                            Token token = response.body();
-                            saveTokenToDataLocal(token);
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
+        user.getIdToken(true).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                IdToken idToken = new IdToken(task.getResult().getToken());
+                RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
+                    @Override
+                    public void onResponse(Call<Token> call, Response<Token> response) {
+                        Token token = response.body();
+                        saveTokenToDataLocal(token);
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
 
-                        @Override
-                        public void onFailure(Call<Token> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<Token> call, Throwable t) {
 
-                        }
-                    });
+                    }
+                });
 
-                }
+            } else {
+                CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối!");
+
             }
         });
     }

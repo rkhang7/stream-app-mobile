@@ -58,8 +58,10 @@ public class StartActivity extends AppCompatActivity {
         // firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null){
-            startActivity(new Intent(StartActivity.this, MainActivity.class));
-            finish();
+            if(mAuth.getCurrentUser().isEmailVerified()) {
+                startActivity(new Intent(StartActivity.this, MainActivity.class));
+                finish();
+            }
         }
     }
 }

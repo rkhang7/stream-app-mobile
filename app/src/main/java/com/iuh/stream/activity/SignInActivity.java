@@ -29,9 +29,11 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
@@ -70,6 +72,7 @@ public class SignInActivity extends AppCompatActivity {
     private LinearProgressIndicator pgPhone;
     private GoogleSignInClient mGoogleSignInClient;
     public static final int RC_SIGN_IN = 100;
+    private CountDownTimer countDownTimer;
 
 
     @Override
@@ -158,17 +161,52 @@ public class SignInActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             pgEmail.setVisibility(View.INVISIBLE);
                             if (task.isSuccessful()) {
-                                handleGetToken();
+                                if(!task.getResult().getUser().isEmailVerified()) {
+                                    task.getResult().getUser().sendEmailVerification()
+                                            .addOnSuccessListener(unused -> {
+                                                CustomAlert.showToast(this, CustomAlert.WARNING, "Email chưa được xác thực! Vui lòng kiểm tra hộp thư để xác thực email.");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                String message = "Lỗi kết nối mạng!";
+                                                if(e instanceof FirebaseTooManyRequestsException) {
+                                                    message = "Tạm khóa tài khoản! Có vẻ như có ai đó đang cố truy cập vào tài khoản này!";
+
+                                                }
+                                                CustomAlert.showToast(this, CustomAlert.WARNING, message);
+                                            });
+
+                                } else {
+                                    handleGetToken();
+                                }
 
                             } else {
+                                String message = "Không thể đăng nhập!";
+
+                                if(task.getException() instanceof FirebaseAuthException) {
+                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                    switch (e.getErrorCode()) {
+                                        case "ERROR_WRONG_PASSWORD":
+                                            message = "Email hoặc mật khẩu không đúng!";
+                                            break;
+                                        case "ERROR_USER_NOT_FOUND":
+                                            message = "Email hoặc mật khẩu không đúng!";
+                                            break;
+                                        case "ERROR_TOO_MANY_REQUESTS":
+                                            message = "Không thể xác thực! Có vẻ như có bạn đang cố truy cập vào tài khoản này.";
+                                            break;
+                                        case "ERROR_NETWORK_REQUEST_FAILED":
+                                            message = "Lỗi kết nối mạng!";
+                                            break;
+
+                                        default:
+                                            message = "Không thể đăng nhập!";
+                                            break;
+                                    }
+                                }
+
+                                CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, message);
                                 Log.d(Constants.TAG, "loginByEmailPart: \n" + task.getException());
-                                CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Email hoặc mật khẩu không đúng!");
                             }
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.d(Constants.TAG, "loginByEmailPart: \n" + e);
-                            pgEmail.setVisibility(View.INVISIBLE);
-                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi kết nối!");
                         });
             }
         });
@@ -187,7 +225,8 @@ public class SignInActivity extends AppCompatActivity {
                             if(response.isSuccessful()) {
                                 Token token = response.body();
                                 saveTokenToDataLocal(token);
-                                Log.e("TAG", "onResponse: " + token);
+
+                                CustomAlert.showToast(SignInActivity.this, CustomAlert.INFO, "Đăng nhập thành công!");
                                 Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -294,7 +333,12 @@ public class SignInActivity extends AppCompatActivity {
                 layoutPhone.setError("");
 
                 int seconds = 60;
-                new CountDownTimer(seconds * 1000, 1000) {
+
+                if(countDownTimer != null) {
+                    countDownTimer.cancel();
+                }
+
+                countDownTimer =  new CountDownTimer(seconds * 1000, 1000) {
                     @Override
                     public void onTick(long l) {
                         layoutPhone.setHelperText("Mã hết hạn trong: " + l / 1000);
@@ -391,16 +435,9 @@ public class SignInActivity extends AppCompatActivity {
                             handleGetToken();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(SignInActivity.this, "signInWithCredential:failure" + task.getException(), Toast.LENGTH_SHORT).show();
-
+                            Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + task.getException());
+                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi đăng nhập!");
                         }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + e);
-                        Toast.makeText(SignInActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -430,7 +467,8 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 User resUser = response.body();
                 if (resUser == null) {
-                    Toast.makeText(SignInActivity.this, "Đã xãy ra lỗi", Toast.LENGTH_SHORT).show();
+                    Log.d(Constants.TAG, "SaveUser: \n" + "Không thể lưu user!");
+                    CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Không thể kết nối đến server!");
                 }
 
             }
@@ -438,7 +476,8 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d(Constants.TAG, "saveUserToDatabase: \n" + t);
-                Toast.makeText(SignInActivity.this, "Đã xảy ta lỗi", Toast.LENGTH_SHORT).show();
+                CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Không thể kết nối đến server!");
+                Toast.makeText(SignInActivity.this, "", Toast.LENGTH_SHORT).show();
             }
         });
 

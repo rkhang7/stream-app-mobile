@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat;
 import com.iuh.stream.R;
 
 public class CustomAlert {
-    public static int WARNING = -1;
-    public static int INFO = 1;
+    public static final int WARNING = -1;
+    public static final int INFO = 1;
     public static void showToast(Activity activity, int type, String message) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, null);
