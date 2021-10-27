@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.google.android.material.badge.BadgeDrawable;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.iuh.stream.R;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         chatFragment = new ChatFragment();
         profileFragment = new ProfileFragment();
         contactFragment = new ContactFragment();
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 fragmentTransaction.show(fragment)
-                    .commit();
+                        .commit();
 
                 return true;
             }

@@ -56,6 +56,7 @@
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_info.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/change_avatar_popup.xml" value="0.21" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1421875" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />

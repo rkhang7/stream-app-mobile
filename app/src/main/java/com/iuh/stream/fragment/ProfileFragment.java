@@ -29,6 +29,7 @@ import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
+import com.squareup.picasso.Picasso;
 import com.victor.loading.newton.NewtonCradleLoading;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,14 +55,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_profile, container, false);
-
         addControls();
         addEvents();
-
-
         return view;
-
-
     }
 
     private void addEvents() {
@@ -90,7 +86,6 @@ public class ProfileFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Sign out firebase account
                         FirebaseAuth.getInstance().signOut();
-
                         //SignOut google account
                         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                                 .requestIdToken(getString((R.string.default_client_id)))
@@ -139,7 +134,8 @@ public class ProfileFragment extends Fragment {
                     user = response.body();
                     if(user != null){
                         // set info
-                        Glide.with(getContext()).load(user.getImageURL()).into(avatar);
+                        Picasso.get().load(user.getImageURL()).into(avatar);
+                        Log.e("TAG", "onResponse: " +  user.getImageURL());
                         nameTv.setText(user.getFirstName() + " " + user.getLastName());
                     }
                 }
@@ -154,6 +150,5 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 }

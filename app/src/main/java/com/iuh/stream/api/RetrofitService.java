@@ -48,4 +48,8 @@ public interface RetrofitService {
     @PUT("/users/me/info")
     Call<UpdateUserResponse> updateUser(@Body User user, @Header("Authorization") String accessToken);
 
+    @PUT("/users/me/info")
+    @FormUrlEncoded
+    Call<UpdateUserResponse> updateAvatar(@Field("image") String imageBase64, @Header("Authorization") String accessToken);
+
 }

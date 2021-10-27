@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/bg_popup_white_conner_16"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_blue_conner_top_16"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Ảnh đại diện"
+        style="@style/Heading2"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:textSize="16sp"
+            android:id="@+id/view_avatar_btn"
+            android:text=" Xem ảnh đại diện"
+            android:layout_width="match_parent"
+            android:textAlignment="textStart"
+            android:layout_height="80dp"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            app:icon="@drawable/icons8_eye_48"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+
+        <Button
+            android:textSize="16sp"
+            android:id="@+id/image_camera_btn"
+            android:text=" Chụp ảnh mới"
+            android:layout_width="match_parent"
+            android:textAlignment="textStart"
+            android:layout_height="80dp"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            app:icon="@drawable/icons8_camera_48"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+
+        <Button
+            android:id="@+id/image_gallery_btn"
+            android:textSize="16sp"
+            android:text=" Chọn ảnh từ thiết bị"
+            android:layout_width="match_parent"
+            android:textAlignment="textStart"
+            android:layout_height="80dp"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            app:icon="@drawable/icons8_image_48"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+
+    </LinearLayout>
+
+
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/linearProgressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+</LinearLayout>
