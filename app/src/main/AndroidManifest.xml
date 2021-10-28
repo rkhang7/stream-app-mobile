@@ -17,6 +17,20 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Stream">
+        <activity android:name=".imagepicker.ImageCropActivity" />
+        <activity android:name=".imagepicker.ImageSelectActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+
+        <provider
+            android:name=".imagepicker.provider.ImageSelectionProvider"
+            android:authorities="${applicationId}.image-selection-provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <activity
             android:name=".activity.UserInfoActivity"
             android:exported="false"

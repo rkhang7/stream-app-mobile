@@ -48,6 +48,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.fragment.ProfileFragment;
+import com.iuh.stream.imagepicker.ImageSelectActivity;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.responce.UpdateUserResponse;
 import com.iuh.stream.utils.Constants;
@@ -74,6 +75,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserInfoActivity extends AppCompatActivity {
+
     // views
     private CircleImageView avatarIv;
     private TextView nameTv;
@@ -142,78 +144,12 @@ public class UserInfoActivity extends AppCompatActivity {
         avatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PermissionListener permissionlistener = new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted() {
-                        openChangeAvatarPopup();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(List<String> deniedPermissions) {
-                        CustomAlert.showToast(UserInfoActivity.this, CustomAlert.WARNING, "Permission Denied\n");
-                    }
-                };
-
-                TedPermission.create()
-                        .setPermissionListener(permissionlistener)
-                        .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                        .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .check();
-
+                ImageSelectActivity.startImageSelectionForResult(UserInfoActivity.this, true, true, true, true, 1213);
             }
         });
 
     }
 
-    private void openChangeAvatarPopup() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.change_avatar_popup);
-
-        Window window = dialog.getWindow();
-        if (window == null) {
-            return;
-        }
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams attributes = window.getAttributes();
-        attributes.gravity = Gravity.CENTER;
-
-        window.setAttributes(attributes);
-
-        dialog.setCancelable(true);
-
-        Button viewAvatarBtn = dialog.findViewById(R.id.view_avatar_btn);
-        Button imageFromCamera = dialog.findViewById(R.id.image_camera_btn);
-        Button imageFromGallery = dialog.findViewById(R.id.image_gallery_btn);
-
-        imageFromCamera.setOnClickListener(v -> openCamera());
-
-        imageFromGallery.setOnClickListener(v -> {
-            openGallery();
-        });
-
-        dialog.show();
-
-
-    }
-
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, GALLERY_CODE);
-    }
-
-    private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "Temp Pick");
-        values.put(MediaStore.Images.Media.TITLE, "Temp Desc");
-        avatarUri = getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, avatarUri);
-        startActivityForResult(intent, CAMERA_CODE);
-
-    }
 
     private void openPopup(int type) {
         final Dialog dialog = new Dialog(this);
@@ -496,38 +432,16 @@ public class UserInfoActivity extends AppCompatActivity {
 
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK) {
-            avatarUri = data.getData();
-            final InputStream imageStream;
-            try {
-                imageStream = getContentResolver().openInputStream(avatarUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                String encodedImage = "data:image/jpeg;base64," + encodeImage(selectedImage);
-                uploadImageToAws(encodedImage);
-            } catch (FileNotFoundException e) {
-                CustomAlert.showToast(UserInfoActivity.this, CustomAlert.WARNING, e.getMessage());
-            }
-
+        if (requestCode == 1213 && resultCode == Activity.RESULT_OK) {
+            String filePath = data.getStringExtra(ImageSelectActivity.RESULT_FILE_PATH);
+            Bitmap selectedImage = BitmapFactory.decodeFile(filePath);
+            String encodedImage = "data:image/jpeg;base64," + encodeImage(selectedImage);
+            uploadImageToAws(encodedImage);
         }
-        // for camera
-        else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
-            Uri uri = avatarUri;
-            final InputStream imageStream;
-            try {
-                imageStream = getContentResolver().openInputStream(uri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                String encodedImage = "data:image/jpeg;base64," + encodeImage(selectedImage);
-                uploadImageToAws(encodedImage);
-            } catch (FileNotFoundException e) {
-                CustomAlert.showToast(UserInfoActivity.this, CustomAlert.WARNING, e.getMessage());
-            }
-
-        }
-
-
     }
 
     private void uploadImageToAws(String encodedImage) {
