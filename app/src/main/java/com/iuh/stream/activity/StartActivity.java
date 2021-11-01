@@ -12,7 +12,11 @@ import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.iuh.stream.R;
+
+import java.util.List;
 
 public class StartActivity extends AppCompatActivity {
     // views
@@ -59,7 +63,8 @@ public class StartActivity extends AppCompatActivity {
         // firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null){
-            if(mAuth.getCurrentUser().isEmailVerified() || true) {
+            UserInfo userInfo = mAuth.getCurrentUser().getProviderData().get(1);
+            if(!userInfo.getProviderId().equals("password") || mAuth.getCurrentUser().isEmailVerified()) {
                 startActivity(new Intent(StartActivity.this, MainActivity.class));
                 finish();
             }

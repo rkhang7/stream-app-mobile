@@ -41,10 +41,12 @@
         <activity
             android:name=".activity.AddFriendActivity"
             android:exported="true"
-            android:label="Thêm bạn" />
+            android:label="Thêm bạn"
+            android:theme="@style/Theme.Design.Light" />
         <activity
             android:name=".activity.FriendInvitationActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.Design.Light"/>
         <activity
             android:name=".activity.PhoneFriendsActivity"
             android:exported="true" />

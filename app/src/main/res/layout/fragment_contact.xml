@@ -5,53 +5,69 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.ContactFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <RelativeLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/contacts_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/main">
+        android:padding="5dp"
+        app:alignItems="stretch"
+        app:flexDirection="row"
+        app:flexWrap="wrap">
 
-        <Button
-            android:id="@+id/search_iv"
-            style="@style/Widget.MaterialComponents.Button.Icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            app:icon="@drawable/search_white"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <TextView
-            android:layout_width="200dp"
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="18dp"
-            android:layout_toEndOf="@id/search_iv"
-            android:text="Tìm bạn bè"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:background="@drawable/rounded_bg_8"
+            android:backgroundTint="@color/white"
+            app:alignItems="stretch"
+            app:flexDirection="row"
+            app:layout_flexGrow="1">
+
+            <ImageView
+                android:id="@+id/search_iv"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/search_black_32"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                style="@style/EditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@id/search_iv"
+                android:backgroundTint="@color/transparent"
+                android:hint="@string/search_friend"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_flexGrow="1" />
+        </com.google.android.flexbox.FlexboxLayout>
 
 
-        <Button
+        <ImageButton
             android:id="@+id/add_friend_btn"
-            style="@style/Widget.MaterialComponents.Button.Icon"
+            style="@style/BorderlessButton"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
-            app:icon="@drawable/icons8_add_user_32"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:src="@drawable/icons8_add_user_32" />
+    </com.google.android.flexbox.FlexboxLayout>
 
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/contacts_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/contacts_toolbar"/>
+        android:layout_below="@id/contacts_toolbar"
+        android:backgroundTint="@color/white_smoke"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rounded_bg_8"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/contacts_pager2"

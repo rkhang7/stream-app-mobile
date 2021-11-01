@@ -64,7 +64,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/corners_button"
-            android:text="Tìm" />
+            android:text="Tìm"
+            android:backgroundTint="@color/white"/>
 
 
     </RelativeLayout>

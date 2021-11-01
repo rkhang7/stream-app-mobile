@@ -30,4 +30,5 @@
     <string name="reset_password">Đặt lại mật khẩu</string>
     <string name="canada_icon">\</string>
     <string name="search">Tìm kiếm</string>
+    <string name="search_friend">Tìm bạn bè</string>
 </resources>

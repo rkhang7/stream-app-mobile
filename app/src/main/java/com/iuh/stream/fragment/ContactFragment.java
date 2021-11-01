@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -25,7 +26,7 @@ public class ContactFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private MyFragmentAdapter myFragmentAdapter;
-    private Button addFiendBtn;
+    private ImageButton addFiendBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -32,12 +32,31 @@
         android:textColor="@color/black"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextNormal"
-        android:textStyle="bold"
-        android:text="Tất cả danh bạ"/>
+        android:layout_below="@id/linearLayout">
+
+        <TextView
+            android:id="@+id/textView2"
+            style="@style/TextDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bạn bè"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            android:layout_marginStart="5dp"
+            android:background="@color/secondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/textView2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
