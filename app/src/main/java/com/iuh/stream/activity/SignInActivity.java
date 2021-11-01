@@ -232,7 +232,6 @@ public class SignInActivity extends AppCompatActivity {
 
                             } else {
                                 CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Tài khoản không tồn tại!");
-                                Log.d(Constants.TAG, "getToken: \n" + response);
                             }
                         }
 
@@ -331,7 +330,9 @@ public class SignInActivity extends AppCompatActivity {
 
                 layoutPhone.setError("");
 
-                int seconds = 60;
+                int seconds = 120;
+                CustomAlert.showToast(SignInActivity.this, CustomAlert.INFO, "Mã xác nhận đã được gửi đến số điện thoại của bạn");
+
 
                 if(countDownTimer != null) {
                     countDownTimer.cancel();
