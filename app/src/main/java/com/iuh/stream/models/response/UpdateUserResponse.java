@@ -1,4 +1,4 @@
-package com.iuh.stream.models.responce;
+package com.iuh.stream.models.response;
 
 public class UpdateUserResponse {
     private int code;

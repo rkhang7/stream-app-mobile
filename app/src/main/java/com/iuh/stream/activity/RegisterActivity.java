@@ -510,7 +510,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Token> call, Throwable t) {
-
+                        CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
 

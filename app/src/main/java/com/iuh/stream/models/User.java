@@ -12,6 +12,7 @@ public class User implements Serializable {
     private Date dateOfBirth;
     private String imageURL;
     private String phoneNumber;
+    private boolean deleted;
     private String email;
     private Date lastOnline;
     private boolean online;
@@ -22,7 +23,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, String email, Date lastOnline, boolean online, List<String> contacts, List<String> friendRequests, List<String> friendInvitations) {
+    public User(String _id, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, boolean deleted, String email, Date lastOnline, boolean online, List<String> contacts, List<String> friendRequests, List<String> friendInvitations) {
         this._id = _id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -30,6 +31,7 @@ public class User implements Serializable {
         this.dateOfBirth = dateOfBirth;
         this.imageURL = imageURL;
         this.phoneNumber = phoneNumber;
+        this.deleted = deleted;
         this.email = email;
         this.lastOnline = lastOnline;
         this.online = online;
@@ -165,6 +167,14 @@ public class User implements Serializable {
         this.contacts = contacts;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -175,6 +185,7 @@ public class User implements Serializable {
                 ", dateOfBirth=" + dateOfBirth +
                 ", imageURL='" + imageURL + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", deleted=" + deleted +
                 ", email='" + email + '\'' +
                 ", lastOnline=" + lastOnline +
                 ", online=" + online +

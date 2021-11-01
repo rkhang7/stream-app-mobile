@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 <!--    <color name="main">#049DD9</color>-->
     <color name="main">#224D73</color>
+    <color name="my_read">#dc3545</color>
     <color name="main_50">#80003F63</color>
     <color name="danger">#D50000</color>
     <color name="danger_50">#80D50000</color>

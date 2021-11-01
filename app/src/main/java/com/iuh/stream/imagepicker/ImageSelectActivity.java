@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.iuh.stream.R;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.imagepicker.imagecompression.ImageCompression;
 import com.iuh.stream.imagepicker.imagecompression.ImageCompressionListener;
 import com.iuh.stream.imagepicker.imagepicker.ImagePickerUtil;
@@ -34,8 +36,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
-    private TextView textViewCancel;
-    private Button imageCameraBtn, imageGalleyBtn;
+    private Button imageCameraBtn, imageGalleyBtn, viewAvatarBtn;
     private LinearLayout changAvatarLayout;
 
     private boolean isCompress = true, isCamera = true, isGallery = true, isCrop = false;
@@ -44,8 +45,6 @@ public class ImageSelectActivity extends AppCompatActivity {
     public static final String FLAG_CAMERA = "flag_camera";
     public static final String FLAG_GALLERY = "flag_gallery";
     public static final String FLAG_CROP = "flag_crop";
-
-
     public static final String RESULT_FILE_PATH = "result_file_path";
 
     @Override
@@ -55,18 +54,12 @@ public class ImageSelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_select);
 
         progressBar = findViewById(R.id.progressBar);
-//        textViewCancel = findViewById(R.id.textViewCancel);
         imageCameraBtn = findViewById(R.id.image_camera_btn);
         imageGalleyBtn = findViewById(R.id.image_gallery_btn);
         changAvatarLayout = findViewById(R.id.change_avatar_layout);
+        viewAvatarBtn = findViewById(R.id.view_avatar_btn);
 
-//        textViewCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setResult(RESULT_CANCELED);
-//                finish();
-//            }
-//        });
+
         imageCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +80,13 @@ public class ImageSelectActivity extends AppCompatActivity {
                 } else {
                     requestStoragePermission();
                 }
+            }
+        });
+
+        viewAvatarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Tính năng này chưa được phát triển", Toast.LENGTH_SHORT).show();
             }
         });
 

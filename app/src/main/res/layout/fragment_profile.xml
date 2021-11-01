@@ -114,6 +114,7 @@
 
         </com.google.android.flexbox.FlexboxLayout>
         <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/delete_user_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

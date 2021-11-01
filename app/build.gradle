@@ -55,6 +55,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'org.zakariya.stickyheaders:stickyheaders:0.7.10'
     implementation 'com.victor:lib:1.0.4'
-
-
+    implementation ('io.socket:socket.io-client:2.0.1') {
+        exclude group: 'org.json', module: 'json'
+    }
 }

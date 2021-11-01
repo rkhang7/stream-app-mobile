@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -45,6 +46,8 @@ public class ProfileFragment extends Fragment {
     private TextView nameTv;
     private View view;
     private NewtonCradleLoading newtonCradleLoading;
+    private FlexboxLayout deleteUserLayout;
+
 
     // firebase
     private FirebaseAuth mAuth;
@@ -105,6 +108,16 @@ public class ProfileFragment extends Fragment {
                 builder.create().show();
             }
         });
+
+        // delete user
+        deleteUserLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Xóa tài khoản");
+                builder.create().show();
+            }
+        });
     }
 
     private void addControls() {
@@ -112,6 +125,7 @@ public class ProfileFragment extends Fragment {
         nameTv = view.findViewById(R.id.profile_name_tv);
         newtonCradleLoading = view.findViewById(R.id.newton_cradle_loading);
         newtonCradleLoading.setLoadingColor(R.color.main);
+        deleteUserLayout = view.findViewById(R.id.delete_user_layout);
 
         getUserInfo();
         mAuth = FirebaseAuth.getInstance();
@@ -135,7 +149,6 @@ public class ProfileFragment extends Fragment {
                     if(user != null){
                         // set info
                         Picasso.get().load(user.getImageURL()).into(avatar);
-                        Log.e("TAG", "onResponse: " +  user.getImageURL());
                         nameTv.setText(user.getFirstName() + " " + user.getLastName());
                     }
                 }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import com.google.firebase.FirebaseApp;
@@ -58,7 +59,7 @@ public class StartActivity extends AppCompatActivity {
         // firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null){
-            if(mAuth.getCurrentUser().isEmailVerified()) {
+            if(mAuth.getCurrentUser().isEmailVerified() || true) {
                 startActivity(new Intent(StartActivity.this, MainActivity.class));
                 finish();
             }

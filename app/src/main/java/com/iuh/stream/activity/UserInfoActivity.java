@@ -1,12 +1,9 @@
 package com.iuh.stream.activity;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,12 +12,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,21 +31,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
-import com.iuh.stream.fragment.ProfileFragment;
 import com.iuh.stream.imagepicker.ImageSelectActivity;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.responce.UpdateUserResponse;
+import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -60,12 +51,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 

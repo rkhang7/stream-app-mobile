@@ -32,4 +32,20 @@
         android:textColor="@color/black"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextNormal"
+        android:textStyle="bold"
+        android:text="Tất cả danh bạ"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:backgroundTint="@color/gray"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="8dp"
+        android:id="@+id/personal_contacts_rcv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

@@ -225,7 +225,6 @@ public class SignInActivity extends AppCompatActivity {
                             if(response.isSuccessful()) {
                                 Token token = response.body();
                                 saveTokenToDataLocal(token);
-
                                 CustomAlert.showToast(SignInActivity.this, CustomAlert.INFO, "Đăng nhập thành công!");
                                 Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                                 startActivity(intent);

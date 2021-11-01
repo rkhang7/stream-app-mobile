@@ -4,13 +4,14 @@ import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
-import com.iuh.stream.models.responce.UpdateUserResponse;
+import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.Constants;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -18,6 +19,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface RetrofitService {
 
@@ -35,6 +37,10 @@ public interface RetrofitService {
     @GET("users/email/{email}")
     Call<User> getUserByEmail(@Path("email") String email, @Header("Authorization") String accessToken);
 
+    @GET("users/{id}")
+    Call<User> getUserById(@Path("id") String id, @Header("Authorization") String accessToken);
+
+
     @POST("auth/idtoken")
     Call<Token> getToken(@Body IdToken idToken);
 
@@ -51,5 +57,9 @@ public interface RetrofitService {
     @PUT("/users/me/info")
     @FormUrlEncoded
     Call<UpdateUserResponse> updateAvatar(@Field("image") String imageBase64, @Header("Authorization") String accessToken);
+
+   @DELETE("/friends")
+   Call<Void> deleteUserIDByOption(@Query("senderID") String senderID, @Query("receiverID") String
+           receiverID, @Query("option") String option, @Header("Authorization") String accessToken);
 
 }
