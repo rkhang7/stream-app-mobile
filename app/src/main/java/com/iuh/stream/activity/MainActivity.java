@@ -6,17 +6,25 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.fragment.ChatFragment;
 import com.iuh.stream.fragment.ContactFragment;
 import com.iuh.stream.fragment.ProfileFragment;
 import com.iuh.stream.fragment.SettingFragment;
+import com.iuh.stream.utils.Constants;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
     // views
@@ -47,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                 .hide(contactFragment)
                 .show(chatFragment)
                 .commit();
+
+
 
         addEvents();
     }

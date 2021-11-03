@@ -61,11 +61,11 @@
             android:id="@+id/search_users_btn"
             android:layout_width="100dp"
             android:layout_height="40dp"
+            android:textColor="@color/white"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/corners_button"
-            android:text="Tìm"
-            android:backgroundTint="@color/white"/>
+            android:text="Tìm" />
 
 
     </RelativeLayout>

@@ -235,6 +235,7 @@ public class AddFriendActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
+
     }
 
     @Override

@@ -197,7 +197,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                             contact.setPhoneNumber(number);
                                                             contact.setPhoneName(name);
                                                             contact.setFirstName(tempUser.getFirstName());
-                                                            contact.setLastName(tempUser.getFirstName());
+                                                            contact.setLastName(tempUser.getLastName());
                                                             contact.setId(tempUser.get_id());
                                                             contact.setAvatar(tempUser.getImageURL());
                                                             contactList.add(contact);
@@ -221,7 +221,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                             contact.setPhoneNumber(number);
                                             contact.setPhoneName(name);
                                             contact.setFirstName(tempUser.getFirstName());
-                                            contact.setLastName(tempUser.getFirstName());
+                                            contact.setLastName(tempUser.getLastName());
                                             contact.setId(tempUser.get_id());
                                             contact.setAvatar(tempUser.getImageURL());
                                             contactList.add(contact);

@@ -48,6 +48,10 @@
         <entry key="app/src/main/res/drawable/bg_blue_conner_top_16.xml" value="0.11614583333333334" />
         <entry key="app/src/main/res/drawable/bg_popup_white_color_16.xml" value="0.11614583333333334" />
         <entry key="app/src/main/res/drawable/bg_white_conner_10_border_gray.xml" value="0.11614583333333334" />
+        <entry key="app/src/main/res/drawable/corners_button.xml" value="0.103125" />
+        <entry key="app/src/main/res/drawable/inbox_btn_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/message_button_bg.xml" value="0.20615384615384616" />
+        <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_image_crop.xml" value="0.23770491803278687" />
         <entry key="app/src/main/res/layout/activity_image_select.xml" value="0.22" />

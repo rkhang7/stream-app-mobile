@@ -1,6 +1,8 @@
 package com.iuh.stream.models.socket;
 
-public class AddFriendRequest {
+import java.io.Serializable;
+
+public class AddFriendRequest implements Serializable {
     private String senderID;
     private String receiverID;
 

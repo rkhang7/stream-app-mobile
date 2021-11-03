@@ -41,8 +41,7 @@
         <activity
             android:name=".activity.AddFriendActivity"
             android:exported="true"
-            android:label="Thêm bạn"
-            android:theme="@style/Theme.Design.Light" />
+            android:label="Thêm bạn"/>
         <activity
             android:name=".activity.FriendInvitationActivity"
             android:exported="true"

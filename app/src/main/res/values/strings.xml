@@ -31,4 +31,5 @@
     <string name="canada_icon">\</string>
     <string name="search">Tìm kiếm</string>
     <string name="search_friend">Tìm bạn bè</string>
+    <string name="error_notification">Đã xảy ra lỗi</string>
 </resources>
