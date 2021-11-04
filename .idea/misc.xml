@@ -70,7 +70,7 @@
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_recived.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_sent.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
-        <entry key="app/src/main/res/layout/fragment_personal_contact.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/fragment_personal_contact.xml" value="0.16" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.2" />
         <entry key="app/src/main/res/layout/friend_row.xml" value="0.2" />
         <entry key="app/src/main/res/layout/invitation_received.xml" value="0.22" />
