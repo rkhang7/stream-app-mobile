@@ -48,8 +48,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private FirebaseAuth mAuth;
     private static final String EVENT_REQUEST = "add-friend";
     private static final String EVENT_RESPONSE = "add-friend-res";
-    private Button addFriendBtn, cancelFriend;
+    private Button addFriendBtn, cancelFriend, acceptFriendBtn;
     private User currentUser;
+    private TextView madeFriendTv;
 
     public ContactAdapter(Context mContext) {
         this.mContext = mContext;
@@ -101,10 +102,26 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                         }
                         else{
                             currentUser = response.body();
-                            List<String> list = currentUser.getFriendInvitations();
-                            if(list.contains(id)){
+                            List<String> listFriendInvitations = currentUser.getFriendInvitations();
+                            List<String> listContact = currentUser.getContacts();
+                            List<String> listFriendRequest = currentUser.getFriendRequests();
+                            if(listFriendInvitations.contains(id)){
                                 addFriendBtn.setVisibility(View.INVISIBLE);
                                 cancelFriend.setVisibility(View.VISIBLE);
+                                madeFriendTv.setVisibility(View.INVISIBLE);
+                                acceptFriendBtn.setVisibility(View.INVISIBLE);
+                            }
+                            else if(listContact.contains(id)){
+                                addFriendBtn.setVisibility(View.INVISIBLE);
+                                cancelFriend.setVisibility(View.INVISIBLE);
+                                madeFriendTv.setVisibility(View.VISIBLE);
+                                acceptFriendBtn.setVisibility(View.INVISIBLE);
+                            }
+                            else if(listContact.contains(id)){
+                                addFriendBtn.setVisibility(View.INVISIBLE);
+                                cancelFriend.setVisibility(View.INVISIBLE);
+                                madeFriendTv.setVisibility(View.INVISIBLE);
+                                acceptFriendBtn.setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -135,7 +152,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             holder.streamNameTv.setText("Tên stream: " + contact.getFirstName() + " " + contact.getLastName());
             Glide.with(mContext).load(contact.getAvatar()).into(holder.avatarIv);
         }
-
         updateStatusFriendRequest(contact.getId());
     }
 
@@ -157,6 +173,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             streamNameTv = itemView.findViewById(R.id.contact_stream_name);
             addFriendBtn = itemView.findViewById(R.id.add_friend_btn);
             cancelFriend = itemView.findViewById(R.id.cancel_friend_request_btn);
+            madeFriendTv = itemView.findViewById(R.id.made_friend_tv);
+            acceptFriendBtn = itemView.findViewById(R.id.accept_friend_btn);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +214,46 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                     cancelFriendInvitation(senderId, receiverId, OPTION, accessToken);
                 }
             });
+
+            acceptFriendBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    String receiverId = contactList.get(getAdapterPosition()).getId();
+                    acceptFriend(receiverId, accessToken);
+                }
+            });
         }
+    }
+
+    private void acceptFriend(String receiverId, String accessToken) {
+        RetrofitService.getInstance.acceptFriendRequest(receiverId, accessToken)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            acceptFriend(receiverId, accessToken);
+                        }
+                        else if(response.code() == 404){
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, "Không tìm thấy người dùng");
+                        }
+                        else if(response.code() == 500){
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                        }
+                        else {
+                            addFriendBtn.setVisibility(View.INVISIBLE);
+                            cancelFriend.setVisibility(View.INVISIBLE);
+                            madeFriendTv.setVisibility(View.VISIBLE);
+                            acceptFriendBtn.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        CustomAlert.showToast((Activity)mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
     }
 
     private void cancelFriendInvitation(String senderId, String receiverId, String option, String accessToken) {

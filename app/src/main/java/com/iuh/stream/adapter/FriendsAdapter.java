@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
+import com.iuh.stream.activity.AddFriendActivity;
+import com.iuh.stream.activity.FriendProfileActivity;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
@@ -110,10 +113,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case 0:
-                        CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Xem thông tin");
+                        viewInfo(receiverId, accessToken);
                         break;
                     case 1:
-                        CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa đươc phát triển");
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
                         break;
                     case 2:
                         openConfirmDialog(name, senderId, receiverId, OPTION, accessToken, position);
@@ -125,9 +128,35 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         builder.create().show();
     }
 
+    private void viewInfo(String id, String accessToken) {
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                .enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            viewInfo(id, accessToken);
+                        }
+                        else{
+                            User user = response.body();
+                            Intent intent = new Intent(mContext, FriendProfileActivity.class);
+                            intent.putExtra(AddFriendActivity.USER_KEY, user);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            mContext.startActivity(intent);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
+    }
+
     private void openConfirmDialog(String name, String senderId, String receiverId, String option, String accessToken, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("Xóa bạn với " + name);
+        builder.setTitle("Xóa bạn với " + name + " ?");
         builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
