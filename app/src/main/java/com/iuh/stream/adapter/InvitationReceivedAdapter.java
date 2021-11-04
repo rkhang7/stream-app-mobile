@@ -88,16 +88,45 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
-                    Log.e("TAG", "addControls: " + DataLocalManager.getStringValue(Constants.ACCESS_TOKEN) );
-                    Log.e("TAG", "sender: " + mAuth.getCurrentUser().getUid());
-                    Log.e("TAG", "receiver: " + userList.get(getAdapterPosition()).get_id() );
+                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    String receiverId = userList.get(getAdapterPosition()).get_id();
+                    int position = getAdapterPosition();
+                    acceptFriend(receiverId, accessToken, position);
                 }
             });
 
 
         }
     }
+
+    private void acceptFriend(String receiverId, String accessToken, int position) {
+        RetrofitService.getInstance.acceptFriendRequest(receiverId, accessToken)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            acceptFriend(receiverId, accessToken, position);
+                        }
+                        else if(response.code() == 404){
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, "Không tìm thấy người dùng");
+                        }
+                        else if(response.code() == 500){
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                        }
+                        else {
+                            userList.remove(position);
+                            notifyItemRemoved(position);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
+    }
+
     private void cancelFriendRequest(String senderId, String receiverId, String option, String accessToken, int position) {
         RetrofitService.getInstance.deleteUserIDByOption(senderId, receiverId, option, accessToken)
                 .enqueue(new Callback<Void>() {

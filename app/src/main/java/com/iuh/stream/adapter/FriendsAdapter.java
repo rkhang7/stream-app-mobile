@@ -41,7 +41,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     @Override
     public void onBindViewHolder(@NonNull FiendsViewHolder holder, int position) {
         User user = userList.get(position);
-//        Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
+        Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
         holder.nameTv.setText(user.getFirstName() + " " + user.getLastName());
     }
 

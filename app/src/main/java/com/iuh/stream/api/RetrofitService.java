@@ -62,4 +62,8 @@ public interface RetrofitService {
    Call<Void> deleteUserIDByOption(@Query("senderID") String senderID, @Query("receiverID") String
            receiverID, @Query("option") String option, @Header("Authorization") String accessToken);
 
+   @POST("/friends/accept")
+   @FormUrlEncoded
+   Call<Void> acceptFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
+
 }

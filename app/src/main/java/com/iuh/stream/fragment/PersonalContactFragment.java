@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
@@ -46,6 +47,7 @@ public class PersonalContactFragment extends Fragment {
     private List<User> listFriendUser;
     private FriendsAdapter friendsAdapter;
     private RecyclerView recyclerView;
+    private TextView updateFriendsTv;
     private User user;
 
     private FirebaseAuth mAuth;
@@ -96,12 +98,20 @@ public class PersonalContactFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        updateFriendsTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void addControls() {
         // init views
         friendFromContactBtn = view.findViewById(R.id.friend_from_contact_btn);
         friendInvitationBtn = view.findViewById(R.id.friend_invitation_btn);
+        updateFriendsTv = view.findViewById(R.id.update_friend_tv);
 
         mAuth = FirebaseAuth.getInstance();
         listFriendId = new ArrayList<>();
@@ -163,4 +173,6 @@ public class PersonalContactFragment extends Fragment {
                     }
                 });
     }
+
+
 }

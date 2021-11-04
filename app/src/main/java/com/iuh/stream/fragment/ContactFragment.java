@@ -68,4 +68,6 @@ public class ContactFragment extends Fragment {
         addFiendBtn = view.findViewById(R.id.add_friend_btn);
 
     }
+
+
 }
