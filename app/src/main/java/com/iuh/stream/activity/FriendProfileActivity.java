@@ -164,7 +164,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         try {
             IO.Options mOptions = new IO.Options();
             mOptions.query = "uid=" + mAuth.getCurrentUser().getUid();
-            mSocket = IO.socket(Constants.SOCKET_URL, mOptions);
+            mSocket = IO.socket(Constants.BASE_URL, mOptions);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

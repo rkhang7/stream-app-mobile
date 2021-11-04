@@ -13,8 +13,8 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/contact_avatar_iv"
             android:layout_alignParentStart="true"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/default_avatar"/>
 
         <LinearLayout
@@ -29,7 +29,7 @@
                 android:id="@+id/contact_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:text="Khang"
                 android:textColor="@color/black"/>
 
@@ -37,7 +37,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:text="Tên stream: Khang Hoàng"
                 android:id="@+id/contact_stream_name"/>
 
@@ -49,13 +49,36 @@
 
 
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/add_friend_btn"
+        android:layout_width="105dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:backgroundTint="#2196F3"
         android:background="@drawable/corners_button"
-        android:text="Kết bạn"/>
+        android:backgroundTint="#2196F3"
+        android:text="Kết bạn"
+        android:textSize="10dp"
+        android:visibility="visible"/>
+
+    <Button
+        android:id="@+id/cancel_friend_request_btn"
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/corners_button"
+        android:text="Hủy kết bạn"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="Đã kết bạn"
+        android:textSize="10sp"
+        android:visibility="gone" />
 
 
 

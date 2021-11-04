@@ -1,5 +1,6 @@
 package com.iuh.stream.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -102,7 +103,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<User> call, Throwable t) {
-
+                        CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
     }
