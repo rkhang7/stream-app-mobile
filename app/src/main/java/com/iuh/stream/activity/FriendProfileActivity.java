@@ -46,7 +46,6 @@ import retrofit2.Response;
 
 public class FriendProfileActivity extends AppCompatActivity {
     private User user, currentUser;
-    private Socket mSocket;
     // views
     private CircleImageView avtIv;
     private TextView nameTv, genderTv, phoneNumberTv, emailTv,dobTv;
@@ -54,6 +53,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private Button friendRequestBtn,cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn;
     private static final String EVENT_REQUEST = "add-friend";
     private static final String EVENT_RESPONSE = "add-friend-res";
+    private Socket mSocket;
 
     // firebase;
     private FirebaseAuth mAuth;
@@ -81,7 +81,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             //
-            mSocket.emit(EVENT_REQUEST, jsonObject);
+            Util.getSocket().emit(EVENT_REQUEST, jsonObject);
         });
 
         cancelFriendRequestBtn.setOnClickListener(v -> {
@@ -247,14 +247,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // init socket
-        try {
-            IO.Options mOptions = new IO.Options();
-            mOptions.query = "uid=" + mAuth.getCurrentUser().getUid();
-            mSocket = IO.socket(Constants.BASE_URL, mOptions);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        mSocket.connect();
+        mSocket = Util.getSocket();
 
         mSocket.on(EVENT_RESPONSE, new Emitter.Listener() {
             @Override
@@ -262,14 +255,16 @@ public class FriendProfileActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject data = (JSONObject) args[0];
-                        String result;
-                        try {
-                            result = data.getString("result");
-                        } catch (JSONException e) {
-                            return;
-                        }
-                        if(result.equals("Success")){
+//                        JSONObject data = (JSONObject) args[0];
+//                        String result;
+//                        try {
+//                            result = data.getString("result");
+//                        } catch (JSONException e) {
+//                            return;
+//                        }
+                        String result = (String) args[0];
+                        Log.e("TAG", "run: " + result );
+                        if(result.equals("Thành công")){
                             friendRequestBtn.setVisibility(View.INVISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.VISIBLE);
                         }
@@ -336,6 +331,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSocket.disconnect();
+        Util.getSocket().disconnect();
     }
 }

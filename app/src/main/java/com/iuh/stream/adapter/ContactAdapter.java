@@ -45,23 +45,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private final Context mContext;
     private List<Contact> contactList;
     private Socket mSocket;
-    private FirebaseAuth mAuth;
     private static final String EVENT_REQUEST = "add-friend";
     private static final String EVENT_RESPONSE = "add-friend-res";
     private Button addFriendBtn, cancelFriend, acceptFriendBtn;
     private User currentUser;
     private TextView madeFriendTv;
+    private FirebaseAuth mAuth;
 
     public ContactAdapter(Context mContext) {
         this.mContext = mContext;
         mAuth = FirebaseAuth.getInstance();
-        try {
-            IO.Options mOptions = new IO.Options();
-            mOptions.query = "uid=" + mAuth.getCurrentUser().getUid();
-            mSocket = IO.socket(Constants.BASE_URL, mOptions);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        mSocket = Util.getSocket();
         mSocket.connect();
         mSocket.on(EVENT_RESPONSE, new Emitter.Listener() {
             @Override

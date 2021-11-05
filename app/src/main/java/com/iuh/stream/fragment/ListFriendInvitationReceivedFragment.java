@@ -94,7 +94,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                         else{
                             user = response.body();
                             listInvitationReceivedUser.add(user);
-                            Log.e("TAG", "onResponse: " + listInvitationReceivedUser );
+
                         }
                         invitationReceivedAdapter.setData(listInvitationReceivedUser);
                         recyclerView.setAdapter(invitationReceivedAdapter);

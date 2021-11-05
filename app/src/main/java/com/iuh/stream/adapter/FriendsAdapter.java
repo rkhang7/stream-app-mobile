@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +30,14 @@ import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,6 +50,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     public FriendsAdapter(Context mContext) {
         mAuth = FirebaseAuth.getInstance();
         this.mContext = mContext;
+
     }
 
     public void setData(List<User> userList){
@@ -62,6 +70,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         User user = userList.get(position);
         Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
         holder.nameTv.setText(user.getFirstName() + " " + user.getLastName());
+        if(user.isOnline()){
+            holder.onlineIv.setVisibility(View.VISIBLE);
+            holder.offlineIv.setVisibility(View.INVISIBLE);
+        }
+        else{
+            holder.onlineIv.setVisibility(View.INVISIBLE);
+            holder.offlineIv.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
@@ -72,10 +89,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     public class FiendsViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView avatarIv;
         private TextView nameTv;
+        private ImageView onlineIv, offlineIv;
         public FiendsViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarIv = itemView.findViewById(R.id.friend_avatar_iv);
             nameTv = itemView.findViewById(R.id.friend_name_tv);
+            onlineIv = itemView.findViewById(R.id.online_iv);
+            offlineIv = itemView.findViewById(R.id.offline_iv);
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

@@ -34,6 +34,7 @@ import com.squareup.picasso.Picasso;
 import com.victor.loading.newton.NewtonCradleLoading;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,7 +48,7 @@ public class ProfileFragment extends Fragment {
     private View view;
     private NewtonCradleLoading newtonCradleLoading;
     private FlexboxLayout deleteUserLayout;
-
+    private Socket mSocket;
 
     // firebase
     private FirebaseAuth mAuth;
@@ -99,9 +100,11 @@ public class ProfileFragment extends Fragment {
                         mGoogleSignInClient.signOut();
 
                         //Go to Start activity
+                        mSocket.disconnect();
                         Intent intent = new Intent(getActivity(), StartActivity.class);
                         getActivity().startActivity(intent);
                         getActivity().finish();
+
                     }
                 });
 
@@ -126,6 +129,7 @@ public class ProfileFragment extends Fragment {
         newtonCradleLoading = view.findViewById(R.id.newton_cradle_loading);
         newtonCradleLoading.setLoadingColor(R.color.main);
         deleteUserLayout = view.findViewById(R.id.delete_user_layout);
+        mSocket = Util.getSocket();
 
         getUserInfo();
         mAuth = FirebaseAuth.getInstance();

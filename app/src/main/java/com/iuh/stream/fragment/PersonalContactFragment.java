@@ -150,7 +150,6 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
                             else{
                                 friendsAdapter.setData(listFriendUser);
                                 recyclerView.setAdapter(friendsAdapter);
-                                Log.e("TAG", "updated: "  );
                                 if(type == UPDATE){
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
@@ -180,7 +179,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
                         }
                         friendsAdapter.setData(listFriendUser);
                         recyclerView.setAdapter(friendsAdapter);
-                        Log.e("TAG", "updated: "  );
+
                         if(type == UPDATE){
                             swipeRefreshLayout.setRefreshing(false);
                         }

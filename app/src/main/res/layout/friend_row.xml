@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="8dp">
 
     <LinearLayout
@@ -10,12 +11,44 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/friend_avatar_iv"
-            android:layout_alignParentStart="true"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/default_avatar"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/friend_avatar_iv"
+                android:layout_alignParentStart="true"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/default_avatar"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/online_iv"
+                android:visibility="gone"
+                app:civ_border_width="10dp"
+                android:layout_alignBottom="@id/friend_avatar_iv"
+                app:civ_border_color="#35ac6a"
+                android:layout_marginLeft="-20dp"
+                android:src="@drawable/ic_launcher_foreground"
+                android:layout_toRightOf="@id/friend_avatar_iv" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/offline_iv"
+                android:visibility="visible"
+                app:civ_border_width="10dp"
+                android:layout_alignBottom="@id/friend_avatar_iv"
+                app:civ_border_color="@color/gray"
+                android:layout_marginLeft="-20dp"
+                android:src="@drawable/ic_launcher_foreground"
+                android:layout_toRightOf="@id/friend_avatar_iv" />
+        </RelativeLayout>
+
+
+
 
         <TextView
             android:layout_marginStart="8dp"
