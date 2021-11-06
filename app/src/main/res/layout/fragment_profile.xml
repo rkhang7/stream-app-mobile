@@ -85,6 +85,7 @@
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/sign_in_method_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -113,6 +114,125 @@
                 android:src="@drawable/icons8_forward_24px"/>
 
         </com.google.android.flexbox.FlexboxLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:padding="10dp"
+                style="@style/TextNormal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Để đổi mật khẩu, nhập thông tin vào bên dưới"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/old_password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/icons8_lock_24px_2"
+                style="@style/InputText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/old_password_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Nhập mật khẩu cũ"
+                    style="@style/EditText"
+                    android:backgroundTint="@color/white"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/new_password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/icons8_lock_24px_2"
+                style="@style/InputText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/new_password_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Nhập mật khẩu mới"
+                    style="@style/EditText"
+                    android:backgroundTint="@color/white"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confirm_new_password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/icons8_lock_24px_2"
+                style="@style/InputText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirm_new_password_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Nhập lại mật khẩu mới"
+                    style="@style/EditText"
+                    android:backgroundTint="@color/white"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <Button
+                android:layout_gravity="end"
+                android:id="@+id/change_password_btn"
+                android:layout_width="wrap_content"
+                style="@style/RoundedButton"
+                android:text="Đổi mật khẩu"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/phone_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/phone_number_tv"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextNormal"
+                android:text="Số điện thoại: 0367922251"/>
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/google_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sử dụng tài khoản Google để đăng nhập"
+                android:padding="10dp"
+                style="@style/TextNormal"/>
+
+
+            <TextView
+                android:id="@+id/email_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tài khoản Google: xuankhang6a4@gmail.com"
+                android:padding="10dp"
+                style="@style/TextNormal"/>
+            
+            
+        </LinearLayout>
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/delete_user_layout"
             android:layout_width="match_parent"

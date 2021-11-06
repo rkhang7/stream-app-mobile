@@ -64,7 +64,7 @@ import retrofit2.Response;
 public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private TextInputLayout layoutPhone;
-    private String phoneNumber84;
+    private String phoneNumber84, password;
     private String mVerificationId;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -73,6 +73,7 @@ public class SignInActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     public static final int RC_SIGN_IN = 100;
     private CountDownTimer countDownTimer;
+
 
 
     @Override
@@ -138,7 +139,7 @@ public class SignInActivity extends AppCompatActivity {
 
         findViewById(R.id.btnLoginEmail).setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
-            String password = edtPassword.getText().toString().trim();
+            password = edtPassword.getText().toString().trim();
 
             layoutEmail.setError("");
             layoutPassword.setError("");
@@ -225,6 +226,8 @@ public class SignInActivity extends AppCompatActivity {
                             if(response.isSuccessful()) {
                                 Token token = response.body();
                                 saveTokenToDataLocal(token);
+                                // save password to change later
+                                DataLocalManager.putStringValue(Constants.PASSWORD, password);
                                 CustomAlert.showToast(SignInActivity.this, CustomAlert.INFO, "Đăng nhập thành công!");
                                 Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                                 startActivity(intent);

@@ -1,9 +1,13 @@
 package com.iuh.stream.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -11,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +26,16 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.StartActivity;
 import com.iuh.stream.activity.UserInfoActivity;
@@ -45,16 +60,23 @@ public class ProfileFragment extends Fragment {
     public static final String USER_KEY = ProfileFragment.class.getName();
     // views
     private CircleImageView avatar;
-    private TextView nameTv;
+    private TextView nameTv, phoneTv, emailTv;
     private View view;
     private NewtonCradleLoading newtonCradleLoading;
-    private FlexboxLayout deleteUserLayout;
+    private FlexboxLayout deleteUserLayout, signInMethodLayout;
     private Socket mSocket;
+    private LinearLayout passwordLayout, phoneLayout, googleLayout;
+    private String password;
+    private Button changePasswordBtn;
+    private TextInputLayout oldPasswordLayout, newPasswordLayout, confirmNewPasswordLayout;
+    private TextInputEditText oldPasswordEt, newPasswordEt, confirmNewPasswordLEt;
 
     // firebase
     private FirebaseAuth mAuth;
     private ImageButton logoutBtn;
     private User user;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,6 +144,130 @@ public class ProfileFragment extends Fragment {
                 builder.create().show();
             }
         });
+
+        signInMethodLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String method = mAuth.getCurrentUser().getProviderData().get(1).getProviderId();;
+                if(method.equals("password")){
+                    if(passwordLayout.getVisibility() == View.GONE){
+                        passwordLayout.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        passwordLayout.setVisibility(View.GONE);
+                    }
+
+                }
+
+                else if(method.equals("phone")){
+                    if(phoneLayout.getVisibility() == View.GONE){
+                        String phone = mAuth.getCurrentUser().getPhoneNumber();
+                        phoneTv.setText("Số điện thoai: " + phone);
+                        phoneLayout.setVisibility(View.VISIBLE);
+
+                    }
+                    else{
+                        phoneLayout.setVisibility(View.GONE);
+                    }
+                }
+                else if(method.equals("google.com")){
+                    if(googleLayout.getVisibility() == View.GONE){
+                        String email = mAuth.getCurrentUser().getEmail();
+                        emailTv.setText("Tài khoản Google: " + email);
+                        googleLayout.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        googleLayout.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+
+        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String oldPassword = oldPasswordEt.getText().toString().trim();
+                String newPassword = newPasswordEt.getText().toString().trim();
+                String confirmNewPassword =confirmNewPasswordLEt.getText().toString().trim();
+                changePassword(oldPassword, newPassword, confirmNewPassword);
+            }
+        });
+
+
+    }
+
+    private void changePassword(String oldPassword, String newPassword, String confirmNewPassword) {
+        if(oldPassword.equals(DataLocalManager.getStringValue(Constants.PASSWORD))){
+            oldPasswordLayout.setHelperText("");
+            if(newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$")){
+                newPasswordLayout.setHelperText("");
+                if(!oldPassword.equals(newPassword)){
+                    newPasswordLayout.setHelperText("");
+                    if(newPassword.equals(confirmNewPassword)){
+                        confirmNewPasswordLayout.setHelperText("");
+
+                        FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
+                        String email = user.getEmail();
+                        AuthCredential credential = EmailAuthProvider
+                                .getCredential(email, oldPassword);
+                        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                CustomAlert.showToast(getActivity(), CustomAlert.INFO, "Đổi mật khẩu thành công");
+                                                //save password
+                                                DataLocalManager.putStringValue(Constants.PASSWORD, newPassword);
+                                                passwordLayout.setVisibility(View.GONE);
+                                                oldPasswordEt.setText("");
+                                                newPasswordEt.setText("");
+                                                confirmNewPasswordLEt.setText("");
+                                            }
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
+
+                                        }
+                                    });
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
+
+                            }
+                        });
+                    }
+                    else{
+                        confirmNewPasswordLayout.setHelperText("Mật khẩu không khớp");
+                        confirmNewPasswordLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                        return;
+                    }
+                }
+                else{
+                    newPasswordLayout.setHelperText("Mật khẩu mới không được trùng với mật khẩu cũ");
+                    newPasswordLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                    return;
+                }
+            }
+            else {
+                newPasswordLayout.setHelperText("Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số, tối thiểu 6 ký tự");
+                newPasswordLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                return;
+            }
+
+        }
+        else{
+            oldPasswordLayout.setHelperText("Mật khẩu cũ không đúng");
+            oldPasswordLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+            return;
+        }
     }
 
     private void deleteMe(String accessToken) {
@@ -167,11 +313,27 @@ public class ProfileFragment extends Fragment {
     }
 
     private void addControls() {
+        // init views
         avatar = view.findViewById(R.id.profile_avatar_iv);
         nameTv = view.findViewById(R.id.profile_name_tv);
+        phoneTv = view.findViewById(R.id.phone_number_tv);
+        emailTv = view.findViewById(R.id.email_tv);
         newtonCradleLoading = view.findViewById(R.id.newton_cradle_loading);
         newtonCradleLoading.setLoadingColor(R.color.main);
         deleteUserLayout = view.findViewById(R.id.delete_user_layout);
+        signInMethodLayout = view.findViewById(R.id.sign_in_method_layout);
+        passwordLayout = view.findViewById(R.id.password_layout);
+        phoneLayout = view.findViewById(R.id.phone_layout);
+        googleLayout = view.findViewById(R.id.google_layout);
+
+        changePasswordBtn = view.findViewById(R.id.change_password_btn);
+        oldPasswordLayout = view.findViewById(R.id.old_password_layout);
+        newPasswordLayout = view.findViewById(R.id.new_password_layout);
+        confirmNewPasswordLayout = view.findViewById(R.id.confirm_new_password_layout);
+        oldPasswordEt = view.findViewById(R.id.old_password_et);
+        newPasswordEt = view.findViewById(R.id.new_password_et);
+        confirmNewPasswordLEt = view.findViewById(R.id.confirm_new_password_et);
+
         mSocket = Util.getSocket();
 
         getUserInfo();
