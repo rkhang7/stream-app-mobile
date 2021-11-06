@@ -26,6 +26,7 @@ import com.iuh.stream.activity.StartActivity;
 import com.iuh.stream.activity.UserInfoActivity;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.utils.Constants;
@@ -88,23 +89,7 @@ public class ProfileFragment extends Fragment {
                 builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //Sign out firebase account
-                        FirebaseAuth.getInstance().signOut();
-                        //SignOut google account
-                        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                .requestIdToken(getString((R.string.default_client_id)))
-                                .requestEmail()
-                                .build();
-
-                        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-                        mGoogleSignInClient.signOut();
-
-                        //Go to Start activity
-                        mSocket.disconnect();
-                        Intent intent = new Intent(getActivity(), StartActivity.class);
-                        getActivity().startActivity(intent);
-                        getActivity().finish();
-
+                        signOut();
                     }
                 });
 
@@ -117,10 +102,68 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Xóa tài khoản");
+                builder.setIcon(R.drawable.icons8_error_60);
+                builder.setTitle("Xóa tài khoản sẽ: ");
+                builder.setMessage("Không thể khôi phục dữ liệu khi xóa tài khoản");
+                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                        deleteMe(accessToken);
+                    }
+                });
+
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
                 builder.create().show();
             }
         });
+    }
+
+    private void deleteMe(String accessToken) {
+        RetrofitService.getInstance.deleteMe(accessToken)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                            deleteMe(accessToken);
+                        }
+                        else if(response.code() == 401){
+                            CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
+                        }
+                        else if(response.code() == 200){
+                            signOut();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
+                    }
+                });
+    }
+    private void signOut(){
+        //Sign out firebase account
+        FirebaseAuth.getInstance().signOut();
+        //SignOut google account
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString((R.string.default_client_id)))
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+        mGoogleSignInClient.signOut();
+
+        //Go to Start activity
+        mSocket.disconnect();
+        Intent intent = new Intent(getActivity(), StartActivity.class);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
     private void addControls() {

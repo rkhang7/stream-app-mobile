@@ -177,6 +177,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
                             user = response.body();
                             listFriendUser.add(user);
                         }
+                        listFriendUser = Util.sortListFriend(listFriendUser);
                         friendsAdapter.setData(listFriendUser);
                         recyclerView.setAdapter(friendsAdapter);
 

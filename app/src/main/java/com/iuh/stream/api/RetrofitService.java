@@ -46,6 +46,9 @@ public interface RetrofitService {
 
     @GET("users/me/info")
     Call<User> getMeInfo(@Header("Authorization") String accessToken);
+
+    @DELETE("users/me")
+    Call<Void> deleteMe(@Header("Authorization") String accessToken);
     
     @POST("auth/token")
     @FormUrlEncoded
@@ -65,5 +68,7 @@ public interface RetrofitService {
    @POST("/friends/accept")
    @FormUrlEncoded
    Call<Void> acceptFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
+
+
 
 }

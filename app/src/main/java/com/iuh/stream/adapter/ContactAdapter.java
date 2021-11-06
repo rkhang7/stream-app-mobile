@@ -282,11 +282,18 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                            getUserForContact(id, accessToken);
                         }
                         else{
+
                             User user = response.body();
-                            Intent intent = new Intent(mContext, FriendProfileActivity.class);
-                            intent.putExtra(AddFriendActivity.USER_KEY, user);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            mContext.startActivity(intent);
+                            if(user.isDeleted()){
+                                CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tài khoản đã bị xóa");
+                            }
+                            else{
+                                Intent intent = new Intent(mContext, FriendProfileActivity.class);
+                                intent.putExtra(AddFriendActivity.USER_KEY, user);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                mContext.startActivity(intent);
+                            }
+
 
                         }
 

@@ -28,6 +28,7 @@ import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
@@ -150,9 +151,14 @@ public class AddFriendActivity extends AppCompatActivity {
                 else {
                     User user = response.body();
                     if(user != null){
-                        Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
-                        intent.putExtra(USER_KEY, user);
-                        startActivity(intent);
+                        if(!mAuth.getCurrentUser().getUid().equals(user.get_id())){
+                            Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
+                            intent.putExtra(USER_KEY, user);
+                            startActivity(intent);
+                        }
+                        else{
+                            CustomAlert.showToast(AddFriendActivity.this, CustomAlert.INFO, "Đây là số điện thoại của bạn");
+                        }
                     }
                     else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
@@ -189,9 +195,15 @@ public class AddFriendActivity extends AppCompatActivity {
                 else {
                     User user = response.body();
                     if(user != null){
-                        Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
-                        intent.putExtra(USER_KEY, user);
-                        startActivity(intent);
+                        if(!mAuth.getCurrentUser().getUid().equals(user.get_id())){
+                            Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
+                            intent.putExtra(USER_KEY, user);
+                            startActivity(intent);
+                        }
+                        else{
+                            CustomAlert.showToast(AddFriendActivity.this, CustomAlert.INFO, "Đây là email của bạn");
+                        }
+
                     }
                     else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
