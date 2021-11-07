@@ -1,11 +1,11 @@
 package com.iuh.stream.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,12 +17,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
@@ -34,6 +32,7 @@ import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,12 +45,10 @@ public class AddFriendActivity extends AppCompatActivity {
     private EditText editText;
     private TextView phoneErrorTv;
     private TextView emailErrorTv;
-    private RelativeLayout inputLayout;
     public static final String USER_KEY = AddFriendActivity.class.getName();
 
     // firebase
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,42 +95,34 @@ public class AddFriendActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(TextUtils.isEmpty(editable.toString())){
-                    searchBtn.setEnabled(false);
-                }
-                else{
-                    searchBtn.setEnabled(true);
-                }
+                searchBtn.setEnabled(!TextUtils.isEmpty(editable.toString()));
             }
         });
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String keyword = editText.getText().toString();
-                if(Patterns.EMAIL_ADDRESS.matcher(keyword).matches()){
+        searchBtn.setOnClickListener(view -> {
+            String keyword = editText.getText().toString();
+            if(Patterns.EMAIL_ADDRESS.matcher(keyword).matches()){
+                phoneErrorTv.setVisibility(View.GONE);
+                emailErrorTv.setVisibility(View.GONE);
+                String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                findUserByEmail(keyword, ACCESS_TOKEN);
+            }
+
+            else if(Patterns.PHONE.matcher(keyword).matches()){
+                if(keyword.length() == 10 && keyword.charAt(0) == '0'){
                     phoneErrorTv.setVisibility(View.GONE);
-                    emailErrorTv.setVisibility(View.GONE);
                     String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-                    findUserByEmail(keyword, ACCESS_TOKEN);
+                    findUserByPhoneNumber(keyword, ACCESS_TOKEN);
                 }
-
-                else if(Patterns.PHONE.matcher(keyword).matches()){
-                    if(keyword.length() == 10 && keyword.charAt(0) == '0'){
-                        phoneErrorTv.setVisibility(View.GONE);
-                        String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-                        findUserByPhoneNumber(keyword, ACCESS_TOKEN);
-                    }
-                    else{
-                        phoneErrorTv.setVisibility(View.VISIBLE);
-                    }
-                    emailErrorTv.setVisibility(View.GONE);
-                }
-
                 else{
-                    phoneErrorTv.setVisibility(View.GONE);
-                    emailErrorTv.setVisibility(View.VISIBLE);
+                    phoneErrorTv.setVisibility(View.VISIBLE);
                 }
+                emailErrorTv.setVisibility(View.GONE);
+            }
+
+            else{
+                phoneErrorTv.setVisibility(View.GONE);
+                emailErrorTv.setVisibility(View.VISIBLE);
             }
         });
 
@@ -142,7 +131,7 @@ public class AddFriendActivity extends AppCompatActivity {
     private void findUserByPhoneNumber(String keyword, String accessToken) {
         RetrofitService.getInstance.getUserByPhoneNumber(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
                     String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
                     Util.refreshToken(REFRESH_TOKEN);
@@ -151,7 +140,7 @@ public class AddFriendActivity extends AppCompatActivity {
                 else {
                     User user = response.body();
                     if(user != null){
-                        if(!mAuth.getCurrentUser().getUid().equals(user.get_id())){
+                        if(!Objects.requireNonNull(mAuth.getCurrentUser()).getUid().equals(user.get_id())){
                             Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
                             intent.putExtra(USER_KEY, user);
                             startActivity(intent);
@@ -164,19 +153,14 @@ public class AddFriendActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
                         builder.setTitle("Thông báo");
                         builder.setMessage("Số điện thoại này chưa kích hoạt Stream.");
-                        builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
+                        builder.setNegativeButton("Đóng", (dialogInterface, i) -> dialogInterface.cancel());
                         builder.create().show();
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
 
             }
         });
@@ -186,7 +170,7 @@ public class AddFriendActivity extends AppCompatActivity {
     private void findUserByEmail(String keyword, String accessToken) {
         RetrofitService.getInstance.getUserByEmail(keyword, accessToken).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
                     String REFRESH_TOKEN = DataLocalManager.getStringValue(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
                     Util.refreshToken(REFRESH_TOKEN);
@@ -195,7 +179,7 @@ public class AddFriendActivity extends AppCompatActivity {
                 else {
                     User user = response.body();
                     if(user != null){
-                        if(!mAuth.getCurrentUser().getUid().equals(user.get_id())){
+                        if(!Objects.requireNonNull(mAuth.getCurrentUser()).getUid().equals(user.get_id())){
                             Intent intent = new Intent(AddFriendActivity.this, FriendProfileActivity.class);
                             intent.putExtra(USER_KEY, user);
                             startActivity(intent);
@@ -209,12 +193,7 @@ public class AddFriendActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(AddFriendActivity.this);
                         builder.setTitle("Thông báo");
                         builder.setMessage("Email này chưa kích hoạt Stream.");
-                        builder.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
+                        builder.setNegativeButton("Đóng", (dialogInterface, i) -> dialogInterface.cancel());
 
                         builder.create().show();
                     }
@@ -224,7 +203,7 @@ public class AddFriendActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -232,7 +211,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
 
     private void addControls() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // init views
         addFriendFromContactsBtn = findViewById(R.id.add_friend_from_contacts_btn);
@@ -241,11 +220,9 @@ public class AddFriendActivity extends AppCompatActivity {
         editText = findViewById(R.id.phone_or_email_et);
         emailErrorTv = findViewById(R.id.email_error_tv);
         phoneErrorTv = findViewById(R.id.phone_error_tv);
-        inputLayout = findViewById(R.id.input_layout);
 
         // init firebase
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
 
 
     }

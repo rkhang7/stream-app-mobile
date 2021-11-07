@@ -19,12 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -36,7 +32,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -50,7 +45,6 @@ import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -333,7 +327,7 @@ public class RegisterActivity extends AppCompatActivity {
                             //User already exist => Register fail
                             CustomAlert.showToast(this, CustomAlert.WARNING, "Số điện thoại đã được sử dụng, vui lòng dùng số khác!");
                         } else {
-                            saveUserToDatabase(task.getResult().getUser().getUid(), PHONE_NUMBER_TYPE);
+                            saveUserToDatabase(Objects.requireNonNull(task.getResult().getUser()).getUid(), PHONE_NUMBER_TYPE);
                         }
 
                     } else {
@@ -399,12 +393,8 @@ public class RegisterActivity extends AppCompatActivity {
                                 saveUserToDatabase(uid, EMAIL_TYPE);
 
                                 task.getResult().getUser().sendEmailVerification()
-                                        .addOnSuccessListener(unused -> {
-                                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.INFO, "Vui lòng kiểm tra email để xác nhận đăng kí tài khoản!");
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối mạng!");
-                                        });
+                                        .addOnSuccessListener(unused -> CustomAlert.showToast(RegisterActivity.this, CustomAlert.INFO, "Vui lòng kiểm tra email để xác nhận đăng kí tài khoản!"))
+                                        .addOnFailureListener(e -> CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối mạng!"));
 
                             }
                         })
@@ -451,12 +441,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
 
-         //get lastOnline
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-
-        boolean online = true;
-
         String email = null;
         String phoneNumber = null;
 
@@ -470,11 +454,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, online);
+        User user = new User(uid, firstName, lastName, gender,dob, phoneNumber, email, true);
 
         RetrofitService.getInstance.saveUser(user, uid).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 User resUser = response.body();
                 if(resUser == null){
                     Log.d(Constants.TAG, "Save user: \n" + "Null");
@@ -492,7 +476,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Không thể tạo tài khoản, vui lòng thử lại!");
             }
         });
@@ -502,38 +486,37 @@ public class RegisterActivity extends AppCompatActivity {
     private void handleGetToken() {
         FirebaseUser user = mAuth.getCurrentUser();
         Log.e("TAG", "handleGetToken: " + user.getUid() );
-        user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-            @Override
-            public void onComplete(@NonNull Task<GetTokenResult> task) {
-                if (task.isSuccessful()) {
-                    IdToken idToken = new IdToken(task.getResult().getToken());
-                    RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
-                        @Override
-                        public void onResponse(Call<Token> call, Response<Token> response) {
-                            if(response.isSuccessful()){
-                                Token token = response.body();
+        user.getIdToken(true).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                IdToken idToken = new IdToken(task.getResult().getToken());
+                RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
+                        if(response.isSuccessful()){
+                            Token token = response.body();
+                            if (token != null) {
                                 saveTokenToDataLocal(token);
-                                CustomAlert.showToast(RegisterActivity.this, CustomAlert.INFO, "Đăng kí thành công!");
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
                             }
-                            else{
-                                Log.e("TAG", "onResponse: " + "Errr" );
-                            }
-
+                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.INFO, "Đăng kí thành công!");
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else{
+                            Log.e("TAG", "onResponse: " + "Errr" );
                         }
 
-                        @Override
-                        public void onFailure(Call<Token> call, Throwable t) {
-                            CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, t.getMessage());
-                        }
-                    });
+                    }
 
-                } else {
-                    CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối!");
+                    @Override
+                    public void onFailure(@NonNull Call<Token> call, @NonNull Throwable t) {
+                        CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
 
-                }
+            } else {
+                CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Lỗi kết nối!");
+
             }
         });
     }

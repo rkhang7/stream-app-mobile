@@ -1,5 +1,6 @@
 package com.iuh.stream.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -10,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -48,9 +48,6 @@ import com.squareup.picasso.Picasso;
 
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -73,18 +70,12 @@ public class UserInfoActivity extends AppCompatActivity {
     private ImageButton editFirstNameBtn, editLastNameBtn, editGenderBtn, editDobBtn;
     private FlexboxLayout emailLayout, phoneNumberLayout;
     private RadioGroup radioGroup;
-    private RadioButton maleBtn, femaleBtn;
     private User user;
     private static final int FIRST_NAME_TYPE = 0;
     private static final int LAST_NAME_TYPE = 1;
     private static final int GENDER_TYPE = 2;
     private static final int DOB_TYPE = 3;
     private LinearProgressIndicator linearProgressIndicator;
-    // permission constants
-    private static final int CAMERA_CODE = 6;
-    private static final int GALLERY_CODE = 7;
-    // uri
-    private Uri avatarUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,41 +92,16 @@ public class UserInfoActivity extends AppCompatActivity {
             finish();
         });
 
-        editFirstNameBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPopup(FIRST_NAME_TYPE);
-            }
-        });
+        editFirstNameBtn.setOnClickListener(v -> openPopup(FIRST_NAME_TYPE));
 
-        editLastNameBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPopup(LAST_NAME_TYPE);
-            }
-        });
+        editLastNameBtn.setOnClickListener(v -> openPopup(LAST_NAME_TYPE));
 
-        editGenderBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPopup(GENDER_TYPE);
-            }
-        });
+        editGenderBtn.setOnClickListener(v -> openPopup(GENDER_TYPE));
 
-        editDobBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openPopup(DOB_TYPE);
-            }
-        });
+        editDobBtn.setOnClickListener(v -> openPopup(DOB_TYPE));
 
 
-        avatarIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageSelectActivity.startImageSelectionForResult(UserInfoActivity.this, true, true, true, true, 1213);
-            }
-        });
+        avatarIv.setOnClickListener(v -> ImageSelectActivity.startImageSelectionForResult(UserInfoActivity.this, true, true, true, true, 1213));
 
     }
 
@@ -158,12 +124,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
         dialog.setCancelable(false);
 
-        dialog.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialog.findViewById(R.id.cancel_btn).setOnClickListener(v -> dialog.dismiss());
 
         // init views
 
@@ -187,11 +148,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s.toString())) {
-                    updateBtn.setEnabled(false);
-                } else {
-                    updateBtn.setEnabled(true);
-                }
+                updateBtn.setEnabled(!TextUtils.isEmpty(s.toString()));
             }
         });
 
@@ -201,7 +158,7 @@ public class UserInfoActivity extends AppCompatActivity {
             nameUpdateEt.setText(user.getLastName());
             nameUpdateEt.requestFocus();
             nameUpdateEt.setSelection(user.getLastName().length());
-            titleTv.setText("Vui lòng nhập tên của bạn");
+            titleTv.setText(R.string.input_name);
             radioGroup.setVisibility(View.GONE);
             dobUpdateEt.setVisibility(View.GONE);
         } else if (type == FIRST_NAME_TYPE) {
@@ -211,9 +168,9 @@ public class UserInfoActivity extends AppCompatActivity {
             radioGroup.setVisibility(View.GONE);
             dobUpdateEt.setVisibility(View.GONE);
         } else if (type == GENDER_TYPE) {
-            maleBtn = dialog.findViewById(R.id.rdMale);
-            femaleBtn = dialog.findViewById(R.id.rdFemale);
-            titleTv.setText("Vui lòng chọn giới tính của bạn");
+            RadioButton maleBtn = dialog.findViewById(R.id.rdMale);
+            RadioButton femaleBtn = dialog.findViewById(R.id.rdFemale);
+            titleTv.setText(R.string.input_gender);
             nameUpdateEt.setVisibility(View.GONE);
             dobUpdateEt.setVisibility(View.GONE);
             if (user.getGender().equals("Nam")) {
@@ -223,7 +180,7 @@ public class UserInfoActivity extends AppCompatActivity {
             }
 
         } else {
-            titleTv.setText("Vui lòng chọn ngày sinh của bạn");
+            titleTv.setText(R.string.input_dob);
             dobUpdateEt.setVisibility(View.VISIBLE);
             nameUpdateEt.setVisibility(View.GONE);
             radioGroup.setVisibility(View.GONE);
@@ -264,72 +221,68 @@ public class UserInfoActivity extends AppCompatActivity {
 
         }
 
-        updateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearProgressIndicator.setVisibility(View.VISIBLE);
-                if (type == FIRST_NAME_TYPE || type == LAST_NAME_TYPE) {
-                    String name = nameUpdateEt.getText().toString().trim();
-                    if (type == FIRST_NAME_TYPE) {
-                        user.setFirstName(name);
-                    } else if (type == LAST_NAME_TYPE) {
-                        user.setLastName(name);
-                    }
-
-                } else if (type == GENDER_TYPE) {
-                    int radioId = radioGroup.getCheckedRadioButtonId();
-                    RadioButton rdGender = dialog.findViewById(radioId);
-                    String gender = rdGender.getText().toString();
-                    user.setGender(gender);
+        updateBtn.setOnClickListener(v -> {
+            linearProgressIndicator.setVisibility(View.VISIBLE);
+            if (type == FIRST_NAME_TYPE || type == LAST_NAME_TYPE) {
+                String name = nameUpdateEt.getText().toString().trim();
+                if (type == FIRST_NAME_TYPE) {
+                    user.setFirstName(name);
                 } else {
-                    Date dob = null;
-                    try {
-                        dob = new SimpleDateFormat("dd/MM/yyyy").parse(dobUpdateEt.getText().toString());
-                        user.setDateOfBirth(dob);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    user.setLastName(name);
                 }
 
-                RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                        .enqueue(new Callback<UpdateUserResponse>() {
-                            @Override
-                            public void onResponse(Call<UpdateUserResponse> call, Response<UpdateUserResponse> response) {
-                                if (response.code() == 403) {
-                                    Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                                    RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                                            .enqueue(new Callback<UpdateUserResponse>() {
-                                                @Override
-                                                public void onResponse(Call<UpdateUserResponse> call, Response<UpdateUserResponse> response) {
-                                                    if (response.isSuccessful()) {
-                                                        linearProgressIndicator.setVisibility(View.GONE);
-                                                        dialog.dismiss();
-                                                        finish();
-                                                        startActivity(getIntent());
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<UpdateUserResponse> call, Throwable t) {
-
-                                                }
-                                            });
-                                }
-                                if (response.isSuccessful()) {
-                                    linearProgressIndicator.setVisibility(View.GONE);
-                                    dialog.dismiss();
-                                    finish();
-                                    startActivity(getIntent());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<UpdateUserResponse> call, Throwable t) {
-                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+            } else if (type == GENDER_TYPE) {
+                int radioId = radioGroup.getCheckedRadioButtonId();
+                RadioButton rdGender = dialog.findViewById(radioId);
+                String gender = rdGender.getText().toString();
+                user.setGender(gender);
+            } else {
+                Date dob;
+                try {
+                    dob = new SimpleDateFormat("dd/MM/yyyy").parse(dobUpdateEt.getText().toString());
+                    user.setDateOfBirth(dob);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
+            RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                    .enqueue(new Callback<UpdateUserResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
+                            if (response.code() == 403) {
+                                Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                                RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                                        .enqueue(new Callback<UpdateUserResponse>() {
+                                            @Override
+                                            public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
+                                                if (response.isSuccessful()) {
+                                                    linearProgressIndicator.setVisibility(View.GONE);
+                                                    dialog.dismiss();
+                                                    finish();
+                                                    startActivity(getIntent());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(@NonNull Call<UpdateUserResponse> call, @NonNull Throwable t) {
+
+                                            }
+                                        });
+                            }
+                            if (response.isSuccessful()) {
+                                linearProgressIndicator.setVisibility(View.GONE);
+                                dialog.dismiss();
+                                finish();
+                                startActivity(getIntent());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<UpdateUserResponse> call, @NonNull Throwable t) {
+                            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
 
@@ -368,7 +321,7 @@ public class UserInfoActivity extends AppCompatActivity {
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             loadUserInfo();
@@ -402,7 +355,7 @@ public class UserInfoActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
 
                     }
                 });
@@ -437,7 +390,7 @@ public class UserInfoActivity extends AppCompatActivity {
         RetrofitService.getInstance.updateAvatar(encodedImage, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<UpdateUserResponse>() {
                     @Override
-                    public void onResponse(Call<UpdateUserResponse> call, Response<UpdateUserResponse> response) {
+                    public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             uploadImageToAws(encodedImage);
@@ -449,7 +402,7 @@ public class UserInfoActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<UpdateUserResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<UpdateUserResponse> call, @NonNull Throwable t) {
                         CustomAlert.showToast(UserInfoActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -459,25 +412,7 @@ public class UserInfoActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-        return encImage;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
-    private String encodeImage(String path) {
-        File imagefile = new File(path);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(imagefile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Bitmap bm = BitmapFactory.decodeStream(fis);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-        //Base64.de
-        return encImage;
-
-    }
 }

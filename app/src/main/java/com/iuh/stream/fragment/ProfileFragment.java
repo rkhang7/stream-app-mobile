@@ -1,6 +1,5 @@
 package com.iuh.stream.fragment;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,6 +42,7 @@ import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 import com.victor.loading.newton.NewtonCradleLoading;
@@ -64,7 +62,6 @@ public class ProfileFragment extends Fragment {
     private View view;
     private NewtonCradleLoading newtonCradleLoading;
     private FlexboxLayout deleteUserLayout, signInMethodLayout;
-    private Socket mSocket;
     private LinearLayout passwordLayout, phoneLayout, googleLayout;
     private String password;
     private Button changePasswordBtn;
@@ -148,37 +145,35 @@ public class ProfileFragment extends Fragment {
         signInMethodLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String method = mAuth.getCurrentUser().getProviderData().get(1).getProviderId();;
-                if(method.equals("password")){
-                    if(passwordLayout.getVisibility() == View.GONE){
-                        passwordLayout.setVisibility(View.VISIBLE);
-                    }
-                    else{
-                        passwordLayout.setVisibility(View.GONE);
-                    }
+                String method = mAuth.getCurrentUser().getProviderData().get(1).getProviderId();
+                switch (method) {
+                    case "password":
+                        if (passwordLayout.getVisibility() == View.GONE) {
+                            passwordLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            passwordLayout.setVisibility(View.GONE);
+                        }
 
-                }
+                        break;
+                    case "phone":
+                        if (phoneLayout.getVisibility() == View.GONE) {
+                            String phone = mAuth.getCurrentUser().getPhoneNumber();
+                            phoneTv.setText("Số điện thoai: " + phone);
+                            phoneLayout.setVisibility(View.VISIBLE);
 
-                else if(method.equals("phone")){
-                    if(phoneLayout.getVisibility() == View.GONE){
-                        String phone = mAuth.getCurrentUser().getPhoneNumber();
-                        phoneTv.setText("Số điện thoai: " + phone);
-                        phoneLayout.setVisibility(View.VISIBLE);
-
-                    }
-                    else{
-                        phoneLayout.setVisibility(View.GONE);
-                    }
-                }
-                else if(method.equals("google.com")){
-                    if(googleLayout.getVisibility() == View.GONE){
-                        String email = mAuth.getCurrentUser().getEmail();
-                        emailTv.setText("Tài khoản Google: " + email);
-                        googleLayout.setVisibility(View.VISIBLE);
-                    }
-                    else{
-                        googleLayout.setVisibility(View.GONE);
-                    }
+                        } else {
+                            phoneLayout.setVisibility(View.GONE);
+                        }
+                        break;
+                    case "google.com":
+                        if (googleLayout.getVisibility() == View.GONE) {
+                            String email = mAuth.getCurrentUser().getEmail();
+                            emailTv.setText(String.format("Tài khoản Google: %s", email));
+                            googleLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            googleLayout.setVisibility(View.GONE);
+                        }
+                        break;
                 }
             }
         });
@@ -227,13 +222,7 @@ public class ProfileFragment extends Fragment {
                                                 confirmNewPasswordLEt.setText("");
                                             }
                                         }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
-
-                                        }
-                                    });
+                                    }).addOnFailureListener(e -> CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification)));
                                 }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -306,7 +295,7 @@ public class ProfileFragment extends Fragment {
         mGoogleSignInClient.signOut();
 
         //Go to Start activity
-        mSocket.disconnect();
+        SocketClient.getInstance().disconnect();
         Intent intent = new Intent(getActivity(), StartActivity.class);
         getActivity().startActivity(intent);
         getActivity().finish();
@@ -333,8 +322,6 @@ public class ProfileFragment extends Fragment {
         oldPasswordEt = view.findViewById(R.id.old_password_et);
         newPasswordEt = view.findViewById(R.id.new_password_et);
         confirmNewPasswordLEt = view.findViewById(R.id.confirm_new_password_et);
-
-        mSocket = Util.getSocket();
 
         getUserInfo();
         mAuth = FirebaseAuth.getInstance();

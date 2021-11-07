@@ -32,4 +32,7 @@
     <string name="search">Tìm kiếm</string>
     <string name="search_friend">Tìm bạn bè</string>
     <string name="error_notification">Đã xảy ra lỗi</string>
+    <string name="input_name">Vui lòng nhập tên của bạn</string>
+    <string name="input_gender">Vui lòng chọn giới tính của bạn</string>
+    <string name="input_dob">Vui lòng chọn ngày sinh của bạn</string>
 </resources>

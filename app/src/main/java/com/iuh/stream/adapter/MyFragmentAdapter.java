@@ -5,15 +5,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.iuh.stream.fragment.GroupContactFragment;
-import com.iuh.stream.fragment.PersonalContactFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyFragmentAdapter extends FragmentStateAdapter {
 
-    private List<Fragment> fragmentList;
+    private final List<Fragment> fragmentList;
 
     public MyFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

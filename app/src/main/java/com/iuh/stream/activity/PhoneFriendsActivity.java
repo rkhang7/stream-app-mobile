@@ -1,5 +1,6 @@
 package com.iuh.stream.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,10 +27,10 @@ import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
 
-import org.zakariya.stickyheaders.StickyHeaderLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -99,7 +99,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
     private void addControls() {
         // set title
-        getSupportActionBar().setTitle("Bạn từ danh bạ máy");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Bạn từ danh bạ máy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // init firebase
@@ -111,7 +111,6 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         contactAdapter = new ContactAdapter(this);
         contactAdapter.setData(contactList);
         recyclerView = findViewById(R.id.contact_rv);
-        StickyHeaderLayoutManager stickyHeaderLayoutManager = new StickyHeaderLayoutManager();
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -182,14 +181,14 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                         // get user by phone number
                         RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
                             @Override
-                            public void onResponse(Call<User> call, Response<User> response) {
+                            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                                 if(response.code() == 403){
                                     String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
                                     Util.refreshToken(REFRESH_TOKEN);
                                     RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                                             .enqueue(new Callback<User>() {
                                                 @Override
-                                                public void onResponse(Call<User> call, Response<User> response) {
+                                                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                                                     tempUser = response.body();
                                                     if(tempUser != null){
                                                         if(!tempUser.get_id().equals(mUser.getUid())){
@@ -208,7 +207,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                 }
 
                                                 @Override
-                                                public void onFailure(Call<User> call, Throwable t) {
+                                                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                                                     Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -233,7 +232,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onFailure(Call<User> call, Throwable t) {
+                            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });

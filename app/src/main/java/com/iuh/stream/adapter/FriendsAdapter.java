@@ -1,11 +1,8 @@
 package com.iuh.stream.adapter;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddFriendActivity;
@@ -30,22 +26,19 @@ import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsViewHolder>{
-    private Context mContext;
+    private final Context mContext;
     private List<User> userList;
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth;
 
     public FriendsAdapter(Context mContext) {
         mAuth = FirebaseAuth.getInstance();
@@ -87,9 +80,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     }
 
     public class FiendsViewHolder extends RecyclerView.ViewHolder {
-        private CircleImageView avatarIv;
-        private TextView nameTv;
-        private ImageView onlineIv, offlineIv;
+        private final CircleImageView avatarIv;
+        private final TextView nameTv;
+        private final ImageView onlineIv;
+        private final ImageView offlineIv;
         public FiendsViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarIv = itemView.findViewById(R.id.friend_avatar_iv);
@@ -97,30 +91,20 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
             onlineIv = itemView.findViewById(R.id.online_iv);
             offlineIv = itemView.findViewById(R.id.offline_iv);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    openDialog(getAdapterPosition());
-                    return false;
-                }
+            itemView.setOnLongClickListener(v -> {
+                openDialog(getAdapterPosition());
+                return false;
             });
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText((Activity)mContext, "Click", Toast.LENGTH_SHORT).show();
-
-                }
-            });
+            itemView.setOnClickListener(v -> Toast.makeText((Activity)mContext, "Click", Toast.LENGTH_SHORT).show());
         }
     }
 
     private void openDialog(int position) {
         User user = userList.get(position);
-        String senderId = mAuth.getCurrentUser().getUid();
+        String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         String receiverId = user.get_id();
         String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-        final String OPTION = "friend";
 
         // set up dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -128,21 +112,18 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         String name = user.getFirstName() + " " + user.getLastName();
         builder.setTitle(name);
         String[] options = {"Xem thông tin", "Chăn người này", "Xóa bạn"};
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case 0:
-                        viewInfo(receiverId, accessToken);
-                        break;
-                    case 1:
-                        CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
-                        break;
-                    case 2:
-                        openConfirmDialog(name, senderId, receiverId, OPTION, accessToken, position);
-                        break;
+        builder.setItems(options, (dialog, which) -> {
+            switch (which){
+                case 0:
+                    viewInfo(receiverId, accessToken);
+                    break;
+                case 1:
+                    CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
+                    break;
+                case 2:
+                    openConfirmDialog(name, senderId, receiverId, accessToken, position);
+                    break;
 
-                }
             }
         });
         builder.create().show();
@@ -152,21 +133,23 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             viewInfo(id, accessToken);
                         }
                         else{
                             User user = response.body();
-                            if(user.isDeleted()){
-                                CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tài khoản đã bị xóa");
-                            }
-                            else{
-                                Intent intent = new Intent(mContext, FriendProfileActivity.class);
-                                intent.putExtra(AddFriendActivity.USER_KEY, user);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                mContext.startActivity(intent);
+                            if (user != null) {
+                                if(user.isDeleted()){
+                                    CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tài khoản đã bị xóa");
+                                }
+                                else{
+                                    Intent intent = new Intent(mContext, FriendProfileActivity.class);
+                                    intent.putExtra(AddFriendActivity.USER_KEY, user);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    mContext.startActivity(intent);
+                                }
                             }
 
                         }
@@ -174,27 +157,17 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
                     }
                 });
     }
 
-    private void openConfirmDialog(String name, String senderId, String receiverId, String option, String accessToken, int position) {
+    private void openConfirmDialog(String name, String senderId, String receiverId, String accessToken, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Xóa bạn với " + name + " ?");
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteFriend(senderId, receiverId, option, accessToken, position);
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton("Xóa", (dialog, which) -> deleteFriend(senderId, receiverId, "friend", accessToken, position));
 
         builder.create().show();
     }
@@ -204,7 +177,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         RetrofitService.getInstance.deleteUserIDByOption(senderId, receiverId, option, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
                             userList.remove(position);
                             notifyItemRemoved(position);
@@ -217,7 +190,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
                     }
                 });

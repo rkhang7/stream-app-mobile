@@ -1,17 +1,14 @@
 package com.iuh.stream.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.InvitationReceivedAdapter;
 import com.iuh.stream.api.RetrofitService;
@@ -61,14 +58,16 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
                             Util.refreshToken(Constants.REFRESH_TOKEN);
                             getCurrentUser();
                         }
                         else{
                             user = response.body();
-                            listInvitationReceivedId = user.getFriendRequests();
+                            if (user != null) {
+                                listInvitationReceivedId = user.getFriendRequests();
+                            }
                             for(String id: listInvitationReceivedId){
                                 getListInvitationReceivedUser(id);
                             }
@@ -76,7 +75,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -86,7 +85,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             getListInvitationReceivedUser(id);
@@ -102,7 +101,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });

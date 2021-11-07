@@ -2,7 +2,6 @@ package com.iuh.stream.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -30,9 +30,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationReceivedAdapter.InvitationViewHolder> {
-    private Context mContext;
+    private final Context mContext;
     private List<User> userList;
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth;
 
     public InvitationReceivedAdapter(Context mContext) {
         this.mContext = mContext;
@@ -55,7 +55,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
     public void onBindViewHolder(@NonNull InvitationViewHolder holder, int position) {
         User user = userList.get(position);
         Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
-        holder.name_tv.setText(user.getFirstName() + " " + user.getLastName());
+        holder.name_tv.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
     }
 
     @Override
@@ -64,35 +64,29 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
     }
 
     public class InvitationViewHolder extends RecyclerView.ViewHolder {
-        private CircleImageView avatarIv;
-        private TextView name_tv;
-        private Button removeBtn, acceptBtn;
+        private final CircleImageView avatarIv;
+        private final TextView name_tv;
+
         public InvitationViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarIv = itemView.findViewById(R.id.avatar_iv);
             name_tv = itemView.findViewById(R.id.name_tv);
-            removeBtn = itemView.findViewById(R.id.remove_btn);
-            acceptBtn = itemView.findViewById(R.id.accept_btn);
+            Button removeBtn = itemView.findViewById(R.id.remove_btn);
+            Button acceptBtn = itemView.findViewById(R.id.accept_btn);
 
-            removeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String senderId = mAuth.getCurrentUser().getUid();
-                    String receiverId =  userList.get(getAdapterPosition()).get_id();
-                    final String OPTION = "friendRequest";
-                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-                    cancelFriendRequest(senderId, receiverId, OPTION, accessToken, getAdapterPosition());
-                }
+            removeBtn.setOnClickListener(v -> {
+                String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+                String receiverId =  userList.get(getAdapterPosition()).get_id();
+                final String OPTION = "friendRequest";
+                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                cancelFriendRequest(senderId, receiverId, OPTION, accessToken, getAdapterPosition());
             });
 
-            acceptBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-                    String receiverId = userList.get(getAdapterPosition()).get_id();
-                    int position = getAdapterPosition();
-                    acceptFriend(receiverId, accessToken, position);
-                }
+            acceptBtn.setOnClickListener(v -> {
+                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String receiverId = userList.get(getAdapterPosition()).get_id();
+                int position = getAdapterPosition();
+                acceptFriend(receiverId, accessToken, position);
             });
 
 
@@ -103,7 +97,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
         RetrofitService.getInstance.acceptFriendRequest(receiverId, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             acceptFriend(receiverId, accessToken, position);
@@ -121,7 +115,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -131,7 +125,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
         RetrofitService.getInstance.deleteUserIDByOption(senderId, receiverId, option, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
                             userList.remove(position);
                             notifyItemRemoved(position);
@@ -144,7 +138,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
                     }
                 });

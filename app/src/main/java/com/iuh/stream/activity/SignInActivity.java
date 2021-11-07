@@ -22,7 +22,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
@@ -31,7 +30,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -187,8 +185,6 @@ public class SignInActivity extends AppCompatActivity {
                                     FirebaseAuthException e = (FirebaseAuthException) task.getException();
                                     switch (e.getErrorCode()) {
                                         case "ERROR_WRONG_PASSWORD":
-                                            message = "Email hoặc mật khẩu không đúng!";
-                                            break;
                                         case "ERROR_USER_NOT_FOUND":
                                             message = "Email hoặc mật khẩu không đúng!";
                                             break;
@@ -239,7 +235,7 @@ public class SignInActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<Token> call, Throwable t) {
+                        public void onFailure(@NonNull Call<Token> call, @NonNull Throwable t) {
                             CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Có lỗi đã xảy ra!");
                             Log.d(Constants.TAG, "handleGetToken: \n" + t);
                         }
@@ -296,7 +292,7 @@ public class SignInActivity extends AppCompatActivity {
 
         //When user enter confirm otp/ login by thí phone
         btnLoginPhone.setOnClickListener(v -> {
-            String code = edtOtpCode.getText().toString().trim();
+            String code = Objects.requireNonNull(edtOtpCode.getText()).toString().trim();
 
             if (code.length() == 6) {
                 PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
@@ -425,49 +421,46 @@ public class SignInActivity extends AppCompatActivity {
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // if user signing in first time then get and show user info from gg account
-                            if (task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                FirebaseUser user = task.getResult().getUser();
-                                saveUserToDatabase(user);
-                            }
-                            // Sign in success, update UI with the signed-in user's information
-                            handleGetToken();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + task.getException());
-                            CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi đăng nhập!");
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // if user signing in first time then get and show user info from gg account
+                        if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+                            FirebaseUser user = task.getResult().getUser();
+                            saveUserToDatabase(user);
                         }
+                        // Sign in success, update UI with the signed-in user's information
+                        handleGetToken();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + task.getException());
+                        CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi đăng nhập!");
                     }
                 });
     }
 
     private void saveUserToDatabase(FirebaseUser user) {
         String uid = user.getUid();
-        String[] s = user.getDisplayName().split(" ");
+        String[] s = Objects.requireNonNull(user.getDisplayName()).split(" ");
         List<String> displayName = Arrays.asList(s);
 
         String firstName = displayName.get(0);
-        String lastName = "";
+        StringBuilder lastName = new StringBuilder();
         for (int i = 1; i < displayName.size(); i++) {
-            lastName += displayName.get(i);
+            lastName.append(displayName.get(i));
         }
 
         String gender = null;
-        String imageURL = user.getPhotoUrl().toString();
+        String imageURL = Objects.requireNonNull(user.getPhotoUrl()).toString();
         String phoneNumber = user.getPhoneNumber();
         String email = user.getEmail();
         List<String> contacts = new ArrayList<>();
 
 
-        User mUser = new User(uid, firstName, lastName, gender, imageURL, phoneNumber, email, true, contacts);
+        User mUser = new User(uid, firstName, lastName.toString(), gender, imageURL, phoneNumber, email, true, contacts);
 
         RetrofitService.getInstance.saveUser(mUser, uid).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 User resUser = response.body();
                 if (resUser == null) {
                     Log.d(Constants.TAG, "SaveUser: \n" + "Không thể lưu user!");
@@ -477,7 +470,7 @@ public class SignInActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 Log.d(Constants.TAG, "saveUserToDatabase: \n" + t);
                 CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Không thể kết nối đến server!");
                 Toast.makeText(SignInActivity.this, "", Toast.LENGTH_SHORT).show();

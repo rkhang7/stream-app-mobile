@@ -1,43 +1,40 @@
 package com.iuh.stream.activity;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-
-import android.app.Activity;
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.Gson;
 import com.iuh.stream.R;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.socket.AddFriendRequest;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URISyntaxException;
+
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import retrofit2.Call;
@@ -46,14 +43,9 @@ import retrofit2.Response;
 
 public class FriendProfileActivity extends AppCompatActivity {
     private User user, currentUser;
-    // views
-    private CircleImageView avtIv;
-    private TextView nameTv, genderTv, phoneNumberTv, emailTv,dobTv;
-    private FlexboxLayout emailLayout, phoneNumberLayout;
-    private Button friendRequestBtn,cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn;
+    private Button friendRequestBtn, cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn;
     private static final String EVENT_REQUEST = "add-friend";
     private static final String EVENT_RESPONSE = "add-friend-res";
-    private Socket mSocket;
 
     // firebase;
     private FirebaseAuth mAuth;
@@ -69,23 +61,22 @@ public class FriendProfileActivity extends AppCompatActivity {
     private void addEvents() {
         friendRequestBtn.setOnClickListener(v -> {
             // send event
-            String senderId = mAuth.getCurrentUser().getUid();
+            String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             String receiverId = user.get_id();
-
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("senderID", senderId);
                 jsonObject.put("receiverID", receiverId);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //
-            Util.getSocket().emit(EVENT_REQUEST, jsonObject);
+            SocketClient.getInstance().emit(EVENT_REQUEST, jsonObject);
+            friendRequestBtn.setVisibility(View.INVISIBLE);
+            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
         });
 
         cancelFriendRequestBtn.setOnClickListener(v -> {
-            String senderId = mAuth.getCurrentUser().getUid();
+            String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             String receiverId = user.get_id();
             final String OPTION = "friendInvitation";
             String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
@@ -95,10 +86,9 @@ public class FriendProfileActivity extends AppCompatActivity {
         deleteFriendBtn.setOnClickListener(v -> {
             String name = user.getFirstName() + " " + user.getLastName();
             String receiverId = user.get_id();
-            String senderId = mAuth.getCurrentUser().getUid();
-            final String OPTION = "friend";
+            String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-            openConfirmDialog(name, senderId, receiverId, OPTION, accessToken);
+            openConfirmDialog(name, senderId, receiverId, accessToken);
         });
 
         acceptFriendBtn.setOnClickListener(v -> {
@@ -112,18 +102,15 @@ public class FriendProfileActivity extends AppCompatActivity {
         RetrofitService.getInstance.acceptFriendRequest(receiverId, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if(response.code() == 403){
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             acceptFriend(receiverId, accessToken);
-                        }
-                        else if(response.code() == 404){
+                        } else if (response.code() == 404) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, "Không tìm thấy người dùng");
-                        }
-                        else if(response.code() == 500){
+                        } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
-                        }
-                        else {
+                        } else {
                             friendRequestBtn.setVisibility(View.INVISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                             deleteFriendBtn.setVisibility(View.VISIBLE);
@@ -132,28 +119,17 @@ public class FriendProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
     }
 
-    private void openConfirmDialog(String name, String senderId, String receiverId, String option, String accessToken) {
+    private void openConfirmDialog(String name, String senderId, String receiverId, String accessToken) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Xóa bạn với " + name + " ?");
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteFriend(senderId, receiverId, option, accessToken);
-            }
-        });
-
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton("Xóa", (dialog, which) -> deleteFriend(senderId, receiverId, "friend", accessToken));
         builder.create().show();
     }
 
@@ -161,7 +137,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         RetrofitService.getInstance.deleteUserIDByOption(senderId, receiverId, option, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
                             FriendProfileActivity.this.finish();
                         } else if (response.code() == 500) {
@@ -173,7 +149,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -183,7 +159,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         RetrofitService.getInstance.deleteUserIDByOption(senderId, receiverId, option, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
                             friendRequestBtn.setVisibility(View.VISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
@@ -194,8 +170,9 @@ public class FriendProfileActivity extends AppCompatActivity {
                             cancelFriendInvitation(senderId, receiverId, option, accessToken);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -203,36 +180,35 @@ public class FriendProfileActivity extends AppCompatActivity {
 
 
     private void addControls() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         user = (User) getIntent().getSerializableExtra(AddFriendActivity.USER_KEY);
 
         // init views
-        avtIv = findViewById(R.id.avt_iv);
+        // views
+        CircleImageView avtIv = findViewById(R.id.avt_iv);
         Glide.with(this).load(user.getImageURL()).into(avtIv);
 
-        nameTv = findViewById(R.id.name_tv);
-        nameTv.setText(user.getFirstName() + " " +  user.getLastName());
+        TextView nameTv = findViewById(R.id.name_tv);
+        nameTv.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
 
-        dobTv = findViewById(R.id.friend_info_dob_et);
+        TextView dobTv = findViewById(R.id.friend_info_dob_et);
         // datetime format
         String pattern = "dd-MM-yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         dobTv.setText(simpleDateFormat.format(user.getDateOfBirth()));
 
-        genderTv = findViewById(R.id.friend_info_gender_tv);
+        TextView genderTv = findViewById(R.id.friend_info_gender_tv);
         genderTv.setText(user.getGender());
 
-        phoneNumberTv = findViewById(R.id.friend_info_phone_tv);
-        emailTv = findViewById(R.id.friend_info_email_tv);
-        phoneNumberLayout = findViewById(R.id.phone_layout);
-        emailLayout = findViewById(R.id.email_layout);
-        if(user.getPhoneNumber() != null){
+        TextView phoneNumberTv = findViewById(R.id.friend_info_phone_tv);
+        TextView emailTv = findViewById(R.id.friend_info_email_tv);
+        FlexboxLayout phoneNumberLayout = findViewById(R.id.phone_layout);
+        FlexboxLayout emailLayout = findViewById(R.id.email_layout);
+        if (user.getPhoneNumber() != null) {
             emailLayout.setVisibility(View.GONE);
             phoneNumberLayout.setVisibility(View.VISIBLE);
             phoneNumberTv.setText(user.getPhoneNumber());
-        }
-
-        else if(!user.getEmail().equals("null")){
+        } else if (!user.getEmail().equals("null")) {
             emailLayout.setVisibility(View.VISIBLE);
             phoneNumberLayout.setVisibility(View.GONE);
             emailTv.setText(user.getEmail());
@@ -247,30 +223,21 @@ public class FriendProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // init socket
-        mSocket = Util.getSocket();
 
-        mSocket.on(EVENT_RESPONSE, new Emitter.Listener() {
+        SocketClient.getInstance().on(EVENT_RESPONSE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                runOnUiThread(new Runnable() {
+                FriendProfileActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        JSONObject data = (JSONObject) args[0];
-//                        String result;
-//                        try {
-//                            result = data.getString("result");
-//                        } catch (JSONException e) {
-//                            return;
-//                        }
-                        String result = (String) args[0];
+                        boolean result = (boolean) args[0];
                         Log.e("TAG", "run: " + result );
-                        if(result.equals("Thành công")){
-                            friendRequestBtn.setVisibility(View.INVISIBLE);
-                            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
-                        }
+//                        if (!result) {
+//                            CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+//                        } else {
+//                            friendRequestBtn.setVisibility(View.INVISIBLE);
+//                            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
+//                        }
                     }
                 });
             }
@@ -285,29 +252,27 @@ public class FriendProfileActivity extends AppCompatActivity {
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        if(response.code() == 403){
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                        if (response.code() == 403) {
                             Util.refreshToken(Constants.REFRESH_TOKEN);
                             updateStatusFriendRequest();
-                        }
-                        else{
+                        } else {
                             currentUser = response.body();
+                            assert currentUser != null;
                             List<String> listFriendInvitations = currentUser.getFriendInvitations();
                             List<String> listContacts = currentUser.getContacts();
                             List<String> listFriendRequest = currentUser.getFriendRequests();
-                            if(listFriendInvitations.contains(user.get_id())){
+                            if (listFriendInvitations.contains(user.get_id())) {
                                 friendRequestBtn.setVisibility(View.INVISIBLE);
                                 cancelFriendRequestBtn.setVisibility(View.VISIBLE);
                                 deleteFriendBtn.setVisibility(View.INVISIBLE);
                                 acceptFriendBtn.setVisibility(View.INVISIBLE);
-                            }
-                            else if(listContacts.contains(user.get_id())){
+                            } else if (listContacts.contains(user.get_id())) {
                                 friendRequestBtn.setVisibility(View.INVISIBLE);
                                 cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                                 deleteFriendBtn.setVisibility(View.VISIBLE);
                                 acceptFriendBtn.setVisibility(View.INVISIBLE);
-                            }
-                            else if(listFriendRequest.contains(user.get_id())){
+                            } else if (listFriendRequest.contains(user.get_id())) {
                                 friendRequestBtn.setVisibility(View.INVISIBLE);
                                 cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                                 deleteFriendBtn.setVisibility(View.INVISIBLE);
@@ -315,8 +280,9 @@ public class FriendProfileActivity extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -331,6 +297,5 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Util.getSocket().disconnect();
     }
 }

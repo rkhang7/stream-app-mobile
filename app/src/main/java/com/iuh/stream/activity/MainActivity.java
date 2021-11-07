@@ -20,6 +20,7 @@ import com.iuh.stream.fragment.ContactFragment;
 import com.iuh.stream.fragment.ProfileFragment;
 import com.iuh.stream.fragment.SettingFragment;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
 import java.net.URISyntaxException;
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private ProfileFragment profileFragment;
     private ContactFragment contactFragment;
     private SettingFragment settingFragment;
-    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
 
-        mSocket = Util.getSocket();
-        mSocket.connect();
+        SocketClient.getInstance().connect();
         addEvents();
     }
 
@@ -115,6 +114,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSocket.disconnect();
+        SocketClient.getInstance().disconnect();
     }
 }

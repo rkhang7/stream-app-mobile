@@ -1,25 +1,21 @@
 package com.iuh.stream.fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
@@ -39,7 +35,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class PersonalContactFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
@@ -47,15 +42,14 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
     private View view;
     private Button friendFromContactBtn;
     private Button friendInvitationBtn;
-    private List<String> listFriendId ,listFriendIdUpdate;
-    private List<User> listFriendUser, listFriendUserUpdate;
+    private List<String> listFriendId ;
+    private List<User> listFriendUser;
     private FriendsAdapter friendsAdapter;
     private RecyclerView recyclerView;
     private User user;
     private static final int UPDATE = 1;
     private static final int LOAD = 2;
 
-    private FirebaseAuth mAuth;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -71,38 +65,32 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
     }
 
     private void addEvents() {
-        friendFromContactBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PermissionListener permissionlistener = new PermissionListener() {
+        friendFromContactBtn.setOnClickListener(view -> {
+            PermissionListener permissionlistener = new PermissionListener() {
 
-                    @Override
-                    public void onPermissionGranted() {
-                        Intent intent = new Intent(getContext(), PhoneFriendsActivity.class);
-                        startActivity(intent);
-                    }
+                @Override
+                public void onPermissionGranted() {
+                    Intent intent = new Intent(getContext(), PhoneFriendsActivity.class);
+                    startActivity(intent);
+                }
 
-                    @Override
-                    public void onPermissionDenied(List<String> deniedPermissions) {
+                @Override
+                public void onPermissionDenied(List<String> deniedPermissions) {
 
-                    }
-                };
+                }
+            };
 
-                TedPermission.create()
-                        .setPermissionListener(permissionlistener)
-                        .setDeniedMessage("Nếu bạn không cấp quyền, bạn sẽ không thể sử dụng dịch vụ này\n\nVui lòng cấp quyền tại [Cài đặt] -> [Quyền hạn]")
-                        .setPermissions(Manifest.permission.READ_CONTACTS)
-                        .check();
+            TedPermission.create()
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("Nếu bạn không cấp quyền, bạn sẽ không thể sử dụng dịch vụ này\n\nVui lòng cấp quyền tại [Cài đặt] -> [Quyền hạn]")
+                    .setPermissions(Manifest.permission.READ_CONTACTS)
+                    .check();
 
-            }
         });
 
-        friendInvitationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), FriendInvitationActivity.class);
-                startActivity(intent);
-            }
+        friendInvitationBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), FriendInvitationActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -113,7 +101,6 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.main));
 
-        mAuth = FirebaseAuth.getInstance();
         listFriendId = new ArrayList<>();
         listFriendUser = new ArrayList<>();
         friendsAdapter = new FriendsAdapter(getContext());
@@ -135,13 +122,15 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             loadContacts(LOAD);
                         } else {
                             user = response.body();
-                            listFriendId = user.getContacts();
+                            if (user != null) {
+                                listFriendId = user.getContacts();
+                            }
                             if(listFriendId.size() > 0){
                                 for (String id : listFriendId) {
                                     getListFriendUser(id, type);
@@ -159,7 +148,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -169,7 +158,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
                             getListFriendUser(id, type);
@@ -187,7 +176,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
