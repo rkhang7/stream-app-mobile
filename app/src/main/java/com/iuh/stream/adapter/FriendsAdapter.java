@@ -3,6 +3,7 @@ package com.iuh.stream.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddFriendActivity;
+import com.iuh.stream.activity.ChatActivity;
 import com.iuh.stream.activity.FriendProfileActivity;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,11 +43,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     private final Context mContext;
     private List<User> userList;
     private final FirebaseAuth mAuth;
+    public static final String USER = FriendsAdapter.class.getName();
 
     public FriendsAdapter(Context mContext) {
         mAuth = FirebaseAuth.getInstance();
         this.mContext = mContext;
-
     }
 
     public void setData(List<User> userList){
@@ -63,6 +67,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         User user = userList.get(position);
         Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
         holder.nameTv.setText(user.getFirstName() + " " + user.getLastName());
+
+
         if(user.isOnline()){
             holder.onlineIv.setVisibility(View.VISIBLE);
             holder.offlineIv.setVisibility(View.INVISIBLE);
@@ -71,6 +77,32 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
             holder.onlineIv.setVisibility(View.INVISIBLE);
             holder.offlineIv.setVisibility(View.VISIBLE);
         }
+
+        SocketClient.getInstance().on("offline user", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.onlineIv.setVisibility(View.INVISIBLE);
+                        holder.offlineIv.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+
+        SocketClient.getInstance().on("online user", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.onlineIv.setVisibility(View.VISIBLE);
+                        holder.offlineIv.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        });
 
     }
 
@@ -96,7 +128,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
                 return false;
             });
 
-            itemView.setOnClickListener(v -> Toast.makeText((Activity)mContext, "Click", Toast.LENGTH_SHORT).show());
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                User user = userList.get(getAdapterPosition());
+                intent.putExtra(USER, user);
+                mContext.startActivity(intent);
+            });
         }
     }
 

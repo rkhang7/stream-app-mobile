@@ -18,16 +18,16 @@
             android:src="@drawable/default_avatar"/>
 
         <LinearLayout
-            android:layout_marginLeft="16dp"
-            android:layout_width="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginEnd="110dp">
 
 
             <TextView
-                android:layout_toRightOf="@id/contact_avatar_iv"
                 android:id="@+id/contact_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:text="Khang"
@@ -35,8 +35,9 @@
 
             <TextView
                 android:layout_marginTop="8dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:textSize="13sp"
                 android:text="Tên stream: Khang Hoàng"
                 android:id="@+id/contact_stream_name"/>

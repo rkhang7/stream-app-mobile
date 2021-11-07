@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_back_32"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:id="@+id/toolbar_back_btn"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/toolbar_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/toolbar_back_btn"
+            android:src="@drawable/default_avatar"
+            android:layout_marginLeft="24dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/toolbar_image">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Khang Hoàng"
+                android:layout_marginStart="4dp"
+                android:id="@+id/toolbar_username_tv"/>
+
+            <TextView
+                android:textSize="10sp"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/toolbar_active_tv"
+                android:text="Active now"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/list_32"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:id="@+id/toolbar_information_btn"/>
+
+        <ImageButton
+            android:layout_toLeftOf="@id/toolbar_information_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/videocam_32"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:background="@android:color/transparent"
+            android:id="@+id/toolbar_video_call_btn"/>
+
+        <ImageButton
+            android:layout_toLeftOf="@id/toolbar_video_call_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/call_32"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:background="@android:color/transparent"
+            android:id="@+id/toolbar_call_btn"/>
+
+    </RelativeLayout>
+</RelativeLayout>
