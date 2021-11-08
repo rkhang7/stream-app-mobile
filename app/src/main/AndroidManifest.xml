@@ -18,9 +18,13 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activity.ChatActivity"
+            android:name=".activity.SearchActivity"
             android:exported="true"
             android:theme="@style/Theme.NoActionBar"/>
+        <activity
+            android:name=".activity.ChatActivity"
+            android:exported="true"
+            android:theme="@style/Theme.NoActionBar" />
         <activity android:name=".imagepicker.ImageCropActivity" />
         <activity
             android:name=".imagepicker.ImageSelectActivity"

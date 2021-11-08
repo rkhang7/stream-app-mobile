@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddFriendActivity;
+import com.iuh.stream.activity.SearchActivity;
 import com.iuh.stream.adapter.MyFragmentAdapter;
 
 
@@ -22,6 +25,8 @@ public class ContactFragment extends Fragment {
     // views
     private View view;
     private ImageButton addFiendBtn;
+    private LinearLayout searchLayout;
+    private TextView searchTv;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,6 +41,19 @@ public class ContactFragment extends Fragment {
         addFiendBtn.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), AddFriendActivity.class);
             startActivity(intent);
+        });
+
+        searchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), SearchActivity.class));
+            }
+        });
+        searchTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), SearchActivity.class));
+            }
         });
     }
 
@@ -58,6 +76,8 @@ public class ContactFragment extends Fragment {
             }
         }).attach();
         addFiendBtn = view.findViewById(R.id.add_friend_btn);
+        searchLayout = view.findViewById(R.id.search_layout);
+        searchTv = view.findViewById(R.id.search_tv);
 
     }
 

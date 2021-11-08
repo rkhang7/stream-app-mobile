@@ -17,39 +17,36 @@
         app:flexDirection="row"
         app:flexWrap="wrap">
 
-        <com.google.android.flexbox.FlexboxLayout
+        <LinearLayout
+            android:id="@+id/search_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_bg_8"
-            android:backgroundTint="@color/white"
-            app:alignItems="stretch"
             app:flexDirection="row"
-            app:layout_flexGrow="1">
-
+            app:alignItems="stretch"
+            app:layout_flexGrow="1"
+            android:background="@drawable/rounded_bg_8"
+            android:backgroundTint="@color/white">
             <ImageView
-                android:id="@+id/search_iv"
+                android:layout_gravity="center"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:src="@drawable/search_black_32"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <EditText
-                style="@style/EditText"
-                android:layout_width="200dp"
+            <TextView
+                android:id="@+id/search_tv"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="5dp"
-                android:layout_toEndOf="@id/search_iv"
-                android:backgroundTint="@color/transparent"
                 android:hint="@string/search_friend"
+                style="@style/EditText"
+                app:layout_flexGrow="1"
+                android:layout_marginEnd="5dp"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_flexGrow="1" />
-        </com.google.android.flexbox.FlexboxLayout>
-
+                android:backgroundTint="@color/transparent"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/add_friend_btn"
@@ -73,6 +70,6 @@
         android:id="@+id/contacts_pager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/contacts_tab_layout"/>
+        android:layout_below="@+id/contacts_tab_layout" />
 
 </RelativeLayout>

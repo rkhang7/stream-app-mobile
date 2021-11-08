@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -311,10 +312,7 @@ public class UserInfoActivity extends AppCompatActivity {
         emailLayout = findViewById(R.id.email_layout);
 
         loadUserInfo();
-//        Log.e("TAG", "addControls: " + user.toString() );
 
-//        Log.e(Constants.TAG, "addControls: " + DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
-//        Log.e(Constants.TAG, "addControls: " + user.get_id());
     }
 
     private void loadUserInfo() {

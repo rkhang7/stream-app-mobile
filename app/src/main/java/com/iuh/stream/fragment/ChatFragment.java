@@ -1,21 +1,30 @@
 package com.iuh.stream.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.iuh.stream.R;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
+import com.iuh.stream.R;
+import com.iuh.stream.activity.SearchActivity;
 
 
 public class ChatFragment extends Fragment {
+    private LinearLayout searchLayout;
+    private TextView searchTv;
+    private View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         addControls();
         addEvents();
@@ -26,9 +35,12 @@ public class ChatFragment extends Fragment {
     }
 
     private void addEvents() {
+
     }
 
-    private void addControls() { ;
+    private void addControls() {
+        searchLayout = view.findViewById(R.id.search_layout);
+        searchTv = view.findViewById(R.id.search_tv);
     }
 
 }

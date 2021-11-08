@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_height="match_parent"
+    tools:context=".activity.SearchActivity"
+    android:background="@color/white_smoke">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/contacts_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        app:alignItems="stretch"
+        app:flexDirection="row"
+        app:flexWrap="wrap">
+
+        <ImageButton
+            style="@style/BorderlessButton"
+            android:id="@+id/back_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/arrow_back_32"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:padding="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg_8"
+            android:backgroundTint="@color/white"
+            app:alignItems="stretch"
+            app:flexDirection="row"
+            app:layout_flexGrow="1"
+            android:layout_marginStart="8dp">
+
+            <ImageView
+                android:id="@+id/search_iv"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/search_black_32"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/search_et"
+                style="@style/EditText"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@id/search_iv"
+                android:backgroundTint="@color/transparent"
+                android:hint="@string/search_friend"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_flexGrow="1" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_rcv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/not_found_tv"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:text="Không tìm thấy kết quả phù hợp"/>
+
+</LinearLayout>

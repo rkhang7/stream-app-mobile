@@ -17,7 +17,8 @@
         android:padding="5dp"
         app:flexWrap="wrap">
 
-        <com.google.android.flexbox.FlexboxLayout
+        <LinearLayout
+            android:id="@+id/search_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:flexDirection="row"
@@ -26,27 +27,26 @@
             android:background="@drawable/rounded_bg_8"
             android:backgroundTint="@color/white">
             <ImageView
+                android:layout_gravity="center"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="5dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
                 android:src="@drawable/search_black_32"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <EditText
-                android:layout_width="200dp"
+            <TextView
+                android:id="@+id/search_tv"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/search_iv"
-                android:hint="@string/search"
+                android:hint="Tìm kiếm hội thoại"
                 style="@style/EditText"
                 app:layout_flexGrow="1"
                 android:layout_marginEnd="5dp"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/transparent"
                 android:textSize="16sp" />
-        </com.google.android.flexbox.FlexboxLayout>
+        </LinearLayout>
 
 
         <ImageButton

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -342,6 +343,7 @@ public class ProfileFragment extends Fragment {
                 else {
                     newtonCradleLoading.setVisibility(View.GONE);
                     user = response.body();
+                    Log.e("TAG", "onResponse: " + user );
                     if(user != null){
                         // set info
                         Picasso.get().load(user.getImageURL()).into(avatar);
