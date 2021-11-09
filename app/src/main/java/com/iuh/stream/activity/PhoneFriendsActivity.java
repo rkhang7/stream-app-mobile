@@ -50,6 +50,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
     private User tempUser;
     private String phoneNumberConverted = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,19 +80,18 @@ public class PhoneFriendsActivity extends AppCompatActivity {
 
     private void filterContacts(String key) {
         List<Contact> filterContacts = new ArrayList<>();
-        for(Contact contact : contactList){
-            if(contact.getFirstName().toLowerCase().contains(key)
-                    || contact.getLastName().toLowerCase().contains(key) || contact.getPhoneName().toLowerCase().contains(key)){
+        for (Contact contact : contactList) {
+            if (contact.getFirstName().toLowerCase().contains(key)
+                    || contact.getLastName().toLowerCase().contains(key) || contact.getPhoneName().toLowerCase().contains(key)) {
                 filterContacts.add(contact);
             }
         }
 
-        if(filterContacts.size() > 0){
+        if (filterContacts.size() > 0) {
             recyclerView.setVisibility(View.VISIBLE);
             notFoundTv.setVisibility(View.GONE);
             contactAdapter.setData(filterContacts);
-        }
-        else{
+        } else {
             recyclerView.setVisibility(View.GONE);
             notFoundTv.setVisibility(View.VISIBLE);
         }
@@ -134,12 +134,12 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         // init cursor
 
         Cursor cursor = getContentResolver().query(
-                uri,null,null,null, sort
+                uri, null, null, null, sort
         );
 
         // check condition
-        if(cursor.getCount() > 0){
-            while(cursor.moveToNext()){
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
                 tempUser = null;
                 // get contact id
                 int temp = cursor.getColumnIndex(ContactsContract.Contacts._ID);
@@ -161,28 +161,36 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                 );
 
                 // check condition
-                if(phoneCursor.moveToNext()){
+                if (phoneCursor.moveToNext()) {
                     int temp3 = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                     String number = phoneCursor.getString(temp3);
 
                     // convert (012) 345-6711 --->> 0123456711
                     phoneNumberConverted = "";
 
-                    for(int i = 0; i< number.length(); i++){
-                        if(i == 0 || i == 4 || i == 5 || i == 9){
-                            continue;
+                    if (number.charAt(0) == '(') {
+                        for (int i = 0; i < number.length(); i++) {
+                            if (i == 0 || i == 4 || i == 5 || i == 9) {
+                                continue;
+                            }
+                            phoneNumberConverted += number.charAt(i);
                         }
-                        phoneNumberConverted+= number.charAt(i);
                     }
 
-                    if(phoneNumberConverted.length() == 10){
+                    else{
+                        phoneNumberConverted = number;
+                    }
+
+//
+
+                    if (phoneNumberConverted.length() == 10) {
                         // init contact model
 
                         // get user by phone number
                         RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                                if(response.code() == 403){
+                                if (response.code() == 403) {
                                     String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
                                     Util.refreshToken(REFRESH_TOKEN);
                                     RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
@@ -190,8 +198,8 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                                                     tempUser = response.body();
-                                                    if(tempUser != null){
-                                                        if(!tempUser.get_id().equals(mUser.getUid())){
+                                                    if (tempUser != null) {
+                                                        if (!tempUser.get_id().equals(mUser.getUid())) {
                                                             Contact contact = new Contact();
                                                             contact.setPhoneNumber(number);
                                                             contact.setPhoneName(name);
@@ -211,11 +219,10 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                     Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-                                }
-                                else{
+                                } else {
                                     tempUser = response.body();
-                                    if(tempUser != null){
-                                        if(!tempUser.get_id().equals(mUser.getUid())){
+                                    if (tempUser != null) {
+                                        if (!tempUser.get_id().equals(mUser.getUid())) {
                                             Contact contact = new Contact();
                                             contact.setPhoneNumber(number);
                                             contact.setPhoneName(name);
@@ -238,7 +245,6 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                         });
 
 
-
                     }
 
                     // close cursor
@@ -251,10 +257,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         }
 
 
-
     }
-
-
 
 
     @Override

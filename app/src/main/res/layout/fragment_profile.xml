@@ -49,8 +49,10 @@
                 android:layout_marginStart="10dp">
 
                 <TextView
+                    android:maxLines="1"
                     android:id="@+id/profile_name_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginEnd="16dp"
                     android:layout_height="wrap_content"
                     android:text="Điểu Long"
                     style="@style/TextNormal"/>

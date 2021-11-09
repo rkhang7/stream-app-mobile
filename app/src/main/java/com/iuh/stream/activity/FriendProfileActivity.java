@@ -231,7 +231,6 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         boolean result = (boolean) args[0];
-                        Log.e("TAG", "run: " + result );
 //                        if (!result) {
 //                            CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
 //                        } else {

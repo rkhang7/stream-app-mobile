@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.StartActivity;
 import com.iuh.stream.activity.UserInfoActivity;
@@ -41,15 +39,15 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 import com.victor.loading.newton.NewtonCradleLoading;
 
+import java.util.Objects;
+
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,7 +62,6 @@ public class ProfileFragment extends Fragment {
     private NewtonCradleLoading newtonCradleLoading;
     private FlexboxLayout deleteUserLayout, signInMethodLayout;
     private LinearLayout passwordLayout, phoneLayout, googleLayout;
-    private String password;
     private Button changePasswordBtn;
     private TextInputLayout oldPasswordLayout, newPasswordLayout, confirmNewPasswordLayout;
     private TextInputEditText oldPasswordEt, newPasswordEt, confirmNewPasswordLEt;
@@ -92,98 +89,89 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Đăng xuất?");
-                builder.setIcon(R.drawable.icons8_warning_64px);
-                builder.setMessage("Bạn có chắc chắn muốn đăng xuất?");
-                builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+        logoutBtn.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Đăng xuất?");
+            builder.setIcon(R.drawable.icons8_warning_64px);
+            builder.setMessage("Bạn có chắc chắn muốn đăng xuất?");
+            builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
 
-                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        signOut();
-                    }
-                });
+            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    signOut();
+                }
+            });
 
-                builder.create().show();
-            }
+            builder.create().show();
         });
 
         // delete user
-        deleteUserLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setIcon(R.drawable.icons8_error_60);
-                builder.setTitle("Xóa tài khoản sẽ: ");
-                builder.setMessage("Không thể khôi phục dữ liệu khi xóa tài khoản");
-                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
-                        deleteMe(accessToken);
-                    }
-                });
+        deleteUserLayout.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setIcon(R.drawable.icons8_error_60);
+            builder.setTitle("Xóa tài khoản sẽ: ");
+            builder.setMessage("Không thể khôi phục dữ liệu khi xóa tài khoản");
+            builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    deleteMe(accessToken);
+                }
+            });
 
-                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.create().show();
-            }
+            builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
         });
 
-        signInMethodLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String method = mAuth.getCurrentUser().getProviderData().get(1).getProviderId();
-                switch (method) {
-                    case "password":
-                        if (passwordLayout.getVisibility() == View.GONE) {
-                            passwordLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            passwordLayout.setVisibility(View.GONE);
-                        }
+        signInMethodLayout.setOnClickListener(v -> {
+            String method = mAuth.getCurrentUser().getProviderData().get(1).getProviderId();
+            switch (method) {
+                case "password":
+                    if (passwordLayout.getVisibility() == View.GONE) {
+                        passwordLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        passwordLayout.setVisibility(View.GONE);
+                    }
 
-                        break;
-                    case "phone":
-                        if (phoneLayout.getVisibility() == View.GONE) {
-                            String phone = mAuth.getCurrentUser().getPhoneNumber();
-                            phoneTv.setText("Số điện thoai: " + phone);
-                            phoneLayout.setVisibility(View.VISIBLE);
+                    break;
+                case "phone":
+                    if (phoneLayout.getVisibility() == View.GONE) {
+                        String phone = mAuth.getCurrentUser().getPhoneNumber();
+                        phoneTv.setText(String.format("%s%s", getString(R.string.phone_number), phone));
+                        phoneLayout.setVisibility(View.VISIBLE);
 
-                        } else {
-                            phoneLayout.setVisibility(View.GONE);
-                        }
-                        break;
-                    case "google.com":
-                        if (googleLayout.getVisibility() == View.GONE) {
-                            String email = mAuth.getCurrentUser().getEmail();
-                            emailTv.setText(String.format("Tài khoản Google: %s", email));
-                            googleLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            googleLayout.setVisibility(View.GONE);
-                        }
-                        break;
-                }
+                    } else {
+                        phoneLayout.setVisibility(View.GONE);
+                    }
+                    break;
+                case "google.com":
+                    if (googleLayout.getVisibility() == View.GONE) {
+                        String email = mAuth.getCurrentUser().getEmail();
+                        emailTv.setText(String.format("Tài khoản Google: %s", email));
+                        googleLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        googleLayout.setVisibility(View.GONE);
+                    }
+                    break;
             }
         });
 
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldPassword = oldPasswordEt.getText().toString().trim();
-                String newPassword = newPasswordEt.getText().toString().trim();
+                String oldPassword = Objects.requireNonNull(oldPasswordEt.getText()).toString().trim();
+                String newPassword = Objects.requireNonNull(newPasswordEt.getText()).toString().trim();
                 String confirmNewPassword =confirmNewPasswordLEt.getText().toString().trim();
                 changePassword(oldPassword, newPassword, confirmNewPassword);
             }
@@ -203,41 +191,45 @@ public class ProfileFragment extends Fragment {
                         confirmNewPasswordLayout.setHelperText("");
 
                         FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
-                        String email = user.getEmail();
+                        String email = null;
+                        if (user != null) {
+                            email = user.getEmail();
+                        }
                         AuthCredential credential = EmailAuthProvider
                                 .getCredential(email, oldPassword);
-                        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                CustomAlert.showToast(getActivity(), CustomAlert.INFO, "Đổi mật khẩu thành công");
-                                                //save password
-                                                DataLocalManager.putStringValue(Constants.PASSWORD, newPassword);
-                                                passwordLayout.setVisibility(View.GONE);
-                                                oldPasswordEt.setText("");
-                                                newPasswordEt.setText("");
-                                                confirmNewPasswordLEt.setText("");
+                        if (user != null) {
+                            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    CustomAlert.showToast(getActivity(), CustomAlert.INFO, "Đổi mật khẩu thành công");
+                                                    //save password
+                                                    DataLocalManager.putStringValue(Constants.PASSWORD, newPassword);
+                                                    passwordLayout.setVisibility(View.GONE);
+                                                    oldPasswordEt.setText("");
+                                                    newPasswordEt.setText("");
+                                                    confirmNewPasswordLEt.setText("");
+                                                }
                                             }
-                                        }
-                                    }).addOnFailureListener(e -> CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification)));
+                                        }).addOnFailureListener(e -> CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification)));
+                                    }
                                 }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    CustomAlert.showToast(getActivity(), CustomAlert.WARNING, getString(R.string.error_notification));
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                     else{
                         confirmNewPasswordLayout.setHelperText("Mật khẩu không khớp");
                         confirmNewPasswordLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                        return;
                     }
                 }
                 else{
@@ -264,7 +256,7 @@ public class ProfileFragment extends Fragment {
         RetrofitService.getInstance.deleteMe(accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
                             deleteMe(accessToken);
@@ -278,7 +270,7 @@ public class ProfileFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -332,7 +324,7 @@ public class ProfileFragment extends Fragment {
     private void getUserInfo() {
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                     newtonCradleLoading.start();
@@ -343,16 +335,15 @@ public class ProfileFragment extends Fragment {
                 else {
                     newtonCradleLoading.setVisibility(View.GONE);
                     user = response.body();
-                    Log.e("TAG", "onResponse: " + user );
                     if(user != null){
                         // set info
                         Picasso.get().load(user.getImageURL()).into(avatar);
-                        nameTv.setText(user.getFirstName() + " " + user.getLastName());
+                        nameTv.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
                     }
                 }
             }
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 Toast.makeText(ProfileFragment.this.getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

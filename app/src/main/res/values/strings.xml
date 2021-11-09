@@ -35,4 +35,5 @@
     <string name="input_name">Vui lòng nhập tên của bạn</string>
     <string name="input_gender">Vui lòng chọn giới tính của bạn</string>
     <string name="input_dob">Vui lòng chọn ngày sinh của bạn</string>
+    <string name="phone_number">\"Số điện thoai: \"</string>
 </resources>

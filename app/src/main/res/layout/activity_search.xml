@@ -64,6 +64,13 @@
     </com.google.android.flexbox.FlexboxLayout>
 
 
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/search_friend_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="18dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_rcv"
