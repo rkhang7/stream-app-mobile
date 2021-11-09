@@ -23,6 +23,8 @@ import com.iuh.stream.activity.FriendInvitationActivity;
 import com.iuh.stream.activity.PhoneFriendsActivity;
 import com.iuh.stream.adapter.FriendsAdapter;
 import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.api.UserListAsyncResponse;
+import com.iuh.stream.api.UserUtil;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
@@ -113,78 +115,25 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         swipeRefreshLayout.setOnRefreshListener(this);
 
 
-        loadContacts(LOAD);
+        loadContact(LOAD);
     }
 
-    private void loadContacts(int type) {
-        listFriendId.clear();
-        listFriendUser.clear();
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                .enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                        if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                            loadContacts(LOAD);
-                        } else {
-                            user = response.body();
-                            if (user != null) {
-                                listFriendId = user.getContacts();
-                            }
-                            if(listFriendId.size() > 0){
-                                for (String id : listFriendId) {
-                                    getListFriendUser(id, type);
-                                }
-                            }
-                            else{
-                                friendsAdapter.setData(listFriendUser);
-                                recyclerView.setAdapter(friendsAdapter);
-                                if(type == UPDATE){
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            }
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                        CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
-                    }
-                });
+    private void loadContact(int type) {
+        new UserUtil().getListFriend(new UserListAsyncResponse() {
+            @Override
+            public void processFinnish(List<User> friendArrayList) {
+                listFriendUser = Util.sortListFriend(friendArrayList);
+                friendsAdapter.setData(listFriendUser);
+                recyclerView.setAdapter(friendsAdapter);
+                if(type == UPDATE){
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
-
-    private void getListFriendUser(String id, int type) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                .enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                        if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                            getListFriendUser(id, type);
-                        } else {
-                            user = response.body();
-                            listFriendUser.add(user);
-                        }
-                        listFriendUser = Util.sortListFriend(listFriendUser);
-                        friendsAdapter.setData(listFriendUser);
-                        recyclerView.setAdapter(friendsAdapter);
-
-                        if(type == UPDATE){
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                        CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
-                    }
-                });
-    }
-
 
     @Override
     public void onRefresh() {
-        loadContacts(UPDATE);
+        loadContact(UPDATE);
     }
 }

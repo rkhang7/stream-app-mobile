@@ -27,6 +27,8 @@ import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
+import com.vanniktech.emoji.EmojiPopup;
+
 
 
 import java.util.Date;
@@ -48,6 +50,7 @@ public class ChatActivity extends AppCompatActivity {
     private CircleImageView avatarIv;
     private TextView nameTv, activeTv;
     private ImageView onlineIv, offlineIv;
+    private EmojiPopup emojiPopup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +99,13 @@ public class ChatActivity extends AppCompatActivity {
                 openImagePicker();
             }
         });
+
+        emojiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emojiPopup.toggle();
+            }
+        });
     }
 
     private void openImagePicker() {
@@ -129,6 +139,10 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addControls() {
+
+
+
+
         messageEt = findViewById(R.id.messageEt);
         emojiBtn = findViewById(R.id.emoji_btn);
         sendBtn = findViewById(R.id.sendBtn);
@@ -140,6 +154,10 @@ public class ChatActivity extends AppCompatActivity {
         onlineIv = findViewById(R.id.toolbar_online_iv);
         offlineIv = findViewById(R.id.toolbar_offline_iv);
         activeTv = findViewById(R.id.toolbar_active_tv);
+
+        // emoji
+        emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
+                .build(messageEt);
 
         user = (User) getIntent().getSerializableExtra(FriendsAdapter.USER);
         // set info

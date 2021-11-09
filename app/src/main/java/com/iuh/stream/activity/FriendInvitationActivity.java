@@ -30,6 +30,7 @@ public class FriendInvitationActivity extends AppCompatActivity {
 
         // views
         TabLayout tabLayout = findViewById(R.id.tab_layout);
+
         ViewPager2 viewPager2 = findViewById(R.id.pager);
         MyFragmentAdapter myFragmentAdapter = new MyFragmentAdapter(this);
         myFragmentAdapter.addFragment(new ListFriendInvitationReceivedFragment());

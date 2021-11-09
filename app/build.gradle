@@ -63,4 +63,6 @@ dependencies {
     }
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.2.7'
+
+    implementation "com.vanniktech:emoji-twitter:0.8.0"
 }
