@@ -51,10 +51,10 @@
 
         <ImageButton
             style="@style/BorderlessButton"
-            android:id="@+id/add_btn"
+            android:id="@+id/add_group_btn"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_add_32"/>
+            android:src="@drawable/group_add_black"/>
     </com.google.android.flexbox.FlexboxLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"

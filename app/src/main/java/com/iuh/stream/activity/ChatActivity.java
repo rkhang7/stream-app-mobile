@@ -139,10 +139,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addControls() {
-
-
-
-
         messageEt = findViewById(R.id.messageEt);
         emojiBtn = findViewById(R.id.emoji_btn);
         sendBtn = findViewById(R.id.sendBtn);
