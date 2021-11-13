@@ -49,15 +49,19 @@
         <entry key="app/src/main/res/drawable/bg_blue_conner_top_16.xml" value="0.11614583333333334" />
         <entry key="app/src/main/res/drawable/bg_popup_white_color_16.xml" value="0.11614583333333334" />
         <entry key="app/src/main/res/drawable/bg_white_conner_10_border_gray.xml" value="0.11614583333333334" />
+        <entry key="app/src/main/res/drawable/chat_item_left_bg.xml" value="0.12039473684210526" />
+        <entry key="app/src/main/res/drawable/chat_item_right_bg.xml" value="0.12039473684210526" />
         <entry key="app/src/main/res/drawable/checkbox_selector.xml" value="0.13094462540716612" />
         <entry key="app/src/main/res/drawable/corners_button.xml" value="0.103125" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_32.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_call_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/inbox_btn_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/line_item_left_bg.xml" value="0.13094462540716612" />
+        <entry key="app/src/main/res/drawable/line_item_right_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/message_button_bg.xml" value="0.20615384615384616" />
         <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_add_group.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.14" />
         <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.11" />
         <entry key="app/src/main/res/layout/activity_image_crop.xml" value="0.23770491803278687" />
         <entry key="app/src/main/res/layout/activity_image_select.xml" value="0.22" />
@@ -72,6 +76,8 @@
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
         <entry key="app/src/main/res/layout/change_avatar_popup.xml" value="0.21" />
         <entry key="app/src/main/res/layout/change_info_popup.xml" value="0.10520833333333333" />
+        <entry key="app/src/main/res/layout/chat_item_left.xml" value="0.15" />
+        <entry key="app/src/main/res/layout/chat_item_right.xml" value="0.17" />
         <entry key="app/src/main/res/layout/chat_toolbar.xml" value="0.18" />
         <entry key="app/src/main/res/layout/contact_row.xml" value="0.16" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.16" />
@@ -85,6 +91,10 @@
         <entry key="app/src/main/res/layout/friend_row.xml" value="0.15" />
         <entry key="app/src/main/res/layout/invitation_received.xml" value="0.12" />
         <entry key="app/src/main/res/layout/invitation_sent.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/line_item_left.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/line_item_right.xml" value="0.12203947368421053" />
+        <entry key="app/src/main/res/layout/message_item.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/message_item_left.xml" value="0.12203947368421053" />
         <entry key="app/src/main/res/layout/popup_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/show_login_method_dialog.xml" value="0.175" />
       </map>

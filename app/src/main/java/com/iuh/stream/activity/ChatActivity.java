@@ -2,6 +2,8 @@ package com.iuh.stream.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -16,13 +18,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.FriendsAdapter;
+import com.iuh.stream.adapter.PersonalMessageAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.User;
+import com.iuh.stream.models.chat.Message;
+import com.iuh.stream.models.chat.PersonalChat;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
@@ -30,7 +36,7 @@ import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiPopup;
 
 
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +57,14 @@ public class ChatActivity extends AppCompatActivity {
     private TextView nameTv, activeTv;
     private ImageView onlineIv, offlineIv;
     private EmojiPopup emojiPopup;
+    private FirebaseAuth mAuth;
+
+
+    private List<Message> messageList;
+    private PersonalMessageAdapter personalMessageAdapter;
+    private RecyclerView recyclerView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +165,9 @@ public class ChatActivity extends AppCompatActivity {
         offlineIv = findViewById(R.id.toolbar_offline_iv);
         activeTv = findViewById(R.id.toolbar_active_tv);
 
+
+
+
         // emoji
         emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
                 .build(messageEt);
@@ -159,7 +176,60 @@ public class ChatActivity extends AppCompatActivity {
         // set info
         updateStatusUser(user.get_id(), DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
         Picasso.get().load(user.getImageURL()).into(avatarIv);
-        nameTv.setText(user.getLastName());
+        nameTv.setText(user.getLastName());mAuth  = FirebaseAuth.getInstance();
+        messageList =  new ArrayList<>();
+
+        recyclerView = findViewById(R.id.chat_rcv);
+        personalMessageAdapter = new PersonalMessageAdapter(this, mAuth.getCurrentUser().getUid(), user.getImageURL());
+        personalMessageAdapter.setData(messageList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setAdapter(personalMessageAdapter);
+
+        Log.e("TAG", "addControls: " + DataLocalManager.getStringValue(Constants.ACCESS_TOKEN) );
+
+
+
+
+        RetrofitService.getInstance.getPersonalChatById("618f1f8e1b0cb62c9053d3a2", DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                .enqueue(new Callback<PersonalChat>() {
+                    @Override
+                    public void onResponse(Call<PersonalChat> call, Response<PersonalChat> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            RetrofitService.getInstance.getPersonalChatById("618f1f8e1b0cb62c9053d3a2", DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                                    .enqueue(new Callback<PersonalChat>() {
+                                        @Override
+                                        public void onResponse(Call<PersonalChat> call, Response<PersonalChat> response) {
+                                            PersonalChat personalChat = response.body();
+                                            messageList = personalChat.getMessages();
+                                            personalMessageAdapter.setData(messageList);
+                                            recyclerView.setAdapter(personalMessageAdapter);
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<PersonalChat> call, Throwable t) {
+
+                                        }
+                                    });
+                        }
+                        else if(response.code() == 200){
+                            PersonalChat personalChat = response.body();
+                            messageList = personalChat.getMessages();
+                            personalMessageAdapter.setData(messageList);
+                            recyclerView.setAdapter(personalMessageAdapter);
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<PersonalChat> call, Throwable t) {
+
+                    }
+                });
 
         SocketClient.getInstance().on("offline user", new Emitter.Listener() {
             @Override

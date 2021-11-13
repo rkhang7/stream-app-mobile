@@ -114,9 +114,10 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:padding="8dp"
         android:id="@+id/chat_rcv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@id/inputLayout"
         android:layout_below="@id/toolbar"
         android:layout_marginBottom="8dp"

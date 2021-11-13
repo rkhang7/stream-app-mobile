@@ -1,11 +1,14 @@
 package com.iuh.stream.api;
 
+import com.iuh.stream.models.chat.PersonalChat;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.Constants;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -70,5 +73,6 @@ public interface RetrofitService {
    Call<Void> acceptFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
 
 
-
+   @GET("/chats/{id}")
+    Call<PersonalChat> getPersonalChatById(@Path("id") String id, @Header("Authorization") String accessToken);
 }
