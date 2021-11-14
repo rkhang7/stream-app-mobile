@@ -18,6 +18,7 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -90,7 +91,8 @@ public class InvitationSentAdapter extends RecyclerView.Adapter<InvitationSentAd
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {

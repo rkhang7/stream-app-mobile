@@ -7,4 +7,24 @@ public class Constants {
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String PASSWORD = "password";
     public static final String TAG = "STREAM_APP";
+
+    // gửi lời mời kết bạn
+    public static final String ADD_FRIEND_REQUEST = "add-friend";
+    public static final String ADD_FRIEND_RESPONSE = "add-friend-res";
+
+    // đồng ý kết bạn
+    public static final String ACCEPT_FRIEND_REQUEST = "accept-friend";
+    public static final String ACCEPT_FRIEND_RESPONSE = "accept-friend-res";
+
+    // xóa bạn
+    public static final String CANCEL_FRIEND_REQUEST = "cancel-friend";
+    public static final String CANCEL_FRIEND_RESPONSE = "cancel-friend-res";
+
+    // hủy lời mời kết bạn khi  ta gửi cho mình
+    public static final String CANCEL_FRIEND_REQUEST_REQUEST = "cancel-friend-req";
+    public static final String CANCEL_FRIEND_REQUEST_RESPONSE = "cancel-friend-req-res";
+
+    // hủy lời mời kết bạn khi mình gửi cho người ta
+    public static final String CANCEL_FRIEND_INV_REQUEST = "cancel-friend-inv";
+    public static final String CANCEL_FRIEND_INV_RESPONSE = "cancel-friend-inv-res";
 }

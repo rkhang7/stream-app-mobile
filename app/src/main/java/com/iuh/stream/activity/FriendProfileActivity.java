@@ -44,8 +44,7 @@ import retrofit2.Response;
 public class FriendProfileActivity extends AppCompatActivity {
     private User user, currentUser;
     private Button friendRequestBtn, cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn;
-    private static final String EVENT_REQUEST = "add-friend";
-    private static final String EVENT_RESPONSE = "add-friend-res";
+
 
     // firebase;
     private FirebaseAuth mAuth;
@@ -61,18 +60,10 @@ public class FriendProfileActivity extends AppCompatActivity {
     private void addEvents() {
         friendRequestBtn.setOnClickListener(v -> {
             // send event
-            String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             String receiverId = user.get_id();
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("senderID", senderId);
-                jsonObject.put("receiverID", receiverId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            SocketClient.getInstance().emit(EVENT_REQUEST, jsonObject);
-            friendRequestBtn.setVisibility(View.INVISIBLE);
-            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
+            String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+            addFriendRequest(receiverId, accessToken);
+
         });
 
         cancelFriendRequestBtn.setOnClickListener(v -> {
@@ -98,6 +89,32 @@ public class FriendProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void addFriendRequest(String receiverId, String accessToken) {
+        RetrofitService.getInstance.addFriendRequest(receiverId, accessToken)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            addFriendRequest(receiverId, accessToken);
+                        }
+                        else if(response.code() == 500){
+                            CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+                        }
+                        else if(response.code() == 200){
+                            SocketClient.getInstance().emit(Constants.ADD_FRIEND_REQUEST, receiverId);
+                            friendRequestBtn.setVisibility(View.INVISIBLE);
+                            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+                    }
+                });
+    }
+
     private void acceptFriend(String receiverId, String accessToken) {
         RetrofitService.getInstance.acceptFriendRequest(receiverId, accessToken)
                 .enqueue(new Callback<Void>() {
@@ -110,7 +127,8 @@ public class FriendProfileActivity extends AppCompatActivity {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, "Không tìm thấy người dùng");
                         } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
-                        } else {
+                        } else if(response.code() == 200){
+                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
                             friendRequestBtn.setVisibility(View.INVISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                             deleteFriendBtn.setVisibility(View.VISIBLE);
@@ -139,6 +157,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST, receiverId);
                             FriendProfileActivity.this.finish();
                         } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, "Đã xảy ra lỗi");
@@ -160,7 +179,8 @@ public class FriendProfileActivity extends AppCompatActivity {
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             friendRequestBtn.setVisibility(View.VISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                         } else if (response.code() == 500) {
@@ -224,23 +244,6 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         // init socket
 
-        SocketClient.getInstance().on(EVENT_RESPONSE, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                FriendProfileActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean result = (boolean) args[0];
-//                        if (!result) {
-//                            CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
-//                        } else {
-//                            friendRequestBtn.setVisibility(View.INVISIBLE);
-//                            cancelFriendRequestBtn.setVisibility(View.VISIBLE);
-//                        }
-                    }
-                });
-            }
-        });
 
 
         updateStatusFriendRequest();

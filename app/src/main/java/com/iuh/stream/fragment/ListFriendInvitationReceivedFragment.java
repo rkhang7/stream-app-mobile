@@ -93,7 +93,6 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                         else{
                             user = response.body();
                             listInvitationReceivedUser.add(user);
-
                         }
                         invitationReceivedAdapter.setData(listInvitationReceivedUser);
                         recyclerView.setAdapter(invitationReceivedAdapter);

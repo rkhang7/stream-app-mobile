@@ -18,6 +18,7 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -108,7 +109,8 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                         else if(response.code() == 500){
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
-                        else {
+                        else if(response.code() == 200){
+                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         }
@@ -126,7 +128,8 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {

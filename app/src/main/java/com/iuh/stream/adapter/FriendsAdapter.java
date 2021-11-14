@@ -215,7 +215,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {

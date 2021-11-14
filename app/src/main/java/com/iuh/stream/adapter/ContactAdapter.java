@@ -145,21 +145,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             });
 
             addFriendBtn.setOnClickListener(v -> {
-                // send event
-                String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 String receiverId = contactList.get(getAdapterPosition()).getId();
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("senderID", senderId);
-                    jsonObject.put("receiverID", receiverId);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                //
-                SocketClient.getInstance().emit(EVENT_REQUEST, jsonObject);
-                addFriendBtn.setVisibility(View.INVISIBLE);
-                cancelFriend.setVisibility(View.VISIBLE);
+                addFriendRequest(receiverId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
             });
 
             cancelFriend.setOnClickListener(v -> {
@@ -193,7 +180,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                         else if(response.code() == 500){
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
-                        else {
+                        else if(response.code() == 200){
+                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
                             addFriendBtn.setVisibility(View.INVISIBLE);
                             cancelFriend.setVisibility(View.INVISIBLE);
                             madeFriendTv.setVisibility(View.VISIBLE);
@@ -213,7 +201,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 .enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             addFriendBtn.setVisibility(View.VISIBLE);
                             cancelFriend.setVisibility(View.INVISIBLE);
                         } else if (response.code() == 500) {
@@ -261,6 +250,32 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                     @Override
                     public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
+    }
+
+    private void addFriendRequest(String receiverId, String accessToken) {
+        RetrofitService.getInstance.addFriendRequest(receiverId, accessToken)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            addFriendRequest(receiverId, accessToken);
+                        }
+                        else if(response.code() == 500){
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                        }
+                        else if(response.code() == 200){
+                            SocketClient.getInstance().emit(Constants.ADD_FRIEND_REQUEST, receiverId);
+                            addFriendBtn.setVisibility(View.INVISIBLE);
+                            cancelFriend.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                     }
                 });
     }

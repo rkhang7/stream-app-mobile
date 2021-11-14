@@ -52,7 +52,7 @@ public interface RetrofitService {
 
     @DELETE("users/me")
     Call<Void> deleteMe(@Header("Authorization") String accessToken);
-    
+
     @POST("auth/token")
     @FormUrlEncoded
     Call<TokenResponse> refreshToken(@Field("token") String refreshToken);
@@ -64,15 +64,19 @@ public interface RetrofitService {
     @FormUrlEncoded
     Call<UpdateUserResponse> updateAvatar(@Field("image") String imageBase64, @Header("Authorization") String accessToken);
 
-   @DELETE("/friends")
-   Call<Void> deleteUserIDByOption(@Query("senderID") String senderID, @Query("receiverID") String
-           receiverID, @Query("option") String option, @Header("Authorization") String accessToken);
+    @DELETE("/friends")
+    Call<Void> deleteUserIDByOption(@Query("senderID") String senderID, @Query("receiverID") String
+            receiverID, @Query("option") String option, @Header("Authorization") String accessToken);
 
-   @POST("/friends/accept")
-   @FormUrlEncoded
-   Call<Void> acceptFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
+    @POST("/friends/accept")
+    @FormUrlEncoded
+    Call<Void> acceptFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
+
+    @POST("/friends/addFriend")
+    @FormUrlEncoded
+    Call<Void> addFriendRequest(@Field("receiverID") String receiverID, @Header("Authorization") String accessToken);
 
 
-   @GET("/chats/{id}")
+    @GET("/chats/{id}")
     Call<PersonalChat> getPersonalChatById(@Path("id") String id, @Header("Authorization") String accessToken);
 }

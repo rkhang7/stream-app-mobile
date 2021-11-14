@@ -189,11 +189,6 @@ public class ChatActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(personalMessageAdapter);
 
-        Log.e("TAG", "addControls: " + DataLocalManager.getStringValue(Constants.ACCESS_TOKEN) );
-
-
-
-
         RetrofitService.getInstance.getPersonalChatById("618f1f8e1b0cb62c9053d3a2", DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
                 .enqueue(new Callback<PersonalChat>() {
                     @Override
