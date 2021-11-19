@@ -4,38 +4,18 @@ import com.iuh.stream.models.User;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PersonalChat {
+    private String _id;
     private List<User> users;
+    private int unreadMessagesCount;
     private List<Message> messages;
-    public PersonalChat() {
-    }
-
-    public PersonalChat(List<User> users, List<Message> messages) {
-        this.users = users;
-        this.messages = messages;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    @Override
-    public String toString() {
-        return "PersonalChat{" +
-                "users=" + users +
-                ", messages=" + messages +
-                '}';
-    }
 }

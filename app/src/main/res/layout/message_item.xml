@@ -9,11 +9,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/message_rcv"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/last_time_tv"
-        android:text="8 giờ"
-        android:layout_marginStart="66dp"/>
 
 </LinearLayout>

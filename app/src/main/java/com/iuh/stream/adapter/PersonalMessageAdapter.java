@@ -69,7 +69,10 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
 
     @Override
     public int getItemCount() {
-        return messageList.size();
+        if(messageList != null){
+            return messageList.size();
+        }
+        return 0;
     }
 
     public class PersonalMessageAdapterViewHolder extends RecyclerView.ViewHolder {

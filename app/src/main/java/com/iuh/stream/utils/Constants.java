@@ -7,6 +7,7 @@ public class Constants {
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String PASSWORD = "password";
     public static final String TAG = "STREAM_APP";
+    public static final String TYPE_TEXT = "text";
 
     // gửi lời mời kết bạn
     public static final String ADD_FRIEND_REQUEST = "add-friend";

@@ -65,4 +65,7 @@ dependencies {
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.2.7'
 
     implementation "com.vanniktech:emoji-twitter:0.8.0"
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 }

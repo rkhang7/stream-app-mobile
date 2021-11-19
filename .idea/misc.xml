@@ -91,7 +91,7 @@
         <entry key="app/src/main/res/layout/friend_row.xml" value="0.15" />
         <entry key="app/src/main/res/layout/invitation_received.xml" value="0.12" />
         <entry key="app/src/main/res/layout/invitation_sent.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/line_item_left.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/line_item_left.xml" value="0.33" />
         <entry key="app/src/main/res/layout/line_item_right.xml" value="0.12203947368421053" />
         <entry key="app/src/main/res/layout/message_item.xml" value="0.18" />
         <entry key="app/src/main/res/layout/message_item_left.xml" value="0.12203947368421053" />

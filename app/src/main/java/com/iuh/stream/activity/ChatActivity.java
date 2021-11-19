@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,7 +29,10 @@ import com.iuh.stream.adapter.FriendsAdapter;
 import com.iuh.stream.adapter.PersonalMessageAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
+import com.iuh.stream.interfaces.ChatIdListener;
 import com.iuh.stream.models.User;
+import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
 import com.iuh.stream.models.chat.PersonalChat;
 import com.iuh.stream.utils.Constants;
@@ -36,6 +42,15 @@ import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiPopup;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +73,13 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView onlineIv, offlineIv;
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
+    private String chatId;
+    private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
+    private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
+    private static final String PRIVATE_MESSAGE = "private-message";
+
+    private static final int LEFT_ITEM = 1;
+    private static final int RIGHT_ITEM = 2;
 
 
     private List<Message> messageList;
@@ -120,6 +142,37 @@ public class ChatActivity extends AppCompatActivity {
                 emojiPopup.toggle();
             }
         });
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String content = messageEt.getText().toString();
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("content", content);
+                    jsonObject.put("type", Constants.TYPE_TEXT);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String senderId = mAuth.getCurrentUser().getUid();
+                SocketClient.getInstance().emit(PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+
+                // reset message
+                messageEt.setText("");
+
+                // close keyboard
+                closeKeyBoard();
+            }
+        });
+    }
+
+    private void closeKeyBoard() {
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     private void openImagePicker() {
@@ -167,7 +220,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-
         // emoji
         emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
                 .build(messageEt);
@@ -189,42 +241,8 @@ public class ChatActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(personalMessageAdapter);
 
-        RetrofitService.getInstance.getPersonalChatById("618f1f8e1b0cb62c9053d3a2", DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                .enqueue(new Callback<PersonalChat>() {
-                    @Override
-                    public void onResponse(Call<PersonalChat> call, Response<PersonalChat> response) {
-                        if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                            RetrofitService.getInstance.getPersonalChatById("618f1f8e1b0cb62c9053d3a2", DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
-                                    .enqueue(new Callback<PersonalChat>() {
-                                        @Override
-                                        public void onResponse(Call<PersonalChat> call, Response<PersonalChat> response) {
-                                            PersonalChat personalChat = response.body();
-                                            messageList = personalChat.getMessages();
-                                            personalMessageAdapter.setData(messageList);
-                                            recyclerView.setAdapter(personalMessageAdapter);
-                                        }
 
-                                        @Override
-                                        public void onFailure(Call<PersonalChat> call, Throwable t) {
-
-                                        }
-                                    });
-                        }
-                        else if(response.code() == 200){
-                            PersonalChat personalChat = response.body();
-                            messageList = personalChat.getMessages();
-                            personalMessageAdapter.setData(messageList);
-                            recyclerView.setAdapter(personalMessageAdapter);
-                        }
-                    }
-
-
-                    @Override
-                    public void onFailure(Call<PersonalChat> call, Throwable t) {
-
-                    }
-                });
+        getChatId();
 
         SocketClient.getInstance().on("offline user", new Emitter.Listener() {
             @Override
@@ -249,6 +267,157 @@ public class ChatActivity extends AppCompatActivity {
                 });
             }
         });
+
+        SocketClient.getInstance().on("message-sent", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+               runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+//                        JSONObject jsonObject = (JSONObject) args[0];
+//
+//                        // get line
+//                       try {
+//                           JSONObject lineJsonObject = jsonObject.getJSONObject("line");
+//                           String content = lineJsonObject.getString("content");
+//                           String type = lineJsonObject.getString("type");
+//
+//                           Line line = null;
+//                           String stringDate = lineJsonObject.getString("createdAt");
+//                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                               long l = Instant.parse(stringDate)
+//                                       .toEpochMilli();
+//                               Date date = new Date(l);
+//                               line = Line.builder().content(content).createdAt(date).type(type).build();
+//
+//
+//                           }
+//
+//                           // get newMessageId;
+//                           String newMessageId = jsonObject.getString("newMessageId");
+//                           String sender = mAuth.getCurrentUser().getUid();
+//                           List<Line> lineList = new ArrayList<>();
+//                           lineList.add(line);
+//
+//                           Message message = new Message(lineList, sender, newMessageId);
+//                           messageList.add(message);
+//                           personalMessageAdapter.setData(messageList);
+//                           recyclerView.setAdapter(personalMessageAdapter);
+//
+//                       } catch (Exception e) {
+//                           e.printStackTrace();
+//                       }
+                       loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), RIGHT_ITEM);
+
+
+                   }
+               });
+            }
+        });
+
+        SocketClient.getInstance().on(PRIVATE_MESSAGE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), LEFT_ITEM);
+//                       String chatId = (String) args[0];
+//                       String currentUserId = (String) args[1];
+//                       String newMessageId = (String) args[2];
+//
+//                        // get line
+//                        try {
+//                            JSONObject lineObject = (JSONObject) args[3];
+//                            String content = lineObject.getString("content");
+//                            String type = lineObject.getString("type");
+//
+//                            Line line = null;
+//                            String stringDate = lineObject.getString("createdAt");
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                                long l = Instant.parse(stringDate)
+//                                        .toEpochMilli();
+//                                Date date = new Date(l);
+//                                line = Line.builder().content(content).createdAt(date).type(type).build();
+//
+//                            }
+//                            List<Line> lineList = new ArrayList<>();
+//                            lineList.add(line);
+//                            Message message = new Message(lineList, currentUserId, newMessageId);
+//                            messageList.add(message);
+//                            personalMessageAdapter.setData(messageList);
+//                        }catch (Exception e){
+//                            CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, e.getMessage());
+//                        }
+
+
+                    }
+                });
+            }
+        });
+
+
+    }
+
+    private void getChatId() {
+        String senderId = mAuth.getCurrentUser().getUid();
+        String receiverId = user.get_id();
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("senderId", senderId);
+            obj.put("receiverId", receiverId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        SocketClient.getInstance().emit(CREATE_PERSONAL_CHAT_REQUEST, new String[]{senderId, receiverId});
+
+        SocketClient.getInstance().on(CREATE_PERSONAL_CHAT_RESPONSE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String tempId = (String) args[0];
+                chatId = tempId;
+                loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), RIGHT_ITEM);
+            }
+        });
+    }
+
+    private void loadMessage(String id, String accessToken, int type) {
+        RetrofitService.getInstance.getMessageById(id, accessToken)
+              .enqueue(new Callback<List<Message>>() {
+                  @Override
+                  public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                      if(response.body() == null){
+                          CustomAlert.showToast(ChatActivity.this, CustomAlert.INFO, "Không có tin nhắn");
+                      }
+                      else if(response.code() == 403){
+                          Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                          loadMessage(id, accessToken, type);
+                      }
+                      else if(response.code() == 200){
+                          messageList = response.body();
+
+                          if(type == RIGHT_ITEM){
+                              personalMessageAdapter.setData(messageList);
+                              recyclerView.setAdapter(personalMessageAdapter);
+                          }
+                          else{
+                              personalMessageAdapter.setData(messageList);
+                          }
+
+                      }
+                      else{
+                          CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+                      }
+                  }
+
+                  @Override
+                  public void onFailure(Call<List<Message>> call, Throwable t) {
+                      CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, t.getMessage());
+                  }
+              });
+
     }
 
     private void updateStatusUser(String id, String accessToken) {
