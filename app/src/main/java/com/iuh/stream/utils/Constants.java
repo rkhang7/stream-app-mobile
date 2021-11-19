@@ -28,4 +28,7 @@ public class Constants {
     // hủy lời mời kết bạn khi mình gửi cho người ta
     public static final String CANCEL_FRIEND_INV_REQUEST = "cancel-friend-inv";
     public static final String CANCEL_FRIEND_INV_RESPONSE = "cancel-friend-inv-res";
+
+    public static final String PRIVATE_MESSAGE = "private-message";
+    public static final String MESSAGE_SENT = "message-sent";
 }

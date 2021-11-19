@@ -2,6 +2,7 @@ package com.iuh.stream.api;
 
 import com.iuh.stream.models.chat.Message;
 import com.iuh.stream.models.chat.PersonalChat;
+import com.iuh.stream.models.chatlist.ChatList;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
@@ -83,4 +84,7 @@ public interface RetrofitService {
 
     @GET("/chats/{id}/messages")
     Call<List<Message>> getMessageById(@Path("id") String chatId, @Header("Authorization") String accessToken);
+
+    @GET("/chats")
+    Call<ChatList> getChatList(@Header("Authorization") String accessToken);
 }

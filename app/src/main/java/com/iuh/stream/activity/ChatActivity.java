@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     private String chatId;
     private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
-    private static final String PRIVATE_MESSAGE = "private-message";
+
 
     private static final int LEFT_ITEM = 1;
     private static final int RIGHT_ITEM = 2;
@@ -155,7 +155,7 @@ public class ChatActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String senderId = mAuth.getCurrentUser().getUid();
-                SocketClient.getInstance().emit(PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+                SocketClient.getInstance().emit(Constants.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
 
                 // reset message
                 messageEt.setText("");
@@ -268,7 +268,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        SocketClient.getInstance().on("message-sent", new Emitter.Listener() {
+        SocketClient.getInstance().on(Constants.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                runOnUiThread(new Runnable() {
@@ -315,7 +315,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        SocketClient.getInstance().on(PRIVATE_MESSAGE, new Emitter.Listener() {
+        SocketClient.getInstance().on(Constants.PRIVATE_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
