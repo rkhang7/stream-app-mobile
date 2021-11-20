@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
@@ -47,7 +48,7 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
     private List<String> listFriendId ;
     private List<User> listFriendUser;
     private FriendsAdapter friendsAdapter;
-    private RecyclerView recyclerView;
+    public static ShimmerRecyclerView shimmerRecyclerView;
     private User user;
     private static final int UPDATE = 1;
     private static final int LOAD = 2;
@@ -107,11 +108,13 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         listFriendUser = new ArrayList<>();
         friendsAdapter = new FriendsAdapter(getContext());
         friendsAdapter.setData(listFriendUser);
-        recyclerView = view.findViewById(R.id.personal_contacts_rcv);
-        recyclerView.setAdapter(friendsAdapter);
+        shimmerRecyclerView = view.findViewById(R.id.personal_contacts_rcv);
+        shimmerRecyclerView.setAdapter(friendsAdapter);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(itemDecoration);
+        shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        shimmerRecyclerView.addItemDecoration(itemDecoration);
+        shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
+        shimmerRecyclerView.showShimmerAdapter();
         swipeRefreshLayout.setOnRefreshListener(this);
 
 
@@ -123,8 +126,9 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
             @Override
             public void processFinnish(List<User> friendArrayList) {
                 listFriendUser = Util.sortListFriend(friendArrayList);
+                shimmerRecyclerView.hideShimmerAdapter();
                 friendsAdapter.setData(listFriendUser);
-                recyclerView.setAdapter(friendsAdapter);
+                shimmerRecyclerView.setAdapter(friendsAdapter);
                 if(type == UPDATE){
                     swipeRefreshLayout.setRefreshing(false);
                 }

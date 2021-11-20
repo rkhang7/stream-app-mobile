@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.iuh.stream.R;
@@ -40,7 +41,7 @@ public class PhoneFriendsActivity extends AppCompatActivity {
     // views
     private List<Contact> contactList;
     private ContactAdapter contactAdapter;
-    private RecyclerView recyclerView;
+    private ShimmerRecyclerView shimmerRecyclerView;
     private EditText searchContactEt;
     private TextView notFoundTv;
 
@@ -88,11 +89,11 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         }
 
         if (filterContacts.size() > 0) {
-            recyclerView.setVisibility(View.VISIBLE);
+            shimmerRecyclerView.setVisibility(View.VISIBLE);
             notFoundTv.setVisibility(View.GONE);
             contactAdapter.setData(filterContacts);
         } else {
-            recyclerView.setVisibility(View.GONE);
+            shimmerRecyclerView.setVisibility(View.GONE);
             notFoundTv.setVisibility(View.VISIBLE);
         }
     }
@@ -110,11 +111,13 @@ public class PhoneFriendsActivity extends AppCompatActivity {
         contactList = new ArrayList<>();
         contactAdapter = new ContactAdapter(this);
         contactAdapter.setData(contactList);
-        recyclerView = findViewById(R.id.contact_rv);
+        shimmerRecyclerView = findViewById(R.id.contact_rv);
 
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(contactAdapter);
+        shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
+        shimmerRecyclerView.showShimmerAdapter();
+        shimmerRecyclerView.setAdapter(contactAdapter);
 
         // init views
         searchContactEt = findViewById(R.id.search_contact_et);
@@ -208,10 +211,12 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                                             contact.setId(tempUser.get_id());
                                                             contact.setAvatar(tempUser.getImageURL());
                                                             contactList.add(contact);
+
+                                                            shimmerRecyclerView.hideShimmerAdapter();
                                                         }
                                                     }
                                                     contactAdapter.setData(contactList);
-                                                    recyclerView.setAdapter(contactAdapter);
+                                                    shimmerRecyclerView.setAdapter(contactAdapter);
                                                 }
 
                                                 @Override
@@ -231,10 +236,12 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                                             contact.setId(tempUser.get_id());
                                             contact.setAvatar(tempUser.getImageURL());
                                             contactList.add(contact);
+
+                                            shimmerRecyclerView.hideShimmerAdapter();
                                         }
                                     }
                                     contactAdapter.setData(contactList);
-                                    recyclerView.setAdapter(contactAdapter);
+                                    shimmerRecyclerView.setAdapter(contactAdapter);
                                 }
                             }
 

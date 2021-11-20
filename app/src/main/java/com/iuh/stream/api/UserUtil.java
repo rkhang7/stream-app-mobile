@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.iuh.stream.activity.SearchActivity;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
+import com.iuh.stream.fragment.PersonalContactFragment;
 import com.iuh.stream.models.User;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.Util;
@@ -43,6 +44,7 @@ public class UserUtil {
                             user = response.body();
                             if (user != null) {
                                 listUserId = user.getContacts();
+                                PersonalContactFragment.shimmerRecyclerView.hideShimmerAdapter();
                             }
                             if (listUserId.size() > 0) {
                                 for (String id : listUserId) {

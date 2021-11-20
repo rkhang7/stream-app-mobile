@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddGroupActivity;
@@ -45,7 +46,7 @@ public class ChatFragment extends Fragment {
     private ImageButton addGroupBtn;
     private View view;
     private ChatListAdapter chatListAdapter;
-    private RecyclerView recyclerView;
+    private ShimmerRecyclerView shimmerRecyclerView;
 
     private ChatList chatList;
     private List<PersonalChat> personalChatList;
@@ -79,9 +80,11 @@ public class ChatFragment extends Fragment {
         personalChatList = new ArrayList<>();
         chatListAdapter = new ChatListAdapter(getContext());
         chatListAdapter.setData(personalChatList);
-        recyclerView = view.findViewById(R.id.list_chat_rcv);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(chatListAdapter);
+        shimmerRecyclerView = view.findViewById(R.id.list_chat_rcv);
+        shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        shimmerRecyclerView.setAdapter(chatListAdapter);
+        shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
+        shimmerRecyclerView.showShimmerAdapter();
 
         getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)));
 
@@ -122,9 +125,9 @@ public class ChatFragment extends Fragment {
                         }
                          if(response.code() == 200){
                             chatList = response.body();
-                             Log.e("TAG", "onResponse: " + chatList );
+                            shimmerRecyclerView.hideShimmerAdapter();
                              chatListAdapter.setData(chatList.getPersonalChats());
-                             recyclerView.setAdapter(chatListAdapter);
+                             shimmerRecyclerView.setAdapter(chatListAdapter);
                         }
 
                     }

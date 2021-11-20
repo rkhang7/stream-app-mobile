@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".fragment.ListFriendInvitationSentFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
         android:id="@+id/list_sent_rcv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

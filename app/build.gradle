@@ -68,4 +68,5 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
 }

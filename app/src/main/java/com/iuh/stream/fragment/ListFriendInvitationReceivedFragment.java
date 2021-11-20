@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.InvitationReceivedAdapter;
 import com.iuh.stream.api.RetrofitService;
@@ -32,7 +34,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
     private List<String> listInvitationReceivedId;
     private List<User> listInvitationReceivedUser;
     private InvitationReceivedAdapter invitationReceivedAdapter;
-    private RecyclerView recyclerView;
+    private ShimmerRecyclerView shimmerRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,9 +50,11 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
         listInvitationReceivedUser = new ArrayList<>();
         invitationReceivedAdapter = new InvitationReceivedAdapter(getContext());
         invitationReceivedAdapter.setData(listInvitationReceivedUser);
-        recyclerView = view.findViewById(R.id.list_received_rvc);
-        recyclerView.setAdapter(invitationReceivedAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        shimmerRecyclerView = view.findViewById(R.id.list_received_rvc);
+        shimmerRecyclerView.setAdapter(invitationReceivedAdapter);
+        shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
+        shimmerRecyclerView.showShimmerAdapter();
         getCurrentUser();
     }
 
@@ -67,6 +71,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                             user = response.body();
                             if (user != null) {
                                 listInvitationReceivedId = user.getFriendRequests();
+                                shimmerRecyclerView.hideShimmerAdapter();
                             }
                             for(String id: listInvitationReceivedId){
                                 getListInvitationReceivedUser(id);
@@ -95,7 +100,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                             listInvitationReceivedUser.add(user);
                         }
                         invitationReceivedAdapter.setData(listInvitationReceivedUser);
-                        recyclerView.setAdapter(invitationReceivedAdapter);
+                        shimmerRecyclerView.setAdapter(invitationReceivedAdapter);
 
                     }
 
