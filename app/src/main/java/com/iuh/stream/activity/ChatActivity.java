@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +77,7 @@ public class ChatActivity extends AppCompatActivity {
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
     private String chatId;
+    private LinearLayout nameLayout;
     private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
 
@@ -97,6 +101,20 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
+        avatarIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String hisId = user.get_id();
+                viewInfo(hisId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+            }
+        });
+        nameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String hisId = user.get_id();
+                viewInfo(hisId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+            }
+        });
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -164,6 +182,42 @@ public class ChatActivity extends AppCompatActivity {
                 closeKeyBoard();
             }
         });
+
+
+    }
+
+    private void viewInfo(String id, String accessToken) {
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                .enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            viewInfo(id, accessToken);
+                        }
+                        else{
+                            User user = response.body();
+                            if (user != null) {
+                                if(user.isDeleted()){
+                                    CustomAlert.showToast(ChatActivity.this, CustomAlert.INFO, "Tài khoản đã bị xóa");
+                                }
+                                else{
+                                    Intent intent = new Intent(ChatActivity.this, FriendProfileActivity.class);
+                                    intent.putExtra(AddFriendActivity.USER_KEY, user);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                        CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
     }
 
     private void closeKeyBoard() {
@@ -217,6 +271,7 @@ public class ChatActivity extends AppCompatActivity {
         onlineIv = findViewById(R.id.toolbar_online_iv);
         offlineIv = findViewById(R.id.toolbar_offline_iv);
         activeTv = findViewById(R.id.toolbar_active_tv);
+        nameLayout = findViewById(R.id.name_layout);
 
 
 

@@ -1,17 +1,19 @@
 package com.iuh.stream.activity;
 
 
+import static com.iuh.stream.adapter.FriendsAdapter.USER;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.bumptech.glide.Glide;
@@ -26,8 +28,6 @@ import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 import java.text.SimpleDateFormat;
@@ -35,15 +35,13 @@ import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FriendProfileActivity extends AppCompatActivity {
     private User user, currentUser;
-    private Button friendRequestBtn, cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn;
+    private Button friendRequestBtn, cancelFriendRequestBtn, deleteFriendBtn, acceptFriendBtn, chatBtn;
 
 
     // firebase;
@@ -86,6 +84,15 @@ public class FriendProfileActivity extends AppCompatActivity {
             String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
             String receiverId = user.get_id();
             acceptFriend(receiverId, accessToken);
+        });
+
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                intent.putExtra(USER, user);
+                startActivity(intent);
+            }
         });
     }
 
@@ -238,6 +245,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         cancelFriendRequestBtn = findViewById(R.id.cancel_friend_request_btn);
         deleteFriendBtn = findViewById(R.id.delete_friend_btn);
         acceptFriendBtn = findViewById(R.id.accept_friend_btn);
+        chatBtn = findViewById(R.id.inbox_btn);
 
         // inti firebase
         mAuth = FirebaseAuth.getInstance();
