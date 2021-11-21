@@ -16,7 +16,9 @@ public class Line {
     private Date createdAt;
     private String type;
     private String content;
-    private double state;
+    private boolean recall;
+    private List<String> readedUsers;
+    private boolean received;
     private List<Reaction> reactions;
     private List<String> deletedBy;
 }

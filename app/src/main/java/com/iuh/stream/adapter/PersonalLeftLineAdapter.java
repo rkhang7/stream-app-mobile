@@ -51,18 +51,21 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
         if (line != null) {
             if (line.getType().equals(Constants.TYPE_TEXT)) {
                 holder.contentTv.setText(line.getContent());
-
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);
-                    holder.lastLineTv.setVisibility(View.GONE);
-                }else if (position == lineList.size() - 1) {
+                    holder.lastLineTv.setVisibility(View.VISIBLE);
+                }
+                if (position == lineList.size() - 1 && position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                     holder.lastLineTv.setVisibility(View.VISIBLE);
                     holder.lastLineTv.setText(Util.getTime(line.getCreatedAt()));
-                } else {
+                }
+                if(position != 0){
                     holder.avatarIv.setVisibility(View.INVISIBLE);
-                    holder.lastLineTv.setVisibility(View.GONE);
+                }
+                if(position != lineList.size() - 1){
+                    holder.lastLineTv.setVisibility(View.INVISIBLE);
                 }
             }
 
