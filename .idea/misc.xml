@@ -59,9 +59,10 @@
         <entry key="app/src/main/res/drawable/line_item_left_bg.xml" value="0.13094462540716612" />
         <entry key="app/src/main/res/drawable/line_item_right_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/message_button_bg.xml" value="0.20615384615384616" />
+        <entry key="app/src/main/res/drawable/new_message_bg.xml" value="0.18518518518518517" />
         <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_add_group.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.21" />
+        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.11" />
         <entry key="app/src/main/res/layout/activity_image_crop.xml" value="0.23770491803278687" />
         <entry key="app/src/main/res/layout/activity_image_select.xml" value="0.22" />

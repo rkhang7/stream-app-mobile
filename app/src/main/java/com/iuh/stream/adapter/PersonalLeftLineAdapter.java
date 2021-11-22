@@ -65,7 +65,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                 }
                 if(position != lineList.size() - 1){
-                    holder.lastLineTv.setVisibility(View.INVISIBLE);
+                    holder.lastLineTv.setVisibility(View.GONE);
                 }
             }
 

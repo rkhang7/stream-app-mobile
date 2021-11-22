@@ -77,7 +77,7 @@ public class Util {
             s = hour + ":" + minStr ;
         }
         else if(diffInDays  == 1){
-            s = "Hôm qua lúc " + hour + ":" + minStr ;
+            s = "Hôm qua " + hour + ":" + minStr ;
         }
 
         else if(diffInDays > 1){

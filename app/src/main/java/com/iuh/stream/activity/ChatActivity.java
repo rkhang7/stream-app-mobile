@@ -80,15 +80,21 @@ public class ChatActivity extends AppCompatActivity {
     private LinearLayout nameLayout;
     private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
-
+    private LinearLayoutManager linearLayoutManager;
+    private ImageButton scrollLastPositionBtn;
+    private TextView newMessageTv;
 
     private static final int LEFT_ITEM = 1;
     private static final int RIGHT_ITEM = 2;
 
 
+
     private List<Message> messageList;
     private PersonalMessageAdapter personalMessageAdapter;
     private RecyclerView recyclerView;
+
+    private int visibleThreshold = 2; // trigger just one item before the end
+    private int lastVisibleItem, totalItemCount;
 
 
     @Override
@@ -183,6 +189,20 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        scrollLastPositionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.scrollToPosition(messageList.size() - 1);
+            }
+        });
+
+        newMessageTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.scrollToPosition(messageList.size() - 1);
+            }
+        });
+
 
     }
 
@@ -272,6 +292,8 @@ public class ChatActivity extends AppCompatActivity {
         offlineIv = findViewById(R.id.toolbar_offline_iv);
         activeTv = findViewById(R.id.toolbar_active_tv);
         nameLayout = findViewById(R.id.name_layout);
+        scrollLastPositionBtn = findViewById(R.id.scroll_last_position_btn);
+        newMessageTv = findViewById(R.id.new_message_tv);
 
 
 
@@ -289,12 +311,45 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.chat_rcv);
         personalMessageAdapter = new PersonalMessageAdapter(this, mAuth.getCurrentUser().getUid(), user.getImageURL());
         personalMessageAdapter.setData(messageList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
 
         recyclerView.setLayoutManager(linearLayoutManager);
 
         recyclerView.setAdapter(personalMessageAdapter);
+
+
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                if(dy > 0){
+//                    scrollLastPositionBtn.setVisibility(View.GONE);
+//                }
+//                else{
+//                    scrollLastPositionBtn.setVisibility(View.VISIBLE);
+//                }
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (totalItemCount <= (lastVisibleItem + visibleThreshold) ){
+                    newMessageTv.setVisibility(View.GONE);
+                    scrollLastPositionBtn.setVisibility(View.GONE);
+                }
+                else{
+                    scrollLastPositionBtn.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+
+            }
+        });
+
+
+
+
 
 
         getChatId();
@@ -376,6 +431,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), LEFT_ITEM);
 //                       String chatId = (String) args[0];
 //                       String currentUserId = (String) args[1];
@@ -458,6 +514,10 @@ public class ChatActivity extends AppCompatActivity {
                               recyclerView.setAdapter(personalMessageAdapter);
                           }
                           else{
+                              if(scrollLastPositionBtn.getVisibility() == View.VISIBLE){
+                                  scrollLastPositionBtn.setVisibility(View.GONE);
+                                  newMessageTv.setVisibility(View.VISIBLE);
+                              }
                               personalMessageAdapter.setData(messageList);
                           }
 
