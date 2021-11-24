@@ -1,23 +1,31 @@
 package com.iuh.stream.adapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.ChatActivity;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.PersonalChat;
+import com.iuh.stream.service.FloatingViewService;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -139,7 +147,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                     CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
                     break;
                 case 1:
-                    CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
+                    checkPermission();
                     break;
 
             }
@@ -147,5 +155,28 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
 
         builder.create().show();
+    }
+
+    private void checkPermission() {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Intent intent = new Intent(mContext, FloatingViewService.class);
+                mContext.startService(intent);
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(mContext, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                .check();
     }
 }
