@@ -1,6 +1,5 @@
 package com.iuh.stream.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,47 +10,39 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
-import com.iuh.stream.adapter.FriendsAdapter;
-import com.iuh.stream.api.RetrofitService;
-import com.iuh.stream.api.UserListAsyncResponse;
-import com.iuh.stream.api.UserUtil;
-import com.iuh.stream.datalocal.DataLocalManager;
-import com.iuh.stream.dialog.CustomAlert;
+import com.iuh.stream.adapter.ChatListAdapter;
+import com.iuh.stream.api.PersonalChatListCallBack;
+import com.iuh.stream.interfaces.PersonalChatListAsyncResponse;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
-import com.iuh.stream.utils.Util;
+import com.iuh.stream.models.chatlist.PersonalChat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class SearchActivity extends AppCompatActivity {
+public class SearchConversationActivity extends AppCompatActivity {
     private ImageButton backBtn;
     private EditText searchEt;
-    private List<User> listFriend;
-    private List<String> listFriendId;
-    private FriendsAdapter friendsAdapter;
     private RecyclerView recyclerView;
-    private User user;
     private TextView notFoundTv;
     private ProgressBar progressBar;
-
+    private List<PersonalChat> personalChatList;
+    private ChatListAdapter chatListAdapter;
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search_conversation);
 
         addControls();
-
         addEvents();
     }
 
@@ -62,6 +53,7 @@ public class SearchActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -87,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
-                    listFriend.clear();
+                    personalChatList.clear();
                     filterFriends(editable.toString());
                 }
 
@@ -96,35 +88,28 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void filterFriends(String key) {
-        new UserUtil().getListFriend(new UserListAsyncResponse() {
+        new PersonalChatListCallBack().getPersonalChatList(new PersonalChatListAsyncResponse() {
             @Override
-            public void processFinnish(List<User> friendArrayList) {
-                List<User> filterFriends = new ArrayList<>();
-                for (User user : friendArrayList) {
-                    if (user.getEmail() != null) {
-                        if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
-                                || user.getLastName().toLowerCase().contains(key.toLowerCase())
-                                || user.getEmail().equals(key.toLowerCase()))
-                        {
-                            filterFriends.add(user);
-                        }
-                    }
-                    if (user.getPhoneNumber() != null) {
-                        if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
-                                || user.getLastName().toLowerCase().contains(key.toLowerCase())
-                                || user.getPhoneNumber().equals(key.toLowerCase())
-                        ) {
-                            filterFriends.add(user);
+            public void processFinnish(List<PersonalChat> personalChatList) {
+                List<PersonalChat> filterPersonalChat = new ArrayList<>();
+                for(PersonalChat personalChat: personalChatList){
+                    List<User> userList = personalChat.getUsers();
+                    for(User user: userList){
+                        if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
+                            if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
+                                    || user.getLastName().toLowerCase().contains(key.toLowerCase()))
+                            {
+                                filterPersonalChat.add(personalChat);
+                            }
                         }
                     }
                 }
-                if (filterFriends.size() > 0) {
+
+                if (filterPersonalChat.size() > 0) {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     notFoundTv.setVisibility(View.GONE);
-                    friendsAdapter.setData(filterFriends);
-
-
+                    chatListAdapter.setData(filterPersonalChat);
                 } else {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
@@ -134,19 +119,19 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-
     private void addControls() {
+        mAuth = FirebaseAuth.getInstance();
         backBtn = findViewById(R.id.back_btn);
-        searchEt = findViewById(R.id.search_et);
-        notFoundTv = findViewById(R.id.not_found_tv);
-        listFriend = new ArrayList<>();
-        progressBar = findViewById(R.id.search_friend_pb);
-        recyclerView = findViewById(R.id.search_rcv);
-        friendsAdapter = new FriendsAdapter(this);
-        friendsAdapter.setData(listFriend);
-        recyclerView.setAdapter(friendsAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        searchEt.requestFocus();
-    }
+        searchEt = findViewById(R.id.search_conversation_et);
 
+        recyclerView = findViewById(R.id.search_conversation_rcv);
+        notFoundTv = findViewById(R.id.not_found_tv);
+        progressBar = findViewById(R.id.search_conversation_pb);
+
+        personalChatList = new ArrayList<>();
+        chatListAdapter = new ChatListAdapter(this);
+        chatListAdapter.setData(personalChatList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(chatListAdapter);
+    }
 }

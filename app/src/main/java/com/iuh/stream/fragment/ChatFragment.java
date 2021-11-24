@@ -22,6 +22,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddGroupActivity;
 import com.iuh.stream.activity.SearchActivity;
+import com.iuh.stream.activity.SearchConversationActivity;
 import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
@@ -70,11 +71,24 @@ public class ChatFragment extends Fragment {
                 startActivity(new Intent(getContext(), AddGroupActivity.class));
             }
         });
+
+        searchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), SearchConversationActivity.class));
+            }
+        });
+        searchTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), SearchConversationActivity.class));
+            }
+        });
     }
 
     private void addControls() {
-        searchLayout = view.findViewById(R.id.search_layout);
-        searchTv = view.findViewById(R.id.search_tv);
+        searchLayout = view.findViewById(R.id.search_conversation_layout);
+        searchTv = view.findViewById(R.id.search_conversation_tv);
         addGroupBtn = view.findViewById(R.id.add_group_btn);
 
         personalChatList = new ArrayList<>();

@@ -18,7 +18,7 @@
         app:flexWrap="wrap">
 
         <LinearLayout
-            android:id="@+id/search_layout"
+            android:id="@+id/search_conversation_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:flexDirection="row"
@@ -35,7 +35,7 @@
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <TextView
-                android:id="@+id/search_tv"
+                android:id="@+id/search_conversation_tv"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

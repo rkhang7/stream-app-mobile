@@ -6,10 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -33,11 +31,8 @@ import com.iuh.stream.adapter.PersonalMessageAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
-import com.iuh.stream.interfaces.ChatIdListener;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
-import com.iuh.stream.models.chat.PersonalChat;
 import com.iuh.stream.utils.Constants;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
@@ -45,15 +40,9 @@ import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiPopup;
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

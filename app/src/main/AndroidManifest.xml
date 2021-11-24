@@ -18,9 +18,13 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activity.AddGroupActivity"
+            android:name=".activity.SearchConversationActivity"
             android:exported="true"
             android:theme="@style/Theme.NoActionBar"/>
+        <activity
+            android:name=".activity.AddGroupActivity"
+            android:exported="true"
+            android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.SearchActivity"
             android:exported="true"

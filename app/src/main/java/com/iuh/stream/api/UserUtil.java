@@ -44,7 +44,10 @@ public class UserUtil {
                             user = response.body();
                             if (user != null) {
                                 listUserId = user.getContacts();
-                                PersonalContactFragment.shimmerRecyclerView.hideShimmerAdapter();
+                                if(PersonalContactFragment.shimmerRecyclerView != null){
+                                    PersonalContactFragment.shimmerRecyclerView.hideShimmerAdapter();
+                                }
+
                             }
                             if (listUserId.size() > 0) {
                                 for (String id : listUserId) {
