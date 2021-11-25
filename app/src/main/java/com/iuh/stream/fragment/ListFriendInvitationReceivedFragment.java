@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 
 import java.util.ArrayList;
@@ -59,12 +59,12 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
     }
 
     private void getCurrentUser() {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(Constants.REFRESH_TOKEN);
+                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
                             getCurrentUser();
                         }
                         else{
@@ -87,12 +87,12 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
     }
 
     private void getListInvitationReceivedUser(String id) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getListInvitationReceivedUser(id);
                         }
                         else{

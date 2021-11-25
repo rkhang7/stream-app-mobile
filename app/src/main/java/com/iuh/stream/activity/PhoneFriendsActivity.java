@@ -3,7 +3,6 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,7 +24,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.Contact;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 
 
@@ -190,13 +189,13 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                         // init contact model
 
                         // get user by phone number
-                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
+                        RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                                 if (response.code() == 403) {
-                                    String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
+                                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
                                     Util.refreshToken(REFRESH_TOKEN);
-                                    RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                                    RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                                             .enqueue(new Callback<User>() {
                                                 @Override
                                                 public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {

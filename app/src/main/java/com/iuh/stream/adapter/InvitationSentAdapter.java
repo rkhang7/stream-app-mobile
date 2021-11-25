@@ -17,7 +17,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -78,7 +78,7 @@ public class InvitationSentAdapter extends RecyclerView.Adapter<InvitationSentAd
                 String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 String receiverId = userList.get(getAdapterPosition()).get_id();
                 final String OPTION = "friendInvitation";
-                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 cancelFriendInvitation(senderId, receiverId, OPTION, accessToken, getAdapterPosition());
             });
         }
@@ -92,13 +92,13 @@ public class InvitationSentAdapter extends RecyclerView.Adapter<InvitationSentAd
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 200) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, "Đã xảy ra lỗi");
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             cancelFriendInvitation(senderId, receiverId, option, accessToken, position);
                         }
                     }

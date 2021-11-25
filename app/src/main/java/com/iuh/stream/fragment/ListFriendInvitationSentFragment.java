@@ -4,10 +4,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 
 import java.util.ArrayList;
@@ -60,12 +58,12 @@ public class ListFriendInvitationSentFragment extends Fragment {
     }
 
     private void getCurrentUser() {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(Constants.REFRESH_TOKEN);
+                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
                             getCurrentUser();
                         }
                         else if(response.code() == 200){
@@ -86,12 +84,12 @@ public class ListFriendInvitationSentFragment extends Fragment {
     }
 
     private void getListInvitationSentUser(String id) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getListInvitationSentUser(id);
                         }
                         else if(response.code() == 404){

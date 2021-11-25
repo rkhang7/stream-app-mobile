@@ -3,11 +3,8 @@ package com.iuh.stream.api;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.interfaces.PersonalChatListAsyncResponse;
 import com.iuh.stream.models.chatlist.ChatList;
-import com.iuh.stream.models.chatlist.PersonalChat;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,7 +13,7 @@ import retrofit2.Response;
 public class PersonalChatListCallBack {
     private ChatList chatList;
     public void getPersonalChatList(PersonalChatListAsyncResponse callback){
-        getChatList(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), callback);
+        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), callback);
     }
 
     private void getChatList(String accessToken, PersonalChatListAsyncResponse callback) {
@@ -25,8 +22,8 @@ public class PersonalChatListCallBack {
                     @Override
                     public void onResponse(Call<ChatList> call, Response<ChatList> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                            getChatList(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), callback);
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), callback);
                         }
                         if(response.code() == 200){
                             chatList = response.body();

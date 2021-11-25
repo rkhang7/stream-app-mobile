@@ -33,7 +33,7 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chat.Message;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -100,14 +100,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String hisId = user.get_id();
-                viewInfo(hisId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                viewInfo(hisId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
             }
         });
         nameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String hisId = user.get_id();
-                viewInfo(hisId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                viewInfo(hisId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
             }
         });
         messageEt.addTextChangedListener(new TextWatcher() {
@@ -163,12 +163,12 @@ public class ChatActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("content", content);
-                    jsonObject.put("type", Constants.TYPE_TEXT);
+                    jsonObject.put("type", MyConstant.TYPE_TEXT);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 String senderId = mAuth.getCurrentUser().getUid();
-                SocketClient.getInstance().emit(Constants.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
 
                 // reset message
                 messageEt.setText("");
@@ -196,12 +196,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void viewInfo(String id, String accessToken) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             viewInfo(id, accessToken);
                         }
                         else{
@@ -290,9 +290,9 @@ public class ChatActivity extends AppCompatActivity {
         emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
                 .build(messageEt);
 
-        user = (User) getIntent().getSerializableExtra(FriendsAdapter.USER);
+        user = (User) getIntent().getSerializableExtra(MyConstant.USER_KEY);
         // set info
-        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
         Picasso.get().load(user.getImageURL()).into(avatarIv);
         nameTv.setText(user.getLastName());mAuth  = FirebaseAuth.getInstance();
         messageList =  new ArrayList<>();
@@ -349,7 +349,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
@@ -361,13 +361,13 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
         });
 
-        SocketClient.getInstance().on(Constants.MESSAGE_SENT, new Emitter.Listener() {
+        SocketClient.getInstance().on(MyConstant.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                runOnUiThread(new Runnable() {
@@ -406,7 +406,7 @@ public class ChatActivity extends AppCompatActivity {
 //                       } catch (Exception e) {
 //                           e.printStackTrace();
 //                       }
-                       loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), RIGHT_ITEM);
+                       loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
 
 
                    }
@@ -414,14 +414,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        SocketClient.getInstance().on(Constants.PRIVATE_MESSAGE, new Emitter.Listener() {
+        SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), LEFT_ITEM);
+                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LEFT_ITEM);
 //                       String chatId = (String) args[0];
 //                       String currentUserId = (String) args[1];
 //                       String newMessageId = (String) args[2];
@@ -478,7 +478,7 @@ public class ChatActivity extends AppCompatActivity {
             public void call(Object... args) {
                 String tempId = (String) args[0];
                 chatId = tempId;
-                loadMessage(chatId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN), RIGHT_ITEM);
+                loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
             }
         });
     }
@@ -492,7 +492,7 @@ public class ChatActivity extends AppCompatActivity {
                           CustomAlert.showToast(ChatActivity.this, CustomAlert.INFO, "Không có tin nhắn");
                       }
                       else if(response.code() == 403){
-                          Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                          Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                           loadMessage(id, accessToken, type);
                       }
                       else if(response.code() == 200){
@@ -525,12 +525,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void updateStatusUser(String id, String accessToken) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             updateStatusUser(id, accessToken);
                         }
                         else{

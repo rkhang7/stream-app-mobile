@@ -15,7 +15,7 @@ public class SocketClient {
         IO.Options mOptions = new IO.Options();
         mOptions.query = "uid=" + mAuth.getCurrentUser().getUid();
         try {
-            mSocket = IO.socket(Constants.BASE_URL, mOptions);
+            mSocket = IO.socket(MyConstant.BASE_URL, mOptions);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

@@ -39,7 +39,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -120,7 +120,7 @@ public class ProfileFragment extends Fragment {
             builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                     deleteMe(accessToken);
                 }
             });
@@ -181,7 +181,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void changePassword(String oldPassword, String newPassword, String confirmNewPassword) {
-        if(oldPassword.equals(DataLocalManager.getStringValue(Constants.PASSWORD))){
+        if(oldPassword.equals(DataLocalManager.getStringValue(MyConstant.PASSWORD))){
             oldPasswordLayout.setHelperText("");
             if(newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$")){
                 newPasswordLayout.setHelperText("");
@@ -208,7 +208,7 @@ public class ProfileFragment extends Fragment {
                                                 if(task.isSuccessful()){
                                                     CustomAlert.showToast(getActivity(), CustomAlert.INFO, "Đổi mật khẩu thành công");
                                                     //save password
-                                                    DataLocalManager.putStringValue(Constants.PASSWORD, newPassword);
+                                                    DataLocalManager.putStringValue(MyConstant.PASSWORD, newPassword);
                                                     passwordLayout.setVisibility(View.GONE);
                                                     oldPasswordEt.setText("");
                                                     newPasswordEt.setText("");
@@ -258,7 +258,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                             deleteMe(accessToken);
                         }
                         else if(response.code() == 401){
@@ -322,13 +322,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getUserInfo() {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)).enqueue(new Callback<User>() {
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                     newtonCradleLoading.start();
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
+                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
                     Util.refreshToken(REFRESH_TOKEN);
                     getUserInfo();
                 }

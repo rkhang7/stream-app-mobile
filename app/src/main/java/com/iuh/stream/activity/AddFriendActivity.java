@@ -28,7 +28,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 
 import java.util.List;
@@ -104,14 +104,14 @@ public class AddFriendActivity extends AppCompatActivity {
             if(Patterns.EMAIL_ADDRESS.matcher(keyword).matches()){
                 phoneErrorTv.setVisibility(View.GONE);
                 emailErrorTv.setVisibility(View.GONE);
-                String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String ACCESS_TOKEN = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 findUserByEmail(keyword, ACCESS_TOKEN);
             }
 
             else if(Patterns.PHONE.matcher(keyword).matches()){
                 if(keyword.length() == 10 && keyword.charAt(0) == '0'){
                     phoneErrorTv.setVisibility(View.GONE);
-                    String ACCESS_TOKEN = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                    String ACCESS_TOKEN = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                     findUserByPhoneNumber(keyword, ACCESS_TOKEN);
                 }
                 else{
@@ -133,9 +133,9 @@ public class AddFriendActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(Constants.REFRESH_TOKEN);
+                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
                     Util.refreshToken(REFRESH_TOKEN);
-                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                 }
                 else {
                     User user = response.body();
@@ -172,9 +172,9 @@ public class AddFriendActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                    String REFRESH_TOKEN = DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     Util.refreshToken(REFRESH_TOKEN);
-                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                    findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                 }
                 else {
                     User user = response.body();

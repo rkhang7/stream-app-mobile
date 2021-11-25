@@ -13,21 +13,14 @@ import android.widget.FrameLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.fragment.ChatFragment;
 import com.iuh.stream.fragment.ContactFragment;
 import com.iuh.stream.fragment.ProfileFragment;
 import com.iuh.stream.fragment.SettingFragment;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
-import com.iuh.stream.utils.Util;
-
-import java.net.URISyntaxException;
-
-import io.socket.client.IO;
-import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
     // views
@@ -48,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         contactFragment = new ContactFragment();
         settingFragment = new SettingFragment();
 
-        Log.e("TAG", "onCreate: " + DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+        Log.e("TAG", "onCreate: " + DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, settingFragment)

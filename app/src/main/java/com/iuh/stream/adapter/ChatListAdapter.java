@@ -26,6 +26,7 @@ import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.PersonalChat;
 import com.iuh.stream.service.FloatingViewService;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -109,7 +110,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                         if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
                             Intent intent = new Intent(mContext, ChatActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(FriendsAdapter.USER, user);
+                            intent.putExtra(MyConstant.USER_KEY, user);
                             mContext.startActivity(intent);
                         }
                     }
@@ -147,7 +148,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                     CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tính năng này chưa được phát triển");
                     break;
                 case 1:
-                    checkPermission();
+                    checkPermission(position);
                     break;
 
             }
@@ -157,12 +158,22 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         builder.create().show();
     }
 
-    private void checkPermission() {
+    private void checkPermission(int position) {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                Intent intent = new Intent(mContext, FloatingViewService.class);
-                mContext.startService(intent);
+                PersonalChat personalChat = personalChatList.get(position);
+
+                for(User user: personalChat.getUsers()){
+                    if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
+                        Intent intent = new Intent(mContext, FloatingViewService.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(MyConstant.USER_KEY, user);
+                        mContext.startService(intent);
+                    }
+                }
+
+
             }
 
             @Override

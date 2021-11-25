@@ -1,6 +1,6 @@
 package com.iuh.stream.utils;
 
-public class Constants {
+public class MyConstant {
     public static final String BASE_URL = "http://192.168.100.3:3000/";
 //    public static final String BASE_URL = "http://10.0.2.2:3000/";
     public static final String ACCESS_TOKEN = "accessToken";
@@ -8,6 +8,7 @@ public class Constants {
     public static final String PASSWORD = "password";
     public static final String TAG = "STREAM_APP";
     public static final String TYPE_TEXT = "text";
+    public static final String USER_KEY = "USER";
 
     // gửi lời mời kết bạn
     public static final String ADD_FRIEND_REQUEST = "add-friend";

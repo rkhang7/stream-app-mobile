@@ -22,12 +22,9 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.Contact;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,12 +49,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     private void updateStatusFriendRequest(String id) {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(Constants.REFRESH_TOKEN);
+                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
                             updateStatusFriendRequest(id);
                         }
                         else{
@@ -141,24 +138,24 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
             itemView.setOnClickListener(v -> {
                 String id = contactList.get(getAdapterPosition()).getId();
-                getUserForContact(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                getUserForContact(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
             });
 
             addFriendBtn.setOnClickListener(v -> {
                 String receiverId = contactList.get(getAdapterPosition()).getId();
-                addFriendRequest(receiverId, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                addFriendRequest(receiverId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
             });
 
             cancelFriend.setOnClickListener(v -> {
                 String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 String receiverId = contactList.get(getAdapterPosition()).getId();
                 final String OPTION = "friendInvitation";
-                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 cancelFriendInvitation(senderId, receiverId, OPTION, accessToken);
             });
 
             acceptFriendBtn.setOnClickListener(v -> {
-                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 String receiverId = contactList.get(getAdapterPosition()).getId();
                 acceptFriend(receiverId, accessToken);
             });
@@ -171,7 +168,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             acceptFriend(receiverId, accessToken);
                         }
                         else if(response.code() == 404){
@@ -181,7 +178,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
                         else if(response.code() == 200){
-                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.ACCEPT_FRIEND_REQUEST, receiverId);
                             addFriendBtn.setVisibility(View.INVISIBLE);
                             cancelFriend.setVisibility(View.INVISIBLE);
                             madeFriendTv.setVisibility(View.VISIBLE);
@@ -202,13 +199,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 200) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             addFriendBtn.setVisibility(View.VISIBLE);
                             cancelFriend.setVisibility(View.INVISIBLE);
                         } else if (response.code() == 500) {
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             cancelFriendInvitation(senderId, receiverId, option, accessToken);
                         }
                     }
@@ -220,12 +217,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     private void getUserForContact(String id, String accessToken) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                            getUserForContact(id, accessToken);
                         }
                         else{
@@ -260,14 +257,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             addFriendRequest(receiverId, accessToken);
                         }
                         else if(response.code() == 500){
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
                         else if(response.code() == 200){
-                            SocketClient.getInstance().emit(Constants.ADD_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.ADD_FRIEND_REQUEST, receiverId);
                             addFriendBtn.setVisibility(View.INVISIBLE);
                             cancelFriend.setVisibility(View.VISIBLE);
                         }

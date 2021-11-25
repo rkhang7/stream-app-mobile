@@ -43,7 +43,7 @@ import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -400,7 +400,7 @@ public class RegisterActivity extends AppCompatActivity {
                         })
                         .addOnFailureListener(e -> {
                             pbEmailRegister.setVisibility(View.GONE);
-                            Log.e(Constants.TAG, "create by email: ", e);
+                            Log.e(MyConstant.TAG, "create by email: ", e);
 
                             String message = "Tạo tài khoản thất bại!";
                             if(e instanceof FirebaseAuthException) {
@@ -461,7 +461,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 User resUser = response.body();
                 if(resUser == null){
-                    Log.d(Constants.TAG, "Save user: \n" + "Null");
+                    Log.d(MyConstant.TAG, "Save user: \n" + "Null");
                     CustomAlert.showToast(RegisterActivity.this, CustomAlert.WARNING, "Không thể tạo tài khoản, vui lòng thử lại!");
                 }
                 else{
@@ -521,8 +521,8 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
     private void saveTokenToDataLocal(Token token) {
-        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN,token.getAccessToken());
-        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN,token.getRefreshToken());
+        DataLocalManager.putStringValue(MyConstant.ACCESS_TOKEN,token.getAccessToken());
+        DataLocalManager.putStringValue(MyConstant.REFRESH_TOKEN,token.getRefreshToken());
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

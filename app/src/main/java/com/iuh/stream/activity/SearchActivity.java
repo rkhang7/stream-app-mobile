@@ -1,6 +1,5 @@
 package com.iuh.stream.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,21 +16,12 @@ import android.widget.TextView;
 
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.FriendsAdapter;
-import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.api.UserListAsyncResponse;
 import com.iuh.stream.api.UserUtil;
-import com.iuh.stream.datalocal.DataLocalManager;
-import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
-import com.iuh.stream.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchActivity extends AppCompatActivity {
     private ImageButton backBtn;

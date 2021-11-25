@@ -6,29 +6,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
-import com.google.android.flexbox.FlexboxLayout;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.AddGroupActivity;
-import com.iuh.stream.activity.SearchActivity;
 import com.iuh.stream.activity.SearchConversationActivity;
 import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.chatlist.ChatList;
 import com.iuh.stream.models.chatlist.PersonalChat;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
@@ -100,26 +95,26 @@ public class ChatFragment extends Fragment {
         shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
         shimmerRecyclerView.showShimmerAdapter();
 
-        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN)));
+        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)));
 
-        SocketClient.getInstance().on(Constants.PRIVATE_MESSAGE, new Emitter.Listener() {
+        SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
         });
-        SocketClient.getInstance().on(Constants.MESSAGE_SENT, new Emitter.Listener() {
+        SocketClient.getInstance().on(MyConstant.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
@@ -134,8 +129,8 @@ public class ChatFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ChatList> call, Response<ChatList> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                            getChatList(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                         }
                          if(response.code() == 200){
                             chatList = response.body();

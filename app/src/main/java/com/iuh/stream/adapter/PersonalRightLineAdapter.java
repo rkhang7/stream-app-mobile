@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRightLineAdapter.PersonRightLineViewHolder>{
     private List<Line> lineList;
@@ -39,7 +37,7 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
     public void onBindViewHolder(@NonNull PersonRightLineViewHolder holder, int position) {
         Line line = lineList.get(position);
         if(line != null){
-            if(line.getType().equals(Constants.TYPE_TEXT)){
+            if(line.getType().equals(MyConstant.TYPE_TEXT)){
                 holder.contentTv.setText(line.getContent());
 
                if(position == lineList.size() - 1){

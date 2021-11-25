@@ -10,17 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -49,7 +43,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
         Line line = lineList.get(position);
 
         if (line != null) {
-            if (line.getType().equals(Constants.TYPE_TEXT)) {
+            if (line.getType().equals(MyConstant.TYPE_TEXT)) {
                 holder.contentTv.setText(line.getContent());
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,16 +22,31 @@ import android.widget.ImageView;
 import androidx.core.app.NotificationCompat;
 
 import com.iuh.stream.R;
+import com.iuh.stream.activity.ChatActivity;
 import com.iuh.stream.activity.MainActivity;
+import com.iuh.stream.models.User;
+import com.iuh.stream.utils.MyConstant;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FloatingViewService extends Service {
 
     private WindowManager mWindowManager;
     private View mFloatingView;
+    private CircleImageView avatarIv;
 
     private WindowManager.LayoutParams params;
+    private User user;
 
     public FloatingViewService() {
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        user = (User) intent.getSerializableExtra(MyConstant.USER_KEY);
+        Picasso.get().load(user.getImageURL()).into(avatarIv);
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -49,7 +65,7 @@ public class FloatingViewService extends Service {
             startForeground(1, new Notification());
         //Inflate the floating view layout we created
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
-
+        avatarIv = mFloatingView.findViewById(R.id.overlay_avatar_iv);
 
         int LAYOUT_FLAG;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -118,10 +134,11 @@ public class FloatingViewService extends Service {
                         //The check for Xdiff <10 && YDiff< 10 because sometime elements moves a little while clicking.
                         //So that is click event.
                         if (Xdiff < 10 && Ydiff < 10) {
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("fromwhere","ser");
+                            intent.putExtra(MyConstant.USER_KEY,user);
                             startActivity(intent);
+                            stopSelf();
                         }
                         return true;
                     case MotionEvent.ACTION_MOVE:

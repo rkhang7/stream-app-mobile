@@ -16,7 +16,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,7 +42,7 @@ import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.imagepicker.ImageSelectActivity;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.response.UpdateUserResponse;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
@@ -247,13 +246,13 @@ public class UserInfoActivity extends AppCompatActivity {
                 }
             }
 
-            RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+            RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                     .enqueue(new Callback<UpdateUserResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
                             if (response.code() == 403) {
-                                Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
-                                RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+                                Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                                RetrofitService.getInstance.updateUser(user, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                                         .enqueue(new Callback<UpdateUserResponse>() {
                                             @Override
                                             public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
@@ -316,12 +315,12 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void loadUserInfo() {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             loadUserInfo();
                         } else {
                             user = response.body();
@@ -385,12 +384,12 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void uploadImageToAws(String encodedImage) {
-        RetrofitService.getInstance.updateAvatar(encodedImage, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.updateAvatar(encodedImage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<UpdateUserResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<UpdateUserResponse> call, @NonNull Response<UpdateUserResponse> response) {
                         if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImageToAws(encodedImage);
                         } else {
                             finish();

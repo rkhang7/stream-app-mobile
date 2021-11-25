@@ -1,7 +1,7 @@
 package com.iuh.stream.activity;
 
 
-import static com.iuh.stream.adapter.FriendsAdapter.USER;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,7 +24,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
@@ -59,7 +59,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         friendRequestBtn.setOnClickListener(v -> {
             // send event
             String receiverId = user.get_id();
-            String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+            String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
             addFriendRequest(receiverId, accessToken);
 
         });
@@ -68,7 +68,7 @@ public class FriendProfileActivity extends AppCompatActivity {
             String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             String receiverId = user.get_id();
             final String OPTION = "friendInvitation";
-            String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+            String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
             cancelFriendInvitation(senderId, receiverId, OPTION, accessToken);
         });
 
@@ -76,12 +76,12 @@ public class FriendProfileActivity extends AppCompatActivity {
             String name = user.getFirstName() + " " + user.getLastName();
             String receiverId = user.get_id();
             String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-            String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+            String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
             openConfirmDialog(name, senderId, receiverId, accessToken);
         });
 
         acceptFriendBtn.setOnClickListener(v -> {
-            String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+            String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
             String receiverId = user.get_id();
             acceptFriend(receiverId, accessToken);
         });
@@ -90,7 +90,7 @@ public class FriendProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                intent.putExtra(USER, user);
+                intent.putExtra(MyConstant.USER_KEY, user);
                 startActivity(intent);
             }
         });
@@ -102,14 +102,14 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             addFriendRequest(receiverId, accessToken);
                         }
                         else if(response.code() == 500){
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         }
                         else if(response.code() == 200){
-                            SocketClient.getInstance().emit(Constants.ADD_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.ADD_FRIEND_REQUEST, receiverId);
                             friendRequestBtn.setVisibility(View.INVISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.VISIBLE);
                         }
@@ -128,14 +128,14 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             acceptFriend(receiverId, accessToken);
                         } else if (response.code() == 404) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, "Không tìm thấy người dùng");
                         } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         } else if(response.code() == 200){
-                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.ACCEPT_FRIEND_REQUEST, receiverId);
                             friendRequestBtn.setVisibility(View.INVISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                             deleteFriendBtn.setVisibility(View.VISIBLE);
@@ -164,12 +164,12 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_REQUEST, receiverId);
                             FriendProfileActivity.this.finish();
                         } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, "Đã xảy ra lỗi");
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             deleteFriend(senderId, receiverId, option, accessToken);
                         }
                     }
@@ -187,13 +187,13 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 200) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_INV_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_INV_REQUEST, receiverId);
                             friendRequestBtn.setVisibility(View.VISIBLE);
                             cancelFriendRequestBtn.setVisibility(View.INVISIBLE);
                         } else if (response.code() == 500) {
                             CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             cancelFriendInvitation(senderId, receiverId, option, accessToken);
                         }
                     }
@@ -259,12 +259,12 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     private void updateStatusFriendRequest() {
-        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
-                            Util.refreshToken(Constants.REFRESH_TOKEN);
+                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
                             updateStatusFriendRequest();
                         } else {
                             currentUser = response.body();

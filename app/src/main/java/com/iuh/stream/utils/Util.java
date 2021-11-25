@@ -2,7 +2,6 @@ package com.iuh.stream.utils;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.models.User;
@@ -10,7 +9,6 @@ import com.iuh.stream.models.jwt.TokenResponse;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +28,7 @@ public class Util {
                 TokenResponse tokenResponse = response.body();
                 if(tokenResponse != null){
                     String refreshToken = tokenResponse.getAccessToken();
-                    DataLocalManager.putStringValue(Constants.ACCESS_TOKEN, refreshToken);
+                    DataLocalManager.putStringValue(MyConstant.ACCESS_TOKEN, refreshToken);
                 }
             }
             @Override

@@ -19,13 +19,14 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <RelativeLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/overlay_avatar_iv"
                 android:layout_width="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/default_avatar"
-                android:layout_height="60dp">
+                android:layout_height="60dp"/>
 
-            </RelativeLayout>
+
 
             <!--Close button-->
             <ImageView

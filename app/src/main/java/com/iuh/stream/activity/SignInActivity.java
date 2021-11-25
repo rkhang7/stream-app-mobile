@@ -47,7 +47,7 @@ import com.iuh.stream.dialog.ResetPasswordDialog;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -202,7 +202,7 @@ public class SignInActivity extends AppCompatActivity {
                                 }
 
                                 CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, message);
-                                Log.d(Constants.TAG, "loginByEmailPart: \n" + task.getException());
+                                Log.d(MyConstant.TAG, "loginByEmailPart: \n" + task.getException());
                             }
                         });
             }
@@ -223,7 +223,7 @@ public class SignInActivity extends AppCompatActivity {
                                 Token token = response.body();
                                 saveTokenToDataLocal(token);
                                 // save password to change later
-                                DataLocalManager.putStringValue(Constants.PASSWORD, password);
+                                DataLocalManager.putStringValue(MyConstant.PASSWORD, password);
                                 CustomAlert.showToast(SignInActivity.this, CustomAlert.INFO, "Đăng nhập thành công!");
                                 Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -237,7 +237,7 @@ public class SignInActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Call<Token> call, @NonNull Throwable t) {
                             CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Có lỗi đã xảy ra!");
-                            Log.d(Constants.TAG, "handleGetToken: \n" + t);
+                            Log.d(MyConstant.TAG, "handleGetToken: \n" + t);
                         }
                     });
 
@@ -247,8 +247,8 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void saveTokenToDataLocal(Token token) {
-        DataLocalManager.putStringValue(Constants.ACCESS_TOKEN, token.getAccessToken());
-        DataLocalManager.putStringValue(Constants.REFRESH_TOKEN, token.getRefreshToken());
+        DataLocalManager.putStringValue(MyConstant.ACCESS_TOKEN, token.getAccessToken());
+        DataLocalManager.putStringValue(MyConstant.REFRESH_TOKEN, token.getRefreshToken());
     }
 
     private void loginPhonePart() {
@@ -315,7 +315,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 pgPhone.setVisibility(View.INVISIBLE);
                 btnGetOtp.setEnabled(true);
-                Log.d(Constants.TAG, "onVerificationFailed: \n" + e);
+                Log.d(MyConstant.TAG, "onVerificationFailed: \n" + e);
             }
 
             @Override
@@ -396,7 +396,7 @@ public class SignInActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     pgPhone.setVisibility(View.INVISIBLE);
-                    Log.d(Constants.TAG, "signInWithPhoneAuthCredential: \n" + e);
+                    Log.d(MyConstant.TAG, "signInWithPhoneAuthCredential: \n" + e);
                 });
 
     }
@@ -413,7 +413,7 @@ public class SignInActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                Log.d(Constants.TAG, "onActivityResult: \n" + e);
+                Log.d(MyConstant.TAG, "onActivityResult: \n" + e);
             }
         }
     }
@@ -432,7 +432,7 @@ public class SignInActivity extends AppCompatActivity {
                         handleGetToken();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.d(Constants.TAG, "firebaseAuthWithGoogle: \n" + task.getException());
+                        Log.d(MyConstant.TAG, "firebaseAuthWithGoogle: \n" + task.getException());
                         CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Lỗi đăng nhập!");
                     }
                 });
@@ -463,7 +463,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 User resUser = response.body();
                 if (resUser == null) {
-                    Log.d(Constants.TAG, "SaveUser: \n" + "Không thể lưu user!");
+                    Log.d(MyConstant.TAG, "SaveUser: \n" + "Không thể lưu user!");
                     CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Không thể kết nối đến server!");
                 }
 
@@ -471,7 +471,7 @@ public class SignInActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                Log.d(Constants.TAG, "saveUserToDatabase: \n" + t);
+                Log.d(MyConstant.TAG, "saveUserToDatabase: \n" + t);
                 CustomAlert.showToast(SignInActivity.this, CustomAlert.WARNING, "Không thể kết nối đến server!");
                 Toast.makeText(SignInActivity.this, "", Toast.LENGTH_SHORT).show();
             }

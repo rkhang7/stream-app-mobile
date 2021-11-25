@@ -17,7 +17,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -79,12 +79,12 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                 String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 String receiverId =  userList.get(getAdapterPosition()).get_id();
                 final String OPTION = "friendRequest";
-                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 cancelFriendRequest(senderId, receiverId, OPTION, accessToken, getAdapterPosition());
             });
 
             acceptBtn.setOnClickListener(v -> {
-                String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+                String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
                 String receiverId = userList.get(getAdapterPosition()).get_id();
                 int position = getAdapterPosition();
                 acceptFriend(receiverId, accessToken, position);
@@ -100,7 +100,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             acceptFriend(receiverId, accessToken, position);
                         }
                         else if(response.code() == 404){
@@ -110,7 +110,7 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
                         else if(response.code() == 200){
-                            SocketClient.getInstance().emit(Constants.ACCEPT_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.ACCEPT_FRIEND_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         }
@@ -129,13 +129,13 @@ public class InvitationReceivedAdapter extends RecyclerView.Adapter<InvitationRe
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 200) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_REQUEST_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, "Đã xảy ra lỗi");
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             cancelFriendRequest(senderId, receiverId, option, accessToken, position);
                         }
                     }

@@ -8,7 +8,7 @@ import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.response.UpdateUserResponse;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import retrofit2.http.Query;
 public interface RetrofitService {
 
     RetrofitService getInstance = new Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(MyConstant.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(RetrofitService.class);
 

@@ -3,13 +3,11 @@ package com.iuh.stream.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,7 +22,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.utils.Constants;
+import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -43,7 +41,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     private final Context mContext;
     private List<User> userList;
     private final FirebaseAuth mAuth;
-    public static final String USER = FriendsAdapter.class.getName();
+
 
     public FriendsAdapter(Context mContext) {
         mAuth = FirebaseAuth.getInstance();
@@ -131,7 +129,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 User user = userList.get(getAdapterPosition());
-                intent.putExtra(USER, user);
+                intent.putExtra(MyConstant.USER_KEY, user);
                 mContext.startActivity(intent);
             });
         }
@@ -141,7 +139,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         User user = userList.get(position);
         String senderId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         String receiverId = user.get_id();
-        String accessToken = DataLocalManager.getStringValue(Constants.ACCESS_TOKEN);
+        String accessToken = DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN);
 
         // set up dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -167,12 +165,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
     }
 
     private void viewInfo(String id, String accessToken) {
-        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(Constants.ACCESS_TOKEN))
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             viewInfo(id, accessToken);
                         }
                         else{
@@ -216,13 +214,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.code() == 200) {
-                            SocketClient.getInstance().emit(Constants.CANCEL_FRIEND_REQUEST, receiverId);
+                            SocketClient.getInstance().emit(MyConstant.CANCEL_FRIEND_REQUEST, receiverId);
                             userList.remove(position);
                             notifyItemRemoved(position);
                         } else if (response.code() == 500) {
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, "Đã xảy ra lỗi");
                         } else if (response.code() == 403) {
-                            Util.refreshToken(DataLocalManager.getStringValue(Constants.REFRESH_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             deleteFriend(senderId, receiverId, option, accessToken, position);
                         }
                     }
