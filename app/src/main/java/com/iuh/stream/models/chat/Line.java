@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class Line {
+    private String _id;
     private Date createdAt;
     private String type;
     private String content;

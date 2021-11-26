@@ -95,6 +95,7 @@ public class ChatFragment extends Fragment {
         shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
         shimmerRecyclerView.showShimmerAdapter();
 
+
         getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)));
 
         SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {

@@ -32,4 +32,6 @@ public class MyConstant {
 
     public static final String PRIVATE_MESSAGE = "private-message";
     public static final String MESSAGE_SENT = "message-sent";
+
+    public static final String READ_MESSAGE = "read-message";
 }

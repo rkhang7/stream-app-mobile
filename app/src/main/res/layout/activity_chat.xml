@@ -124,17 +124,26 @@
         android:background="#e0e9ee"
         android:padding="8dp" />
 
+    <ProgressBar
+        android:id="@+id/chat_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/inputLayout"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
     <ImageButton
         android:id="@+id/scroll_last_position_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/inputLayout"
         android:layout_alignParentEnd="true"
+        android:layout_marginBottom="8dp"
         android:background="@color/transparent"
         android:padding="24dp"
         android:src="@drawable/icons8_double_down_24"
-        android:visibility="gone"
-        android:layout_marginBottom="8dp"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/new_message_tv"
@@ -146,12 +155,12 @@
         android:background="@drawable/new_message_bg"
         android:drawableLeft="@drawable/icons8_double_down_18_blue"
         android:drawablePadding="8dp"
+        android:gravity="center_vertical"
         android:padding="8dp"
         android:text="Tin nhắn mới"
         android:textColor="@color/main"
         android:textSize="10sp"
-        android:gravity="center_vertical"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/inputLayout"

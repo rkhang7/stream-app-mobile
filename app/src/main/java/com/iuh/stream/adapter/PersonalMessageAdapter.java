@@ -4,15 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iuh.stream.R;
+import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessageAdapter.PersonalMessageAdapterViewHolder>{
     private Context mContext;
@@ -44,6 +48,8 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
     public void onBindViewHolder(@NonNull PersonalMessageAdapterViewHolder holder, int position) {
         Message message = messageList.get(position);
         if(holder.getItemViewType() == LEFT_LINE){
+            holder.readMessageTv.setVisibility(View.GONE);
+            holder.receiveMessageTv.setVisibility(View.GONE);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             linearLayoutManager.setStackFromEnd(true);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
@@ -53,17 +59,41 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(hisImageUrl);
             personalLeftLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalLeftLineAdapter);
+
         }
         else{
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             linearLayoutManager.setStackFromEnd(true);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
             holder.recyclerView.setFocusable(false);
-
             // adapter
             PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter();
             personalRightLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalRightLineAdapter);
+
+            if(position == messageList.size()-1){
+                List<Line> lineList = message.getLines();
+                Line lastLine = lineList.get(lineList.size() - 1);
+                // is receiver
+                if(lastLine.isReceived()){
+                    holder.receiveMessageTv.setVisibility(View.VISIBLE);
+                    holder.readMessageTv.setVisibility(View.GONE);
+                }
+                else{
+                   holder.readMessageTv.setVisibility(View.VISIBLE);
+                   holder.receiveMessageTv.setVisibility(View.GONE);
+                }
+
+                if(lastLine.getReadedUsers().size() > 0){
+                    holder.readMessageTv.setVisibility(View.GONE);
+                    holder.receiveMessageTv.setVisibility(View.GONE);
+                    holder.readerMessageIv.setVisibility(View.VISIBLE);
+                }
+            }
+            else {
+                holder.readMessageTv.setVisibility(View.GONE);
+                holder.receiveMessageTv.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -77,9 +107,14 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
 
     public class PersonalMessageAdapterViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView recyclerView;
+        private TextView readMessageTv, receiveMessageTv;
+        private CircleImageView readerMessageIv;
         public PersonalMessageAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             recyclerView = itemView.findViewById(R.id.message_rcv);
+            readMessageTv = itemView.findViewById(R.id.read_message_tv);
+            receiveMessageTv = itemView.findViewById(R.id.receive_message_tv);
+            readerMessageIv = itemView.findViewById(R.id.reader_message_iv);
         }
     }
 

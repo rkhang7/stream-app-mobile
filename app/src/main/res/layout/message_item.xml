@@ -1,13 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/message_rcv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:visibility="visible"
+        android:id="@+id/read_message_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/message_rcv"/>
+        android:layout_below="@id/message_rcv"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/status_message_bg"
+        android:drawableLeft="@drawable/icons8_single_tick_12"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Đã gửi"
+        android:textColor="@color/white"
+        android:textSize="10dp" />
+
+    <TextView
+        android:id="@+id/receive_message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_rcv"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/status_message_bg"
+        android:drawableLeft="@drawable/icons8_double_tick_12"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="Đã nhận"
+        android:textColor="@color/white"
+        android:textSize="10dp"
+        android:visibility="gone" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/reader_message_iv"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/message_rcv"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_vertical"
+        android:src="@drawable/default_avatar"
+        android:visibility="gone" />
 
 
-</LinearLayout>
+
+</RelativeLayout>

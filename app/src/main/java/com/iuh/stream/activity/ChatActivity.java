@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
+import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
@@ -43,6 +46,7 @@ import com.vanniktech.emoji.EmojiPopup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private ImageButton scrollLastPositionBtn;
     private TextView newMessageTv;
+    private ProgressBar progressBar;
 
     private static final int LEFT_ITEM = 1;
     private static final int RIGHT_ITEM = 2;
@@ -84,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private int visibleThreshold = 2; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
+
 
 
     @Override
@@ -283,6 +289,8 @@ public class ChatActivity extends AppCompatActivity {
         nameLayout = findViewById(R.id.name_layout);
         scrollLastPositionBtn = findViewById(R.id.scroll_last_position_btn);
         newMessageTv = findViewById(R.id.new_message_tv);
+        progressBar = findViewById(R.id.chat_pb);
+
 
 
 
@@ -340,7 +348,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
         getChatId();
 
         SocketClient.getInstance().on("offline user", new Emitter.Listener() {
@@ -374,12 +383,12 @@ public class ChatActivity extends AppCompatActivity {
                    @Override
                    public void run() {
 //                        JSONObject jsonObject = (JSONObject) args[0];
-//
 //                        // get line
 //                       try {
 //                           JSONObject lineJsonObject = jsonObject.getJSONObject("line");
 //                           String content = lineJsonObject.getString("content");
 //                           String type = lineJsonObject.getString("type");
+//                           boolean received = jsonObject.getBoolean("received");
 //
 //                           Line line = null;
 //                           String stringDate = lineJsonObject.getString("createdAt");
@@ -387,9 +396,8 @@ public class ChatActivity extends AppCompatActivity {
 //                               long l = Instant.parse(stringDate)
 //                                       .toEpochMilli();
 //                               Date date = new Date(l);
-//                               line = Line.builder().content(content).createdAt(date).type(type).build();
-//
-//
+//                               line = Line.builder().content(content).createdAt(date).type(type)
+//                                       .received(received).build();
 //                           }
 //
 //                           // get newMessageId;
@@ -407,8 +415,7 @@ public class ChatActivity extends AppCompatActivity {
 //                           e.printStackTrace();
 //                       }
                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
-
-
+                       Log.e("TAG", "right: " );
                    }
                });
             }
@@ -422,6 +429,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void run() {
 
                         loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LEFT_ITEM);
+                        Log.e("TAG", "left: " );
 //                       String chatId = (String) args[0];
 //                       String currentUserId = (String) args[1];
 //                       String newMessageId = (String) args[2];
@@ -453,6 +461,13 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 });
+            }
+        });
+
+        SocketClient.getInstance().on(MyConstant.READ_MESSAGE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
             }
         });
 
@@ -499,6 +514,8 @@ public class ChatActivity extends AppCompatActivity {
                           messageList = response.body();
 
                           if(type == RIGHT_ITEM){
+                              recyclerView.setVisibility(View.VISIBLE);
+                              progressBar.setVisibility(View.GONE);
                               personalMessageAdapter.setData(messageList);
                               recyclerView.setAdapter(personalMessageAdapter);
                           }
@@ -509,7 +526,6 @@ public class ChatActivity extends AppCompatActivity {
                               }
                               personalMessageAdapter.setData(messageList);
                           }
-
                       }
                       else{
                           CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));

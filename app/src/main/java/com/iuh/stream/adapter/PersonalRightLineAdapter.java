@@ -12,6 +12,7 @@ import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -43,10 +44,13 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                if(position == lineList.size() - 1){
                    holder.lastTineLineTv.setVisibility(View.VISIBLE);
                    holder.lastTineLineTv.setText(Util.getTime(line.getCreatedAt()));
+
                 }
                else{
                    holder.lastTineLineTv.setVisibility(View.GONE);
                }
+
+
             }
         }
     }
