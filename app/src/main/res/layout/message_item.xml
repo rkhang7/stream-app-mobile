@@ -11,7 +11,7 @@
 
     <TextView
         android:visibility="visible"
-        android:id="@+id/read_message_tv"
+        android:id="@+id/sent_message_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/message_rcv"

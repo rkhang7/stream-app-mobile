@@ -48,7 +48,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
     public void onBindViewHolder(@NonNull PersonalMessageAdapterViewHolder holder, int position) {
         Message message = messageList.get(position);
         if(holder.getItemViewType() == LEFT_LINE){
-            holder.readMessageTv.setVisibility(View.GONE);
+            holder.sentMessageTv.setVisibility(View.GONE);
             holder.receiveMessageTv.setVisibility(View.GONE);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             linearLayoutManager.setStackFromEnd(true);
@@ -77,21 +77,21 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
                 // is receiver
                 if(lastLine.isReceived()){
                     holder.receiveMessageTv.setVisibility(View.VISIBLE);
-                    holder.readMessageTv.setVisibility(View.GONE);
+                    holder.sentMessageTv.setVisibility(View.GONE);
                 }
                 else{
-                   holder.readMessageTv.setVisibility(View.VISIBLE);
+                   holder.sentMessageTv.setVisibility(View.VISIBLE);
                    holder.receiveMessageTv.setVisibility(View.GONE);
                 }
 
                 if(lastLine.getReadedUsers().size() > 0){
-                    holder.readMessageTv.setVisibility(View.GONE);
+                    holder.sentMessageTv.setVisibility(View.GONE);
                     holder.receiveMessageTv.setVisibility(View.GONE);
                     holder.readerMessageIv.setVisibility(View.VISIBLE);
                 }
             }
             else {
-                holder.readMessageTv.setVisibility(View.GONE);
+                holder.sentMessageTv.setVisibility(View.GONE);
                 holder.receiveMessageTv.setVisibility(View.GONE);
             }
         }
@@ -107,12 +107,12 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
 
     public class PersonalMessageAdapterViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView recyclerView;
-        private TextView readMessageTv, receiveMessageTv;
+        private TextView sentMessageTv, receiveMessageTv;
         private CircleImageView readerMessageIv;
         public PersonalMessageAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             recyclerView = itemView.findViewById(R.id.message_rcv);
-            readMessageTv = itemView.findViewById(R.id.read_message_tv);
+            sentMessageTv = itemView.findViewById(R.id.sent_message_tv);
             receiveMessageTv = itemView.findViewById(R.id.receive_message_tv);
             readerMessageIv = itemView.findViewById(R.id.reader_message_iv);
         }

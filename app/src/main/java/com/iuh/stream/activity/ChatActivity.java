@@ -376,6 +376,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+
+        // khi mình gửi tin nhắn, server trả về
         SocketClient.getInstance().on(MyConstant.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -388,7 +390,6 @@ public class ChatActivity extends AppCompatActivity {
 //                           JSONObject lineJsonObject = jsonObject.getJSONObject("line");
 //                           String content = lineJsonObject.getString("content");
 //                           String type = lineJsonObject.getString("type");
-//                           boolean received = jsonObject.getBoolean("received");
 //
 //                           Line line = null;
 //                           String stringDate = lineJsonObject.getString("createdAt");
@@ -397,7 +398,7 @@ public class ChatActivity extends AppCompatActivity {
 //                                       .toEpochMilli();
 //                               Date date = new Date(l);
 //                               line = Line.builder().content(content).createdAt(date).type(type)
-//                                       .received(received).build();
+//                                       .build();
 //                           }
 //
 //                           // get newMessageId;
@@ -421,6 +422,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // người khác nhắn tin, server trả về
         SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -428,8 +430,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LEFT_ITEM);
-                        Log.e("TAG", "left: " );
+
 //                       String chatId = (String) args[0];
 //                       String currentUserId = (String) args[1];
 //                       String newMessageId = (String) args[2];
@@ -458,20 +459,20 @@ public class ChatActivity extends AppCompatActivity {
 //                            CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, e.getMessage());
 //                        }
 
-
+                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LEFT_ITEM);
+                        Log.e("TAG", "left: " );
                     }
                 });
             }
         });
 
+        // người khác đọc tin nhắn
         SocketClient.getInstance().on(MyConstant.READ_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
             }
         });
-
-
     }
 
     private void getChatId() {
@@ -512,7 +513,6 @@ public class ChatActivity extends AppCompatActivity {
                       }
                       else if(response.code() == 200){
                           messageList = response.body();
-
                           if(type == RIGHT_ITEM){
                               recyclerView.setVisibility(View.VISIBLE);
                               progressBar.setVisibility(View.GONE);
