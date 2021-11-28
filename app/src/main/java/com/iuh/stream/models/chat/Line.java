@@ -1,5 +1,7 @@
 package com.iuh.stream.models.chat;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
@@ -13,13 +15,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class Line {
-    private String _id;
-    private Date createdAt;
+    @SerializedName("_id")
+    private String id;
     private String type;
     private String content;
     private boolean recall;
     private List<String> readedUsers;
     private boolean received;
+    private List<String> deletedByUsers;
+    private Date createdAt;
     private List<Reaction> reactions;
-    private List<String> deletedBy;
+
 }

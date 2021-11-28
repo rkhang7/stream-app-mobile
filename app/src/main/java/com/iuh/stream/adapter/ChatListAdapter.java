@@ -78,6 +78,35 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
                 holder.lastTimeLineTv.setText(Util.getTime(personalChat.getLatestLine().getLine().getCreatedAt()));
             }
+
+            if(personalChat.getUnreadMessagesCount() <= 0){
+                holder.unreadMessageTv.setVisibility(View.GONE);
+            }
+            else if(personalChat.getUnreadMessagesCount() > 5){
+                holder.unreadMessageTv.setText("5+");
+            }
+            else{
+                holder.unreadMessageTv.setText(personalChat.getUnreadMessagesCount() + "");
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // start chat activity
+                    PersonalChat personalChat = personalChatList.get(position);
+
+                    for(User user: personalChat.getUsers()){
+                        if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
+                            holder.unreadMessageTv.setVisibility(View.GONE);
+                            Intent intent = new Intent(mContext, ChatActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra(MyConstant.USER_KEY, user);
+                            mContext.startActivity(intent);
+                        }
+                    }
+                }
+            });
+
         }
     }
 
@@ -91,31 +120,16 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     public class ChatListViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView avatarIv;
-        private TextView lastLineTv, lastTimeLineTv, nameTv;
+        private TextView lastLineTv, lastTimeLineTv, nameTv, unreadMessageTv;
         public ChatListViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarIv = itemView.findViewById(R.id.avatar_iv);
             lastLineTv = itemView.findViewById(R.id.last_line_tv);
             nameTv = itemView.findViewById(R.id.name_tv);
             lastTimeLineTv = itemView.findViewById(R.id.last_date_line_tv);
+            unreadMessageTv = itemView.findViewById(R.id.unread_message_tv);
 
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start chat activity
-                    PersonalChat personalChat = personalChatList.get(getAdapterPosition());
-
-                    for(User user: personalChat.getUsers()){
-                        if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
-                            Intent intent = new Intent(mContext, ChatActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(MyConstant.USER_KEY, user);
-                            mContext.startActivity(intent);
-                        }
-                    }
-                }
-            });
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

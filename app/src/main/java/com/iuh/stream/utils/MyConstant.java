@@ -34,4 +34,5 @@ public class MyConstant {
     public static final String MESSAGE_SENT = "message-sent";
 
     public static final String READ_MESSAGE = "read-message";
+    public static final String RECEIVE_MESSAGE = "receive-message";
 }

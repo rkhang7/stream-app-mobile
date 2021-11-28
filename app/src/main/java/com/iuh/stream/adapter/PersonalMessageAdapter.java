@@ -1,6 +1,7 @@
 package com.iuh.stream.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
+import com.iuh.stream.utils.MyConstant;
+import com.iuh.stream.utils.SocketClient;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.emitter.Emitter;
 
 public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessageAdapter.PersonalMessageAdapterViewHolder>{
     private Context mContext;
@@ -30,6 +34,8 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
         this.mContext = mContext;
         this.myId = myId;
         this.hisImageUrl = hisImageUrl;
+
+        // người khác đọc tin nhắn
     }
 
     public void setData(List<Message> messageList){
@@ -62,6 +68,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
 
         }
         else{
+
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             linearLayoutManager.setStackFromEnd(true);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
@@ -72,23 +79,34 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             holder.recyclerView.setAdapter(personalRightLineAdapter);
 
             if(position == messageList.size()-1){
-                List<Line> lineList = message.getLines();
-                Line lastLine = lineList.get(lineList.size() - 1);
-                // is receiver
-                if(lastLine.isReceived()){
-                    holder.receiveMessageTv.setVisibility(View.VISIBLE);
-                    holder.sentMessageTv.setVisibility(View.GONE);
+                if(message.getSender().equals(myId)){
+                    List<Line> lineList = message.getLines();
+                    Line lastLine = lineList.get(lineList.size() - 1);
+                    // is receiver
+                    if(lastLine.isReceived()){
+                        holder.receiveMessageTv.setVisibility(View.VISIBLE);
+                        holder.sentMessageTv.setVisibility(View.GONE);
+                    }
+                    else{
+                        holder.sentMessageTv.setVisibility(View.VISIBLE);
+                        holder.receiveMessageTv.setVisibility(View.GONE);
+                    }
+
+                    if(lastLine.getReadedUsers() != null){
+                        if(lastLine.getReadedUsers().size() > 0){
+                            holder.sentMessageTv.setVisibility(View.GONE);
+                            holder.receiveMessageTv.setVisibility(View.GONE);
+                            holder.readerMessageIv.setVisibility(View.VISIBLE);
+                        }
+                    }
+
                 }
                 else{
-                   holder.sentMessageTv.setVisibility(View.VISIBLE);
-                   holder.receiveMessageTv.setVisibility(View.GONE);
-                }
-
-                if(lastLine.getReadedUsers().size() > 0){
                     holder.sentMessageTv.setVisibility(View.GONE);
                     holder.receiveMessageTv.setVisibility(View.GONE);
                     holder.readerMessageIv.setVisibility(View.VISIBLE);
                 }
+
             }
             else {
                 holder.sentMessageTv.setVisibility(View.GONE);

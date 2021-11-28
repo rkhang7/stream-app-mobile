@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class Message {
     private List<Line> lines;
     private String sender;
+    private List<String> deletedByUsers;
     private String _id;
 }
