@@ -81,8 +81,10 @@ public class ChatActivity extends AppCompatActivity {
     private List<Message> messageList;
     private PersonalMessageAdapter personalMessageAdapter;
     private RecyclerView recyclerView;
-    private int visibleThreshold = 2; // trigger just one item before the end
+    private int visibleThreshold = 1; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
+
+    private boolean isActivityRunning = false;
 
 
     @Override
@@ -90,6 +92,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        isActivityRunning = true;
         addControls();
         addEvents();
     }
@@ -501,7 +504,9 @@ public class ChatActivity extends AppCompatActivity {
                             personalMessageAdapter.setData(messageList);
 
                             // emit
-                            SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, newLine.getId(), mAuth.getCurrentUser().getUid());
+                            if(isActivityRunning){
+                                SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, newLine.getId(), mAuth.getCurrentUser().getUid());
+                            }
 
 
                         } catch (Exception e) {
@@ -528,10 +533,9 @@ public class ChatActivity extends AppCompatActivity {
                         String senderId = (String) args[2];
                         // last message
                         int lengthMessageList = messageList.size();
-
                         if (lengthMessageList > 0) {
                             Message lastMessage = messageList.get(lengthMessageList - 1);
-                            if (lastMessage.getSender().equals(senderId)) {
+                            if (lastMessage.getSender().equals(mAuth.getCurrentUser().getUid())) {
                                 List<Line> lineList = lastMessage.getLines();
                                 Line lastLine = lineList.get(lineList.size() - 1);
                                 lastLine.setReceived(true);
@@ -702,5 +706,11 @@ public class ChatActivity extends AppCompatActivity {
         }
         return s;
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 }

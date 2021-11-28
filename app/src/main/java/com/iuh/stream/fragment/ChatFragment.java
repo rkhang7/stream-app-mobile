@@ -51,6 +51,7 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static final int LOAD = 1;
     private static final int REFRESH = 2;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -149,6 +150,7 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                              if(type == REFRESH){
                                  swipeRefreshLayout.setRefreshing(false);
                              }
+
                         }
 
                     }

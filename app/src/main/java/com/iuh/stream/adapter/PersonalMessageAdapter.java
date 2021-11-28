@@ -111,6 +111,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             else {
                 holder.sentMessageTv.setVisibility(View.GONE);
                 holder.receiveMessageTv.setVisibility(View.GONE);
+                holder.readerMessageIv.setVisibility(View.GONE);
             }
         }
     }
