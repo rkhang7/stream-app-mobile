@@ -3,11 +3,13 @@ package com.iuh.stream.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +24,19 @@ import com.iuh.stream.activity.SearchConversationActivity;
 import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chatlist.ChatList;
 import com.iuh.stream.models.chatlist.PersonalChat;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.socket.emitter.Emitter;
@@ -37,9 +45,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class ChatFragment extends Fragment{
     private LinearLayout searchLayout;
-    private TextView searchTv;
+    private TextView searchTv, notFoundTv;
     private ImageButton addGroupBtn;
     private View view;
     private ChatListAdapter chatListAdapter;
@@ -47,7 +55,6 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private ChatList chatList;
     private List<PersonalChat> personalChatList;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private static final int LOAD = 1;
     private static final int REFRESH = 2;
 
@@ -89,10 +96,10 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void addControls() {
         searchLayout = view.findViewById(R.id.search_conversation_layout);
         searchTv = view.findViewById(R.id.search_conversation_tv);
+        notFoundTv = view.findViewById(R.id.not_found_tv);
         addGroupBtn = view.findViewById(R.id.add_group_btn);
-        swipeRefreshLayout = view.findViewById(R.id.list_chat_srl);
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.main));
-        swipeRefreshLayout.setOnRefreshListener(this);
+
+
 
         personalChatList = new ArrayList<>();
         chatListAdapter = new ChatListAdapter(getContext());
@@ -104,15 +111,16 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         shimmerRecyclerView.showShimmerAdapter();
 
 
-        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)), LOAD);
+        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)));
 
+        // người khác nhắn tin, server trả về
         SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
@@ -123,7 +131,7 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                     }
                 });
             }
@@ -133,24 +141,20 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
 
-    private void getChatList(String accessToken, int type) {
+    private void getChatList(String accessToken) {
         RetrofitService.getInstance.getChatList(accessToken)
                 .enqueue(new Callback<ChatList>() {
                     @Override
                     public void onResponse(Call<ChatList> call, Response<ChatList> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), type);
+                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                         }
-                         if(response.code() == 200){
+                         else if(response.code() == 200){
                             chatList = response.body();
-                            shimmerRecyclerView.hideShimmerAdapter();
+                             shimmerRecyclerView.hideShimmerAdapter();
                              chatListAdapter.setData(chatList.getPersonalChats());
                              shimmerRecyclerView.setAdapter(chatListAdapter);
-                             if(type == REFRESH){
-                                 swipeRefreshLayout.setRefreshing(false);
-                             }
-
                         }
 
                     }
@@ -162,8 +166,4 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 });
     }
 
-    @Override
-    public void onRefresh() {
-        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), REFRESH);
-    }
 }

@@ -87,4 +87,7 @@ public interface RetrofitService {
 
     @GET("/chats")
     Call<ChatList> getChatList(@Header("Authorization") String accessToken);
+
+    @DELETE("/chats/{id}")
+    Call<Void> deleteChatById(@Path("id") String chatId, @Header("Authorization") String accessToken);
 }

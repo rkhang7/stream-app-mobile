@@ -4,58 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_smoke"
     android:orientation="vertical"
-    tools:context=".fragment.ChatFragment"
     android:padding="10dp"
-    android:background="@color/white_smoke">
+    tools:context=".fragment.ChatFragment">
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:flexDirection="row"
-        app:alignItems="stretch"
         android:padding="5dp"
+        app:alignItems="stretch"
+        app:flexDirection="row"
         app:flexWrap="wrap">
 
         <LinearLayout
             android:id="@+id/search_conversation_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
-            app:alignItems="stretch"
-            app:layout_flexGrow="1"
             android:background="@drawable/rounded_bg_8"
-            android:backgroundTint="@color/white">
+            android:backgroundTint="@color/white"
+            app:alignItems="stretch"
+            app:flexDirection="row"
+            app:layout_flexGrow="1">
+
             <ImageView
-                android:layout_gravity="center"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="5dp"
                 android:src="@drawable/search_black_32"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <TextView
                 android:id="@+id/search_conversation_tv"
-                android:layout_gravity="center"
+                style="@style/EditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Tìm kiếm hội thoại"
-                style="@style/EditText"
-                app:layout_flexGrow="1"
+                android:layout_gravity="center"
                 android:layout_marginEnd="5dp"
-                android:textColor="@color/white"
                 android:backgroundTint="@color/transparent"
-                android:textSize="16sp" />
+                android:hint="Tìm kiếm hội thoại"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_flexGrow="1" />
         </LinearLayout>
 
 
         <ImageButton
-            style="@style/BorderlessButton"
             android:id="@+id/add_group_btn"
+            style="@style/BorderlessButton"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/group_add_black"/>
+            android:src="@drawable/group_add_black" />
     </com.google.android.flexbox.FlexboxLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
@@ -82,17 +84,22 @@
             app:layout_constraintTop_toTopOf="@+id/textView2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/list_chat_srl"
+
+    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        android:id="@+id/list_chat_rcv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
 
-        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/list_chat_rcv"/>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+    <TextView
+        android:id="@+id/not_found_tv"
+        style="@style/TextNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:text="Hiện chưa có tin nhắn"
+        android:visibility="gone" />
 
 
 </LinearLayout>

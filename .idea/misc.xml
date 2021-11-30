@@ -86,7 +86,7 @@
         <entry key="app/src/main/res/layout/chat_list_item_demo.xml" value="0.33" />
         <entry key="app/src/main/res/layout/chat_toolbar.xml" value="0.18" />
         <entry key="app/src/main/res/layout/contact_row.xml" value="0.16" />
-        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1421875" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_recived.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_sent.xml" value="0.1" />
