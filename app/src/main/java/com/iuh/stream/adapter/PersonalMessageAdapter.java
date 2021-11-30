@@ -62,19 +62,18 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             holder.recyclerView.setFocusable(false);
 
             // adapter
-            PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(hisImageUrl);
+            PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(mContext, hisImageUrl);
             personalLeftLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalLeftLineAdapter);
 
         }
         else{
-
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
             linearLayoutManager.setStackFromEnd(true);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
             holder.recyclerView.setFocusable(false);
             // adapter
-            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter();
+            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext);
             personalRightLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalRightLineAdapter);
 

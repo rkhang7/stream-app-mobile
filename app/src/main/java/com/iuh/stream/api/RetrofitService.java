@@ -7,11 +7,14 @@ import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
+import com.iuh.stream.models.response.ImageUrlResponse;
 import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.MyConstant;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -21,8 +24,10 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -90,4 +95,8 @@ public interface RetrofitService {
 
     @DELETE("/chats/{id}")
     Call<Void> deleteChatById(@Path("id") String chatId, @Header("Authorization") String accessToken);
+
+    @Multipart
+    @POST("/files/uploadImage")
+    Call<ImageUrlResponse> uploadImageChat(@Part MultipartBody.Part image , @Header("Authorization") String accessToken);
 }

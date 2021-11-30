@@ -1,13 +1,17 @@
 package com.iuh.stream.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.utils.MyConstant;
@@ -21,8 +25,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLineAdapter.PersonLeftLineViewHolder> {
     private List<Line> lineList;
     private String hisImageUrl;
+    private Context mContext;
 
-    public PersonalLeftLineAdapter(String hisImageUrl) {
+    public PersonalLeftLineAdapter(Context context, String hisImageUrl) {
+        this.mContext = context;
         this.hisImageUrl = hisImageUrl;
     }
 
@@ -43,23 +49,48 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
         Line line = lineList.get(position);
 
         if (line != null) {
-            if (line.getType().equals(MyConstant.TYPE_TEXT)) {
-                holder.contentTv.setText(line.getContent());
+            // text type
+            if (line.getType().equals(MyConstant.TEXT_TYPE)) {
+                holder.textLayout.setVisibility(View.VISIBLE);
+                holder.imageLayout.setVisibility(View.GONE);
+                holder.textContentTv.setText(line.getContent());
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);
-                    holder.lastLineTv.setVisibility(View.VISIBLE);
+                    holder.textLastTimeTv.setVisibility(View.VISIBLE);
                 }
                 if (position == lineList.size() - 1 && position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
-                    holder.lastLineTv.setVisibility(View.VISIBLE);
-                    holder.lastLineTv.setText(Util.getTime(line.getCreatedAt()));
+                    holder.textLastTimeTv.setVisibility(View.VISIBLE);
+                    holder.textLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
                 if(position != 0){
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                 }
                 if(position != lineList.size() - 1){
-                    holder.lastLineTv.setVisibility(View.GONE);
+                    holder.textLastTimeTv.setVisibility(View.GONE);
+                }
+            }
+            // image type
+            else if(line.getType().equals(MyConstant.IMAGE_TYPE)){
+                holder.textLayout.setVisibility(View.GONE);
+                holder.imageLayout.setVisibility(View.VISIBLE);
+                Glide.with(mContext).load(line.getContent()).into(holder.imageContentIv);
+                if (position == 0) {
+                    Picasso.get().load(hisImageUrl).into(holder.avatarIv);
+                    holder.avatarIv.setVisibility(View.VISIBLE);
+                    holder.imageLastTimeTv.setVisibility(View.VISIBLE);
+                }
+                if (position == lineList.size() - 1 && position != 0) {
+                    holder.avatarIv.setVisibility(View.INVISIBLE);
+                    holder.imageLastTimeTv.setVisibility(View.VISIBLE);
+                    holder.imageLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
+                }
+                if(position != 0){
+                    holder.avatarIv.setVisibility(View.INVISIBLE);
+                }
+                if(position != lineList.size() - 1){
+                    holder.imageLastTimeTv.setVisibility(View.GONE);
                 }
             }
 
@@ -76,14 +107,21 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
 
     public class PersonLeftLineViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView avatarIv;
-        private TextView contentTv;
-        private TextView lastLineTv;
+        private TextView textContentTv;
+        private TextView textLastTimeTv, imageLastTimeTv;
+        private LinearLayout textLayout, imageLayout;
+        private ImageView imageContentIv;
 
         public PersonLeftLineViewHolder(@NonNull View itemView) {
             super(itemView);
+
             avatarIv = itemView.findViewById(R.id.chat_image);
-            contentTv = itemView.findViewById(R.id.chat_content);
-            lastLineTv = itemView.findViewById(R.id.last_time_line_tv);
+            textContentTv = itemView.findViewById(R.id.chat_text_content);
+            textLastTimeTv = itemView.findViewById(R.id.text_last_time_line_tv);
+            textLayout = itemView.findViewById(R.id.text_layout);
+            imageLayout = itemView.findViewById(R.id.image_layout);
+            imageContentIv = itemView.findViewById(R.id.chat_image_content);
+            imageLastTimeTv = itemView.findViewById(R.id.image_last_time_line_tv);
         }
     }
 

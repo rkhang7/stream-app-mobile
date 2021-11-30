@@ -7,7 +7,8 @@ public class MyConstant {
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String PASSWORD = "password";
     public static final String TAG = "STREAM_APP";
-    public static final String TYPE_TEXT = "text";
+    public static final String TEXT_TYPE = "text";
+    public static final String IMAGE_TYPE = "image";
     public static final String USER_KEY = "USER";
 
     // gửi lời mời kết bạn

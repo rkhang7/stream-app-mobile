@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
-import com.iuh.stream.adapter.FriendsAdapter;
 import com.iuh.stream.adapter.PersonalMessageAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
@@ -36,7 +37,9 @@ import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
+import com.iuh.stream.models.response.ImageUrlResponse;
 import com.iuh.stream.utils.MyConstant;
+import com.iuh.stream.utils.RealPathUtil;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -46,16 +49,19 @@ import com.vanniktech.emoji.EmojiPopup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.UnaryOperator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedimagepicker.builder.TedImagePicker;
 import io.socket.emitter.Emitter;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private int visibleThreshold = 1; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
+    private ProgressDialog progressDialog;
 
     private boolean isActivityRunning = false;
 
@@ -164,7 +171,7 @@ public class ChatActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("content", content);
-                    jsonObject.put("type", MyConstant.TYPE_TEXT);
+                    jsonObject.put("type", MyConstant.TEXT_TYPE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -260,10 +267,67 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void openBottomPicker() {
+
         TedImagePicker.with(this)
                 .title("Chọn hình ảnh")
                 .startMultiImage(uriList -> {
-                    Log.e("TAG", "openBottomPicker: " + uriList.toString());
+                    progressDialog.show();
+                    // update image
+                    for (Uri uri: uriList){
+                        String realPath = RealPathUtil.getRealPath(this, uri);
+                        File file = new File(realPath);
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("image", file.getName(), requestBody);
+                        uploadImage(mPartImage);
+
+                    }
+
+                    progressDialog.dismiss();
+                });
+
+
+
+
+    }
+
+    private synchronized void uploadImage(MultipartBody.Part file) {
+        RetrofitService.getInstance.uploadImageChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<ImageUrlResponse>() {
+                    @Override
+                    public void onResponse(Call<ImageUrlResponse> call, Response<ImageUrlResponse> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            uploadImage(file);
+                        }
+                        else if(response.code() == 400){
+                            CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, "Không thể tải ảnh lên");
+                        }
+                        else if(response.code() == 200){
+                            ImageUrlResponse imageUrlResponse = response.body();
+                            String imageURL = imageUrlResponse.getImageURL();
+
+                            String content = messageEt.getText().toString();
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("content", imageURL);
+                                jsonObject.put("type", MyConstant.IMAGE_TYPE);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String senderId = mAuth.getCurrentUser().getUid();
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+
+                        }
+                        else {
+                            CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ImageUrlResponse> call, Throwable t) {
+                        CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+
+                    }
                 });
     }
 
@@ -283,6 +347,8 @@ public class ChatActivity extends AppCompatActivity {
         scrollLastPositionBtn = findViewById(R.id.scroll_last_position_btn);
         newMessageTv = findViewById(R.id.new_message_tv);
         progressBar = findViewById(R.id.chat_pb);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Vui lòng đợi");
 
 
         // emoji

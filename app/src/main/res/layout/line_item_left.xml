@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="8dp"
     android:layout_marginBottom="4dp">
 
@@ -12,6 +13,8 @@
         android:src="@drawable/default_avatar" />
 
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/text_layout"
         android:minHeight="40dp"
         android:minWidth="60dp"
         android:layout_marginStart="8dp"
@@ -24,7 +27,7 @@
         android:padding="4dp">
 
         <TextView
-            android:id="@+id/chat_content"
+            android:id="@+id/chat_text_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="4dp"
@@ -33,7 +36,44 @@
             android:textColor="@color/black" />
         <TextView
             android:textSize="10dp"
-            android:id="@+id/last_time_line_tv"
+            android:id="@+id/text_last_time_line_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="16:30"
+            android:layout_marginStart="4dp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/image_layout"
+        android:minHeight="40dp"
+        android:minWidth="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/chat_image"
+        android:gravity="start"
+        android:padding="4dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp">
+            <ImageView
+                android:background="@drawable/image_content_bg"
+                android:id="@+id/chat_image_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:adjustViewBounds="true"
+                android:src="@drawable/default_image"/>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_marginTop="4dp"
+            android:textSize="10dp"
+            android:id="@+id/image_last_time_line_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="16:30"

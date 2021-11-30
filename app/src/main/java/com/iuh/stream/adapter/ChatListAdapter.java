@@ -27,6 +27,8 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
+import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.models.chatlist.LastLine;
 import com.iuh.stream.models.chatlist.PersonalChat;
 import com.iuh.stream.service.FloatingViewService;
 import com.iuh.stream.utils.MyConstant;
@@ -75,14 +77,28 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                     }
                 }
 
-                if(personalChat.getLatestLine().getSenderId().equals(mAuth.getCurrentUser().getUid())){
-                    holder.lastLineTv.setText("Bạn: " + personalChat.getLatestLine().getLine().getContent());
-                }
-                else{
-                    holder.lastLineTv.setText(personalChat.getLatestLine().getLine().getContent());
+                LastLine lastLine = personalChat.getLatestLine();
+                // text type
+                if(lastLine.getLine().getType().equals(MyConstant.TEXT_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
+                    }
+                    else{
+                        holder.lastLineTv.setText(lastLine.getLine().getContent());
+                    }
                 }
 
-                holder.lastTimeLineTv.setText(Util.getTime(personalChat.getLatestLine().getLine().getCreatedAt()));
+                else if(lastLine.getLine().getType().equals(MyConstant.IMAGE_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: [Hình ảnh]");
+                    }
+                    else{
+                        holder.lastLineTv.setText("[Hình ảnh]");
+                    }
+                }
+                holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
+
+
             }
 
             if(personalChat.getUnreadMessagesCount() <= 0){
