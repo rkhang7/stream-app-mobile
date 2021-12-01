@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -57,6 +58,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+import droidninja.filepicker.utils.ContentUriUtils;
 import gun0912.tedimagepicker.builder.TedImagePicker;
 import io.socket.emitter.Emitter;
 import okhttp3.MediaType;
@@ -189,6 +193,7 @@ public class ChatActivity extends AppCompatActivity {
         scrollLastPositionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                scrollLastPositionBtn.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
         });
@@ -200,7 +205,52 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        fileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFilePicker();
+            }
+        });
 
+
+    }
+
+    private void openFilePicker() {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                String[] zipTypes = {"zip","rar"};
+                String[] apkType = {"apk"};
+                String[] jsonType = {"json"};
+                String[] csvType = {"csv"};
+                String[] htmlType = {"html"};
+                String[] cssType = {"css"};
+
+                FilePickerBuilder.getInstance()
+                        .setMaxCount(10) //optional
+                        .addFileSupport("ZIP", zipTypes)
+                        .addFileSupport("APK", apkType)
+                        .addFileSupport("JSON", jsonType)
+                        .addFileSupport("CSV", csvType)
+                        .addFileSupport("HTML", htmlType)
+                        .addFileSupport("CSS", cssType)
+                        .setActivityTheme(R.style.LibAppTheme) //optional
+                        .pickFile(ChatActivity.this);
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+                Toast.makeText(ChatActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+
+        TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
     }
 
     private void viewInfo(String id, String accessToken) {
@@ -305,8 +355,6 @@ public class ChatActivity extends AppCompatActivity {
                         else if(response.code() == 200){
                             ImageUrlResponse imageUrlResponse = response.body();
                             String imageURL = imageUrlResponse.getImageURL();
-
-                            String content = messageEt.getText().toString();
                             JSONObject jsonObject = new JSONObject();
                             try {
                                 jsonObject.put("content", imageURL);
@@ -773,6 +821,63 @@ public class ChatActivity extends AppCompatActivity {
         return s;
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case FilePickerConst.REQUEST_CODE_DOC:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    ArrayList<Uri> docPaths = new ArrayList<>();
+                    docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+
+                    for (Uri uri: docPaths){
+                        String realPath = RealPathUtil.getRealPath(this, uri);
+                        File file = new File(realPath);
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                        uploadFile(mPartImage);
+
+                    }
+                    
+                }
+                break;
+        }
+    }
+
+    private void uploadFile(MultipartBody.Part file) {
+        RetrofitService.getInstance.uploadFileChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            uploadImage(file);
+                        }
+                        else if(response.code() == 200){
+                            String nameFile = response.body();
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("content", nameFile);
+                                jsonObject.put("type", MyConstant.FILE_TYPE);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String senderId = mAuth.getCurrentUser().getUid();
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+                        }
+                        else {
+                            CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+    }
+
 
     @Override
     protected void onDestroy() {

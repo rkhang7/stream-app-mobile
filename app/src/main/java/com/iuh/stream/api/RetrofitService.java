@@ -99,4 +99,8 @@ public interface RetrofitService {
     @Multipart
     @POST("/files/uploadImage")
     Call<ImageUrlResponse> uploadImageChat(@Part MultipartBody.Part image , @Header("Authorization") String accessToken);
+
+    @Multipart
+    @POST("/files/upload")
+    Call<String> uploadFileChat(@Part MultipartBody.Part file , @Header("Authorization") String accessToken);
 }

@@ -9,6 +9,7 @@ public class MyConstant {
     public static final String TAG = "STREAM_APP";
     public static final String TEXT_TYPE = "text";
     public static final String IMAGE_TYPE = "image";
+    public static final String FILE_TYPE = "file";
     public static final String USER_KEY = "USER";
 
     // gửi lời mời kết bạn
