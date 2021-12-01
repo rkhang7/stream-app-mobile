@@ -1,6 +1,7 @@
 package com.iuh.stream.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
+import com.iuh.stream.activity.ViewImageMessage;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
@@ -215,6 +217,17 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
             typeFileTv = itemView.findViewById(R.id.type_file_tv);
             fileLastTimeTv = itemView.findViewById(R.id.file_last_time_line_tv);
 
+
+            // view image
+            imageContentIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Line line = lineList.get(getAdapterPosition());
+                    Intent intent = new Intent(new Intent(mContext, ViewImageMessage.class));
+                    intent.putExtra(MyConstant.CONTENT_KEY, line.getContent());
+                    mContext.startActivity(intent);
+                }
+            });
         }
     }
 

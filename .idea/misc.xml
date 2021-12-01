@@ -80,6 +80,7 @@
         <entry key="app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_info.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_verify.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/activity_view_image_message.xml" value="0.25" />
         <entry key="app/src/main/res/layout/change_avatar_popup.xml" value="0.21" />
         <entry key="app/src/main/res/layout/change_info_popup.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/layout/chat_item_left.xml" value="0.15" />

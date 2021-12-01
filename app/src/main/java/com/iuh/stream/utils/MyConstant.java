@@ -11,6 +11,7 @@ public class MyConstant {
     public static final String IMAGE_TYPE = "image";
     public static final String FILE_TYPE = "file";
     public static final String USER_KEY = "USER";
+    public static final String CONTENT_KEY = "content";
 
     // gửi lời mời kết bạn
     public static final String ADD_FRIEND_REQUEST = "add-friend";

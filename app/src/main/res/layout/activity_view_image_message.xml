@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ViewImageMessage"
+    android:background="@color/black">
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="8dp">
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            style="@style/BorderlessButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/arrow_white_32" />
+
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/name_tv"
+            android:layout_marginStart="18dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Khang"
+            android:textSize="18sp"
+            android:textColor="@color/white"/>
+
+        <ImageButton
+            android:layout_alignParentEnd="true"
+            android:id="@+id/download_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_download_32" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/image_message_iv"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/default_image"/>
+
+</RelativeLayout>
