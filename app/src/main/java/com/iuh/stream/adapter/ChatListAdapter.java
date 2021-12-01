@@ -87,13 +87,23 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                         holder.lastLineTv.setText(lastLine.getLine().getContent());
                     }
                 }
-
+                // image type
                 else if(lastLine.getLine().getType().equals(MyConstant.IMAGE_TYPE)){
                     if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
                         holder.lastLineTv.setText("Bạn: [Hình ảnh]");
                     }
                     else{
                         holder.lastLineTv.setText("[Hình ảnh]");
+                    }
+                }
+
+                // file type
+                else if(lastLine.getLine().getType().equals(MyConstant.FILE_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
+                    }
+                    else{
+                        holder.lastLineTv.setText(lastLine.getLine().getContent());
                     }
                 }
                 holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));

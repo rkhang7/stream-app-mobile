@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chat.Message;
@@ -96,6 +97,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
                             holder.sentMessageTv.setVisibility(View.GONE);
                             holder.receiveMessageTv.setVisibility(View.GONE);
                             holder.readerMessageIv.setVisibility(View.VISIBLE);
+                            Glide.with(mContext).load(hisImageUrl).into(holder.readerMessageIv);
                         }
                     }
 
