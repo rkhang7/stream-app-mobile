@@ -2,7 +2,6 @@ package com.iuh.stream.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
-import com.iuh.stream.activity.ViewImageMessage;
+import com.iuh.stream.activity.ViewImageMessageActivity;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
@@ -223,7 +222,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 @Override
                 public void onClick(View v) {
                     Line line = lineList.get(getAdapterPosition());
-                    Intent intent = new Intent(new Intent(mContext, ViewImageMessage.class));
+                    Intent intent = new Intent(mContext, ViewImageMessageActivity.class);
                     intent.putExtra(MyConstant.CONTENT_KEY, line.getContent());
                     mContext.startActivity(intent);
                 }

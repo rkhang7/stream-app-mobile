@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ViewImageMessage"
+    tools:context=".activity.ViewImageMessageActivity"
     android:background="@color/black">
 
     <RelativeLayout
@@ -50,7 +50,7 @@
 
     </RelativeLayout>
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/image_message_iv"
         android:layout_below="@id/toolbar"
         android:layout_width="match_parent"

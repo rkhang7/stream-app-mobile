@@ -101,7 +101,9 @@ public class UserInfoActivity extends AppCompatActivity {
         editDobBtn.setOnClickListener(v -> openPopup(DOB_TYPE));
 
 
-        avatarIv.setOnClickListener(v -> ImageSelectActivity.startImageSelectionForResult(UserInfoActivity.this, true, true, true, true, 1213));
+        avatarIv.setOnClickListener(v -> {
+            ImageSelectActivity.startImageSelectionForResult(UserInfoActivity.this, true, true, true, true, 1213);
+        });
 
     }
 

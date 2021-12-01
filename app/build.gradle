@@ -73,4 +73,5 @@ dependencies {
     implementation 'com.droidninja:filepicker:2.2.5'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1"
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }

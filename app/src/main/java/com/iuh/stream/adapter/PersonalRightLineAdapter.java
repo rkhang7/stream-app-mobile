@@ -15,11 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
-import com.iuh.stream.activity.ViewImageMessage;
+import com.iuh.stream.activity.ViewImageMessageActivity;
 import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
@@ -191,7 +190,7 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                 @Override
                 public void onClick(View v) {
                     Line line = lineList.get(getAdapterPosition());
-                    Intent intent = new Intent(new Intent(mContext, ViewImageMessage.class));
+                    Intent intent = new Intent(mContext, ViewImageMessageActivity.class);
                     intent.putExtra(MyConstant.CONTENT_KEY, line.getContent());
                     mContext.startActivity(intent);
                 }

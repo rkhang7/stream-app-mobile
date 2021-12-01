@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
@@ -28,10 +29,10 @@ import com.iuh.stream.utils.MyConstant;
 import java.io.File;
 import java.util.List;
 
-public class ViewImageMessage extends AppCompatActivity {
+public class ViewImageMessageActivity extends AppCompatActivity {
     private ImageButton backBtn, downloadBtn;
     private TextView nameTv;
-    private ImageView imageMessageIv;
+    private PhotoView imageMessageIv;
     private String imageUrl;
     private RelativeLayout toolbar;
     @Override

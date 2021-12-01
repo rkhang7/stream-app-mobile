@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activity.ViewImageMessage"
+            android:name=".activity.ViewImageMessageActivity"
             android:exported="true"
             android:theme="@style/Theme.NoActionBar" />
         <activity

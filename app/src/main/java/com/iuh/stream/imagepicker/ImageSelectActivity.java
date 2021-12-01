@@ -24,10 +24,24 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.iuh.stream.R;
+import com.iuh.stream.activity.ViewImageMessageActivity;
+import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.imagepicker.imagecompression.ImageCompression;
 import com.iuh.stream.imagepicker.imagecompression.ImageCompressionListener;
 import com.iuh.stream.imagepicker.imagepicker.ImagePickerUtil;
+import com.iuh.stream.models.User;
+import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.utils.MyConstant;
+import com.iuh.stream.utils.Util;
+import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ImageSelectActivity extends AppCompatActivity {
@@ -86,7 +100,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         viewAvatarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Tính năng này chưa được phát triển", Toast.LENGTH_SHORT).show();
+                loadUserInfo();
             }
         });
 
@@ -207,4 +221,32 @@ public class ImageSelectActivity extends AppCompatActivity {
         fragment.startActivityForResult(intent, requestCode);
     }
     //endregion
+
+
+    private void loadUserInfo() {
+        RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                        if (response.code() == 403) {
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            loadUserInfo();
+                        } else {
+                            User user = response.body();
+                            if (user != null) {
+                                Intent intent = new Intent(ImageSelectActivity.this, ViewImageMessageActivity.class);
+                                intent.putExtra(MyConstant.CONTENT_KEY, user.getImageURL());
+                                startActivity(intent);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+
+                    }
+                });
+
+    }
+
 }
