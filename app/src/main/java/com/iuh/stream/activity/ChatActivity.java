@@ -76,14 +76,16 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn;
     private User user;
     private CircleImageView avatarIv;
-    private TextView nameTv, activeTv;
+    private TextView nameTv, activeTv ,textingTv;
     private ImageView onlineIv, offlineIv;
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
-    private String chatId;
+    private String chatId, myId;
     private LinearLayout nameLayout;
     private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
+    private static final String TEXTING_EVENT = "texting";
+    private static final String STOP_TEXTING_EVENT = "stop-texting";
     private LinearLayoutManager linearLayoutManager;
     private ImageButton scrollLastPositionBtn;
     private TextView newMessageTv;
@@ -126,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                Log.e("TAG", "beforeTextChanged: " );
             }
 
             @Override
@@ -140,10 +142,12 @@ public class ChatActivity extends AppCompatActivity {
                     sendBtn.setVisibility(View.VISIBLE);
                     imageBtn.setVisibility(View.GONE);
                     fileBtn.setVisibility(View.GONE);
+                    SocketClient.getInstance().emit(TEXTING_EVENT, chatId, myId);
                 } else {
                     sendBtn.setVisibility(View.GONE);
                     imageBtn.setVisibility(View.VISIBLE);
                     fileBtn.setVisibility(View.VISIBLE);
+                    SocketClient.getInstance().emit(STOP_TEXTING_EVENT, chatId, myId);
                 }
             }
         });
@@ -151,6 +155,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                SocketClient.getInstance().emit(STOP_TEXTING_EVENT, chatId, myId);
             }
         });
 
@@ -179,8 +184,8 @@ public class ChatActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                String senderId = mAuth.getCurrentUser().getUid();
-                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+
+                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
 
                 // reset message
                 messageEt.setText("");
@@ -362,8 +367,8 @@ public class ChatActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            String senderId = mAuth.getCurrentUser().getUid();
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
 
                         }
                         else {
@@ -380,6 +385,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addControls() {
+        textingTv = findViewById(R.id.texting_tv);
         messageEt = findViewById(R.id.messageEt);
         emojiBtn = findViewById(R.id.emoji_btn);
         sendBtn = findViewById(R.id.sendBtn);
@@ -409,10 +415,11 @@ public class ChatActivity extends AppCompatActivity {
         Picasso.get().load(user.getImageURL()).into(avatarIv);
         nameTv.setText(user.getLastName());
         mAuth = FirebaseAuth.getInstance();
+        myId = mAuth.getCurrentUser().getUid();
         messageList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.chat_rcv);
-        personalMessageAdapter = new PersonalMessageAdapter(this, mAuth.getCurrentUser().getUid(), user.getImageURL());
+        personalMessageAdapter = new PersonalMessageAdapter(this, myId, user.getImageURL());
         personalMessageAdapter.setData(messageList);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -440,6 +447,7 @@ public class ChatActivity extends AppCompatActivity {
                 } else {
                     scrollLastPositionBtn.setVisibility(View.VISIBLE);
                 }
+
             }
 
             @Override
@@ -508,8 +516,7 @@ public class ChatActivity extends AppCompatActivity {
 
                                 if (lengthMessageList > 0) {
                                     Message lastMessage = messageList.get(lengthMessageList - 1);
-                                    String myId = mAuth.getCurrentUser().getUid();
-                                    if (!lastMessage.getSender().equals(mAuth.getCurrentUser().getUid())) {
+                                    if (!lastMessage.getSender().equals(myId)) {
                                         List<Line> lineList = new ArrayList<>();
                                         lineList.add(newLine);
                                         Message message = new Message(lineList, myId, null, newMessageId);
@@ -534,7 +541,7 @@ public class ChatActivity extends AppCompatActivity {
                                 } else {
                                     List<Line> lineList = new ArrayList<>();
                                     lineList.add(newLine);
-                                    Message message = new Message(lineList, mAuth.getCurrentUser().getUid(), null, newMessageId);
+                                    Message message = new Message(lineList, myId, null, newMessageId);
                                     messageList.add(message);
                                 }
 
@@ -582,7 +589,7 @@ public class ChatActivity extends AppCompatActivity {
                                 int lengthMessageList = messageList.size();
                                 if (lengthMessageList > 0) {
                                     Message lastMessage = messageList.get(lengthMessageList - 1);
-                                    if (lastMessage.getSender().equals(mAuth.getCurrentUser().getUid())) {
+                                    if (lastMessage.getSender().equals(myId)) {
                                         List<Line> lineList = new ArrayList<>();
                                         lineList.add(newLine);
                                         Message message = new Message(lineList, currentUserId, null, newMessageId);
@@ -619,7 +626,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             // emit
                             if(isActivityRunning){
-                                SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, newLine.getId(), mAuth.getCurrentUser().getUid());
+                                SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, newLine.getId(), myId);
                             }
 
 
@@ -649,7 +656,7 @@ public class ChatActivity extends AppCompatActivity {
                         int lengthMessageList = messageList.size();
                         if (lengthMessageList > 0) {
                             Message lastMessage = messageList.get(lengthMessageList - 1);
-                            if (lastMessage.getSender().equals(mAuth.getCurrentUser().getUid())) {
+                            if (lastMessage.getSender().equals(myId)) {
                                 List<Line> lineList = lastMessage.getLines();
                                 Line lastLine = lineList.get(lineList.size() - 1);
                                 lastLine.setReceived(true);
@@ -692,23 +699,48 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // người khác đang nhập tin nhắn
+        SocketClient.getInstance().on(TEXTING_EVENT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textingTv.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+
+        SocketClient.getInstance().on(STOP_TEXTING_EVENT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textingTv.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
 
     }
 
 
     private void getChatId() {
-        String senderId = mAuth.getCurrentUser().getUid();
+
         String receiverId = user.get_id();
 
         JSONObject obj = new JSONObject();
         try {
-            obj.put("senderId", senderId);
+            obj.put("senderId", myId);
             obj.put("receiverId", receiverId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        SocketClient.getInstance().emit(CREATE_PERSONAL_CHAT_REQUEST, new String[]{senderId, receiverId});
+        SocketClient.getInstance().emit(CREATE_PERSONAL_CHAT_REQUEST, new String[]{myId, receiverId});
 
         SocketClient.getInstance().on(CREATE_PERSONAL_CHAT_RESPONSE, new Emitter.Listener() {
             @Override
@@ -738,10 +770,10 @@ public class ChatActivity extends AppCompatActivity {
                             int lengthMessageList = messageList.size();
                             if (lengthMessageList > 0) {
                                 Message lastMessage = messageList.get(lengthMessageList - 1);
-                                if (!lastMessage.getSender().equals(mAuth.getCurrentUser().getUid())) {
+                                if (!lastMessage.getSender().equals(myId)) {
                                     int lengthLineList = lastMessage.getLines().size();
                                     Line lastLine = lastMessage.getLines().get(lengthLineList - 1);
-                                    SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, lastLine.getId(), mAuth.getCurrentUser().getUid());
+                                    SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, lastLine.getId(), myId);
                                 }
                             }
                             recyclerView.setVisibility(View.VISIBLE);
@@ -863,8 +895,8 @@ public class ChatActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            String senderId = mAuth.getCurrentUser().getUid();
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, senderId, jsonObject});
+
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
                         }
                         else {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
@@ -883,5 +915,12 @@ public class ChatActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isActivityRunning = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        SocketClient.getInstance().emit(STOP_TEXTING_EVENT, chatId, myId);
     }
 }

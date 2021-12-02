@@ -162,6 +162,17 @@
         android:textSize="10sp"
         android:visibility="gone" />
 
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/texting_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đang soạn tin.."
+        android:layout_above="@id/inputLayout"
+        android:padding="4dp"
+        android:textColor="#49758e"
+        android:background="@drawable/texting_bg"/>
+
     <LinearLayout
         android:id="@+id/inputLayout"
         android:layout_width="match_parent"
