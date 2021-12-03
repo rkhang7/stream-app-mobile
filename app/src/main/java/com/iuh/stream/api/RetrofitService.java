@@ -88,7 +88,7 @@ public interface RetrofitService {
     Call<PersonalChat> getPersonalChatById(@Path("id") String id, @Header("Authorization") String accessToken);
 
     @GET("/chats/{id}/messages")
-    Call<List<Message>> getMessageById(@Path("id") String chatId, @Header("Authorization") String accessToken);
+    Call<List<Message>> getMessageById( @Path("id") String chatId, @Query("page") int page, @Header("Authorization") String accessToken);
 
     @GET("/chats")
     Call<ChatList> getChatList(@Header("Authorization") String accessToken);

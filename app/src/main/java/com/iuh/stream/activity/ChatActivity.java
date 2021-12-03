@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn;
     private User user;
     private CircleImageView avatarIv;
-    private TextView nameTv, activeTv ,textingTv;
+    private TextView nameTv, activeTv, textingTv;
     private ImageView onlineIv, offlineIv;
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
@@ -86,18 +86,22 @@ public class ChatActivity extends AppCompatActivity {
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
     private static final String TEXTING_EVENT = "texting";
     private static final String STOP_TEXTING_EVENT = "stop-texting";
+    private static final int FIRST_LOAD = 11;
+    private static final int NEXT_PAGE_LOAD = 22;
     private LinearLayoutManager linearLayoutManager;
     private ImageButton scrollLastPositionBtn;
     private TextView newMessageTv;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar, pagingPb;
     private List<Message> messageList;
     private PersonalMessageAdapter personalMessageAdapter;
     private RecyclerView recyclerView;
     private int visibleThreshold = 1; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
     private ProgressDialog progressDialog;
+    private int currentPage = 1;
 
     private boolean isActivityRunning = false;
+    private boolean isLoading = true;
 
 
     @Override
@@ -128,7 +132,7 @@ public class ChatActivity extends AppCompatActivity {
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.e("TAG", "beforeTextChanged: " );
+                Log.e("TAG", "beforeTextChanged: ");
             }
 
             @Override
@@ -224,7 +228,7 @@ public class ChatActivity extends AppCompatActivity {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                String[] zipTypes = {"zip","rar"};
+                String[] zipTypes = {"zip", "rar"};
                 String[] apkType = {"apk"};
                 String[] jsonType = {"json"};
                 String[] csvType = {"csv"};
@@ -328,7 +332,7 @@ public class ChatActivity extends AppCompatActivity {
                 .startMultiImage(uriList -> {
                     progressDialog.show();
                     // update image
-                    for (Uri uri: uriList){
+                    for (Uri uri : uriList) {
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -341,8 +345,6 @@ public class ChatActivity extends AppCompatActivity {
                 });
 
 
-
-
     }
 
     private synchronized void uploadImage(MultipartBody.Part file) {
@@ -350,14 +352,12 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<ImageUrlResponse>() {
                     @Override
                     public void onResponse(Call<ImageUrlResponse> call, Response<ImageUrlResponse> response) {
-                        if(response.code() == 403){
+                        if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
-                        }
-                        else if(response.code() == 400){
+                        } else if (response.code() == 400) {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, "Không thể tải ảnh lên");
-                        }
-                        else if(response.code() == 200){
+                        } else if (response.code() == 200) {
                             ImageUrlResponse imageUrlResponse = response.body();
                             String imageURL = imageUrlResponse.getImageURL();
                             JSONObject jsonObject = new JSONObject();
@@ -370,8 +370,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
 
-                        }
-                        else {
+                        } else {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         }
                     }
@@ -385,6 +384,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void addControls() {
+        pagingPb = findViewById(R.id.paging_pb);
         textingTv = findViewById(R.id.texting_tv);
         messageEt = findViewById(R.id.messageEt);
         emojiBtn = findViewById(R.id.emoji_btn);
@@ -446,6 +446,14 @@ public class ChatActivity extends AppCompatActivity {
                     scrollLastPositionBtn.setVisibility(View.GONE);
                 } else {
                     scrollLastPositionBtn.setVisibility(View.VISIBLE);
+                }
+
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+                    Log.e("TAG", "onScrolled: " );
+                    if (isLoading) {
+                        currentPage = currentPage + 1;
+                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+                    }
                 }
 
             }
@@ -625,7 +633,7 @@ public class ChatActivity extends AppCompatActivity {
                             personalMessageAdapter.setData(messageList);
 
                             // emit
-                            if(isActivityRunning){
+                            if (isActivityRunning) {
                                 SocketClient.getInstance().emit(MyConstant.READ_MESSAGE, chatId, newLine.getId(), myId);
                             }
 
@@ -747,13 +755,14 @@ public class ChatActivity extends AppCompatActivity {
             public void call(Object... args) {
                 String tempId = (String) args[0];
                 chatId = tempId;
-                loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), FIRST_LOAD);
             }
         });
     }
 
-    private void loadMessage(String id, String accessToken) {
-        RetrofitService.getInstance.getMessageById(id, accessToken)
+    private void loadMessage(String id, int page, String accessToken, int type) {
+        pagingPb.setVisibility(View.VISIBLE);
+        RetrofitService.getInstance.getMessageById(id, page, accessToken)
                 .enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
@@ -761,9 +770,15 @@ public class ChatActivity extends AppCompatActivity {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.INFO, "Không có tin nhắn");
                         } else if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            loadMessage(id, accessToken);
+                            loadMessage(id, page, accessToken, type);
                         } else if (response.code() == 200) {
-                            messageList = response.body();
+                            pagingPb.setVisibility(View.GONE);
+                            List<Message> tempMessageList = response.body();
+                            if (tempMessageList.size() == 0) {
+                                isLoading = false;
+                            }
+
+                            messageList.addAll(0, tempMessageList);
 
                             // emit read message
                             // last message
@@ -779,10 +794,15 @@ public class ChatActivity extends AppCompatActivity {
                             recyclerView.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
                             personalMessageAdapter.setData(messageList);
-                            recyclerView.setAdapter(personalMessageAdapter);
+
+                            if (type == FIRST_LOAD) {
+
+                                recyclerView.setAdapter(personalMessageAdapter);
+                            }
 
 
                         } else {
+                            pagingPb.setVisibility(View.GONE);
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         }
                     }
@@ -863,7 +883,7 @@ public class ChatActivity extends AppCompatActivity {
                     ArrayList<Uri> docPaths = new ArrayList<>();
                     docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
 
-                    for (Uri uri: docPaths){
+                    for (Uri uri : docPaths) {
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -871,7 +891,7 @@ public class ChatActivity extends AppCompatActivity {
                         uploadFile(mPartImage);
 
                     }
-                    
+
                 }
                 break;
         }
@@ -882,11 +902,10 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        if(response.code() == 403){
+                        if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
-                        }
-                        else if(response.code() == 200){
+                        } else if (response.code() == 200) {
                             String nameFile = response.body();
                             JSONObject jsonObject = new JSONObject();
                             try {
@@ -897,8 +916,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
 
                             SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
-                        }
-                        else {
+                        } else {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         }
                     }
