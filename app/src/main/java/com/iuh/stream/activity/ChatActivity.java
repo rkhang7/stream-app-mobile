@@ -3,6 +3,7 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -104,6 +105,8 @@ public class ChatActivity extends AppCompatActivity {
     private boolean isLoading = true;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +135,6 @@ public class ChatActivity extends AppCompatActivity {
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.e("TAG", "beforeTextChanged: ");
             }
 
             @Override
@@ -210,6 +212,7 @@ public class ChatActivity extends AppCompatActivity {
         newMessageTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                newMessageTv.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
         });
@@ -229,6 +232,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onPermissionGranted() {
                 String[] zipTypes = {"zip", "rar"};
+                String[] mp3Type = {"mp3"};
                 String[] apkType = {"apk"};
                 String[] jsonType = {"json"};
                 String[] csvType = {"csv"};
@@ -237,7 +241,8 @@ public class ChatActivity extends AppCompatActivity {
 
                 FilePickerBuilder.getInstance()
                         .setMaxCount(10) //optional
-                        .addFileSupport("ZIP", zipTypes)
+                        .addFileSupport("RAR", zipTypes)
+                        .addFileSupport("MP3", mp3Type)
                         .addFileSupport("APK", apkType)
                         .addFileSupport("JSON", jsonType)
                         .addFileSupport("CSV", csvType)
@@ -448,13 +453,31 @@ public class ChatActivity extends AppCompatActivity {
                     scrollLastPositionBtn.setVisibility(View.VISIBLE);
                 }
 
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
-                    Log.e("TAG", "onScrolled: " );
-                    if (isLoading) {
-                        currentPage = currentPage + 1;
-                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
-                    }
+                int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+//                if (firstCompletelyVisibleItemPosition == 0) {
+//                    if (isLoading) {
+//                        currentPage = currentPage + 1;
+//                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+//                    }
+//                }
+
+                int visibleItemCount = linearLayoutManager.getChildCount();
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+                int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+//                Log.e("TAG", "visibleItemCount: " + visibleItemCount);
+//                Log.e("TAG", "totalItemCount: " + totalItemCount);
+//                Log.e("TAG", "firstVisibleItemPosition: " + firstVisibleItemPosition);
+//                Log.e("TAG", "lastVisibleItemPosition: " + lastVisibleItemPosition);
+
+                if (firstCompletelyVisibleItemPosition == 0) {
+
+                        if (isLoading) {
+                            currentPage = currentPage + 1;
+                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+                        }
                 }
+//                Log.e("TAG", "==================================");
 
             }
 
@@ -753,9 +776,16 @@ public class ChatActivity extends AppCompatActivity {
         SocketClient.getInstance().on(CREATE_PERSONAL_CHAT_RESPONSE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                String tempId = (String) args[0];
-                chatId = tempId;
-                loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), FIRST_LOAD);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String tempId = (String) args[0];
+                        chatId = tempId;
+                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), FIRST_LOAD);
+                    }
+                });
+
             }
         });
     }
@@ -777,8 +807,12 @@ public class ChatActivity extends AppCompatActivity {
                             if (tempMessageList.size() == 0) {
                                 isLoading = false;
                             }
+                            if (type == NEXT_PAGE_LOAD) {
+                                messageList.addAll(0, tempMessageList);
+                            } else {
+                                messageList = tempMessageList;
+                            }
 
-                            messageList.addAll(0, tempMessageList);
 
                             // emit read message
                             // last message
@@ -793,10 +827,16 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             recyclerView.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
+                            if(type == NEXT_PAGE_LOAD){
+                                int position = messageList.size() - currentPage * 10 + 10;
+                                Log.e("TAG", "size: " + messageList.size() );
+                                Log.e("TAG", "onResponse: " + currentPage );
+                                Log.e("TAG", "position" + position);
+
+                                linearLayoutManager.scrollToPositionWithOffset(position,0);
+                            }
                             personalMessageAdapter.setData(messageList);
-
                             if (type == FIRST_LOAD) {
-
                                 recyclerView.setAdapter(personalMessageAdapter);
                             }
 

@@ -163,6 +163,14 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     case "RAR":
                         holder.typeFileIv.setImageResource(R.drawable.icons8_rar_48);
                         break;
+                    case "MP3":
+                        holder.typeFileIv.setImageResource(R.drawable.icons8_mp3_48);
+                        break;
+                    case "MP4":
+                    case "MOV":
+                    case "MKV":
+                        holder.typeFileIv.setImageResource(R.drawable.icons8_video_48);
+                        break;
                     default:
                         holder.typeFileIv.setImageResource(R.drawable.icons8_file_48);
                         break;

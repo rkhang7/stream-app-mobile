@@ -123,7 +123,6 @@
         android:layout_below="@id/toolbar"
         android:layout_marginBottom="8dp"
         android:background="#e0e9ee"
-        android:nestedScrollingEnabled="false"
         android:padding="8dp" />
 
     <ProgressBar
