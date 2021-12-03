@@ -1,7 +1,10 @@
 package com.iuh.stream.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.ViewImageMessageActivity;
+import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.models.response.FileSizeResponse;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -25,6 +32,9 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLineAdapter.PersonLeftLineViewHolder> {
     private List<Line> lineList;
@@ -111,7 +121,8 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 String name = split[0];
                 String type = split[1].toUpperCase(Locale.ROOT);
                 holder.nameFileTv.setText(name);
-                holder.typeFileTv.setText(type);
+                holder.typeFileTv.setText(type + " * ");
+                setSize(holder.sizeFileTv, content);
                 switch (type){
                     case "JSON":
                         holder.typeFileIv.setImageResource(R.drawable.icons8_json_48);
@@ -181,6 +192,33 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
         }
     }
 
+    private void setSize(TextView sizeFileTv, String name) {
+        RetrofitService.getInstance.getFileSizeByName(name, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<FileSizeResponse>() {
+                    @Override
+                    public void onResponse(Call<FileSizeResponse> call, Response<FileSizeResponse> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            setSize(sizeFileTv, name);
+                        }
+                        else if(response.code() == 200){
+                            FileSizeResponse fileSizeResponse = response.body();
+                            int size = fileSizeResponse.getSize();
+                            String sizeConverted = Formatter.formatFileSize(mContext,size);
+                            sizeFileTv.setText(sizeConverted);
+                        }
+                        else {
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FileSizeResponse> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
+    }
+
     @Override
     public int getItemCount() {
         if (lineList != null) {
@@ -191,7 +229,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
 
     public class PersonLeftLineViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView avatarIv;
-        private TextView textLastTimeTv, imageLastTimeTv, textContentTv, nameFileTv, typeFileTv, fileLastTimeTv;
+        private TextView textLastTimeTv, imageLastTimeTv, textContentTv, nameFileTv, typeFileTv, fileLastTimeTv, sizeFileTv;
         private LinearLayout textLayout, imageLayout;
         private ImageView imageContentIv, typeFileIv;
         private RelativeLayout fileLayout;
@@ -215,6 +253,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
             nameFileTv = itemView.findViewById(R.id.name_file_tv);
             typeFileTv = itemView.findViewById(R.id.type_file_tv);
             fileLastTimeTv = itemView.findViewById(R.id.file_last_time_line_tv);
+            sizeFileTv = itemView.findViewById(R.id.size_file_tv);
 
 
             // view image
