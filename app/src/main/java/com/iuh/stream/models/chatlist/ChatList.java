@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatList {
-    private List<PersonalChat> personalChats;
+    private List<Chats> chats;
     private int totalUnreadMessages;
 }

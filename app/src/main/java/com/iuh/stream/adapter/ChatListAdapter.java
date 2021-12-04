@@ -5,9 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +24,9 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.models.chatlist.Group;
 import com.iuh.stream.models.chatlist.LastLine;
-import com.iuh.stream.models.chatlist.PersonalChat;
+import com.iuh.stream.models.chatlist.Chats;
 import com.iuh.stream.service.FloatingViewService;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
@@ -43,7 +40,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>{
-    private List<PersonalChat> personalChatList;
+    private List<Chats> chatsList;
     private Context mContext;
     private FirebaseAuth mAuth;
 
@@ -52,8 +49,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public void setData(List<PersonalChat> personalChatList){
-        this.personalChatList = personalChatList;
+    public void setData(List<Chats> chatsList){
+        this.chatsList = chatsList;
         notifyDataSetChanged();
     }
 
@@ -66,18 +63,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public void onBindViewHolder(@NonNull ChatListViewHolder holder, int position) {
-        PersonalChat personalChat = personalChatList.get(position);
-        if(personalChat != null){
-            // personal chat
-            if(personalChat.getUsers().size() == 2){
-                for(User user: personalChat.getUsers()){
+        Chats chats = chatsList.get(position);
+        if(chats != null){
+            // chat 1:1
+            if(chats.getGroup() == null){
+                for(User user: chats.getUsers()){
                     if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
                         Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
                         holder.nameTv.setText(user.getFirstName() + " " + user.getLastName());
                     }
                 }
 
-                LastLine lastLine = personalChat.getLatestLine();
+                LastLine lastLine = chats.getLatestLine();
                 // text type
                 if(lastLine.getLine().getType().equals(MyConstant.TEXT_TYPE)){
                     if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
@@ -110,15 +107,21 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
 
             }
+            // group chat
+            else{
+                Group group = chats.getGroup();
+                holder.avatarIv.setImageResource(R.drawable.group_chat);
+                holder.nameTv.setText(group.getName());
+            }
 
-            if(personalChat.getUnreadMessagesCount() <= 0){
+            if(chats.getUnreadMessagesCount() <= 0){
                 holder.unreadMessageTv.setVisibility(View.GONE);
             }
-            else if(personalChat.getUnreadMessagesCount() > 5){
+            else if(chats.getUnreadMessagesCount() > 5){
                 holder.unreadMessageTv.setText("5+");
             }
             else{
-                holder.unreadMessageTv.setText(personalChat.getUnreadMessagesCount() + "");
+                holder.unreadMessageTv.setText(chats.getUnreadMessagesCount() + "");
             }
 
 
@@ -128,8 +131,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public int getItemCount() {
-        if(personalChatList != null){
-            return personalChatList.size();
+        if(chatsList != null){
+            return chatsList.size();
         }
         return 0;
     }
@@ -149,15 +152,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                 @Override
                 public void onClick(View v) {
                     // start chat activity
-                    PersonalChat personalChat = personalChatList.get(getAdapterPosition());
-                    for(User user: personalChat.getUsers()){
-                        if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
-                            Intent intent = new Intent(mContext, ChatActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(MyConstant.USER_KEY, user);
-                            mContext.startActivity(intent);
+                    Chats chats = chatsList.get(getAdapterPosition());
+                    // chat 1:1
+                    if(chats.getGroup() == null){
+                        for(User user: chats.getUsers()){
+                            if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
+                                Intent intent = new Intent(mContext, ChatActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra(MyConstant.USER_KEY, user);
+                                mContext.startActivity(intent);
+                            }
                         }
                     }
+
                 }
             });
 
@@ -172,9 +179,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
     }
 
     private void openDialog(int position) {
-        PersonalChat personalChat = personalChatList.get(position);
+        Chats chats = chatsList.get(position);
         User tempUser = new User();
-        for(User user: personalChat.getUsers()){
+        for(User user: chats.getUsers()){
             if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
                tempUser = user;
             }
@@ -217,7 +224,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String id = personalChatList.get(position).get_id();
+                String id = chatsList.get(position).get_id();
                 deleteChat(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), position);
             }
         });
@@ -235,7 +242,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                             deleteChat(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), position);
                         }
                         else if (response.code() == 200){
-                            personalChatList.remove(position);
+                            chatsList.remove(position);
                             notifyItemRemoved(position);
                             notifyItemRangeChanged(position,getItemCount());
                         }
@@ -255,9 +262,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                PersonalChat personalChat = personalChatList.get(position);
+                Chats chats = chatsList.get(position);
 
-                for(User user: personalChat.getUsers()){
+                for(User user: chats.getUsers()){
                     if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
                         Intent intent = new Intent(mContext, FloatingViewService.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

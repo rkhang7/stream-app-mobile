@@ -1,8 +1,8 @@
 package com.iuh.stream.api;
 
 import com.iuh.stream.models.chat.Message;
-import com.iuh.stream.models.chat.PersonalChat;
 import com.iuh.stream.models.chatlist.ChatList;
+import com.iuh.stream.models.chatlist.Chats;
 import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
@@ -15,7 +15,6 @@ import com.iuh.stream.utils.MyConstant;
 import java.util.List;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -86,7 +85,7 @@ public interface RetrofitService {
 
 
     @GET("/chats/{id}")
-    Call<PersonalChat> getPersonalChatById(@Path("id") String id, @Header("Authorization") String accessToken);
+    Call<Chats> getPersonalChatById(@Path("id") String id, @Header("Authorization") String accessToken);
 
     @GET("/chats/{id}/messages")
     Call<List<Message>> getMessageById( @Path("id") String chatId, @Query("page") int page, @Header("Authorization") String accessToken);

@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -22,11 +20,10 @@ import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.PersonalChatListCallBack;
 import com.iuh.stream.interfaces.PersonalChatListAsyncResponse;
 import com.iuh.stream.models.User;
-import com.iuh.stream.models.chatlist.PersonalChat;
+import com.iuh.stream.models.chatlist.Chats;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class SearchConversationActivity extends AppCompatActivity {
     private ImageButton backBtn;
@@ -34,7 +31,7 @@ public class SearchConversationActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView notFoundTv;
     private ProgressBar progressBar;
-    private List<PersonalChat> personalChatList;
+    private List<Chats> chatsList;
     private ChatListAdapter chatListAdapter;
     private FirebaseAuth mAuth;
     @Override
@@ -79,7 +76,7 @@ public class SearchConversationActivity extends AppCompatActivity {
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
-                    personalChatList.clear();
+                    chatsList.clear();
                     filterFriends(editable.toString());
                 }
 
@@ -90,26 +87,26 @@ public class SearchConversationActivity extends AppCompatActivity {
     private void filterFriends(String key) {
         new PersonalChatListCallBack().getPersonalChatList(new PersonalChatListAsyncResponse() {
             @Override
-            public void processFinnish(List<PersonalChat> personalChatList) {
-                List<PersonalChat> filterPersonalChat = new ArrayList<>();
-                for(PersonalChat personalChat: personalChatList){
-                    List<User> userList = personalChat.getUsers();
+            public void processFinnish(List<Chats> chatsList) {
+                List<Chats> filterChats = new ArrayList<>();
+                for(Chats chats : chatsList){
+                    List<User> userList = chats.getUsers();
                     for(User user: userList){
                         if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
                             if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
                                     || user.getLastName().toLowerCase().contains(key.toLowerCase()))
                             {
-                                filterPersonalChat.add(personalChat);
+                                filterChats.add(chats);
                             }
                         }
                     }
                 }
 
-                if (filterPersonalChat.size() > 0) {
+                if (filterChats.size() > 0) {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     notFoundTv.setVisibility(View.GONE);
-                    chatListAdapter.setData(filterPersonalChat);
+                    chatListAdapter.setData(filterChats);
                 } else {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);
@@ -128,9 +125,9 @@ public class SearchConversationActivity extends AppCompatActivity {
         notFoundTv = findViewById(R.id.not_found_tv);
         progressBar = findViewById(R.id.search_conversation_pb);
 
-        personalChatList = new ArrayList<>();
+        chatsList = new ArrayList<>();
         chatListAdapter = new ChatListAdapter(this);
-        chatListAdapter.setData(personalChatList);
+        chatListAdapter.setData(chatsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(chatListAdapter);
     }

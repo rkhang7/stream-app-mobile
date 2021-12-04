@@ -438,12 +438,6 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-//                if(dy > 0){
-//                    scrollLastPositionBtn.setVisibility(View.GONE);
-//                }
-//                else{
-//                    scrollLastPositionBtn.setVisibility(View.VISIBLE);
-//                }
                 totalItemCount = linearLayoutManager.getItemCount();
                 lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
@@ -453,31 +447,15 @@ public class ChatActivity extends AppCompatActivity {
                     scrollLastPositionBtn.setVisibility(View.VISIBLE);
                 }
 
+                // paging
                 int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-//                if (firstCompletelyVisibleItemPosition == 0) {
-//                    if (isLoading) {
-//                        currentPage = currentPage + 1;
-//                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
-//                    }
-//                }
-
-                int visibleItemCount = linearLayoutManager.getChildCount();
-                int totalItemCount = linearLayoutManager.getItemCount();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
-//                Log.e("TAG", "visibleItemCount: " + visibleItemCount);
-//                Log.e("TAG", "totalItemCount: " + totalItemCount);
-//                Log.e("TAG", "firstVisibleItemPosition: " + firstVisibleItemPosition);
-//                Log.e("TAG", "lastVisibleItemPosition: " + lastVisibleItemPosition);
-
                 if (firstCompletelyVisibleItemPosition == 0) {
-
                         if (isLoading) {
                             currentPage = currentPage + 1;
                             loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
                         }
                 }
-//                Log.e("TAG", "==================================");
+
 
             }
 
@@ -531,7 +509,7 @@ public class ChatActivity extends AppCompatActivity {
                             String content = lineJsonObject.getString("content");
                             String type = lineJsonObject.getString("type");
 
-                            String newMessageId = jsonObject.getString("newMessageId");
+                            String newMessageId = jsonObject.getString("messageId");
 
                             Line newLine = null;
                             String stringDate = lineJsonObject.getString("createdAt");
@@ -829,10 +807,6 @@ public class ChatActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                             if(type == NEXT_PAGE_LOAD){
                                 int position = messageList.size() - currentPage * 10 + 10;
-                                Log.e("TAG", "size: " + messageList.size() );
-                                Log.e("TAG", "onResponse: " + currentPage );
-                                Log.e("TAG", "position" + position);
-
                                 linearLayoutManager.scrollToPositionWithOffset(position,0);
                             }
                             personalMessageAdapter.setData(messageList);

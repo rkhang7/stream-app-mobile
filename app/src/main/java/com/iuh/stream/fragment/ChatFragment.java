@@ -3,13 +3,10 @@ package com.iuh.stream.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,19 +21,13 @@ import com.iuh.stream.activity.SearchConversationActivity;
 import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
-import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.chatlist.ChatList;
-import com.iuh.stream.models.chatlist.PersonalChat;
+import com.iuh.stream.models.chatlist.Chats;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.socket.emitter.Emitter;
@@ -54,7 +45,7 @@ public class ChatFragment extends Fragment{
     private ShimmerRecyclerView shimmerRecyclerView;
 
     private ChatList chatList;
-    private List<PersonalChat> personalChatList;
+    private List<Chats> chatsList;
     private static final int LOAD = 1;
     private static final int REFRESH = 2;
 
@@ -101,9 +92,9 @@ public class ChatFragment extends Fragment{
 
 
 
-        personalChatList = new ArrayList<>();
+        chatsList = new ArrayList<>();
         chatListAdapter = new ChatListAdapter(getContext());
-        chatListAdapter.setData(personalChatList);
+        chatListAdapter.setData(chatsList);
         shimmerRecyclerView = view.findViewById(R.id.list_chat_rcv);
         shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         shimmerRecyclerView.setAdapter(chatListAdapter);
@@ -153,7 +144,7 @@ public class ChatFragment extends Fragment{
                          else if(response.code() == 200){
                             chatList = response.body();
                              shimmerRecyclerView.hideShimmerAdapter();
-                             chatListAdapter.setData(chatList.getPersonalChats());
+                             chatListAdapter.setData(chatList.getChats());
                              shimmerRecyclerView.setAdapter(chatListAdapter);
                         }
 

@@ -27,7 +27,7 @@ public class PersonalChatListCallBack {
                         }
                         if(response.code() == 200){
                             chatList = response.body();
-                            callback.processFinnish(chatList.getPersonalChats());
+                            callback.processFinnish(chatList.getChats());
                         }
 
                     }

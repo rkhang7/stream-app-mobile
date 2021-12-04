@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonalChat {
+public class Chats {
     private String _id;
     private List<User> users;
+    private Group group;
     private int unreadMessagesCount;
     private LastLine latestLine;
 }
