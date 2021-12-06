@@ -61,6 +61,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             linearLayoutManager.setStackFromEnd(true);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
             holder.recyclerView.setFocusable(false);
+            Log.e("TAG", "lef: " );
 
             // adapter
             PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(mContext, hisImageUrl);
@@ -77,7 +78,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext);
             personalRightLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalRightLineAdapter);
-
+            Log.e("TAG", "right: " );
             if(position == messageList.size()-1){
                 if(message.getSender().equals(myId)){
                     List<Line> lineList = message.getLines();

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -183,7 +184,8 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                         phoneNumberConverted = number;
                     }
 
-//
+                    // remove space in string
+                    phoneNumberConverted = phoneNumberConverted.replaceAll("\\s+","");
 
                     if (phoneNumberConverted.length() == 10) {
                         // init contact model

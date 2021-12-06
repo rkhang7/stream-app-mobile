@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -448,13 +449,13 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 // paging
-                int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                if (firstCompletelyVisibleItemPosition == 0) {
-                        if (isLoading) {
-                            currentPage = currentPage + 1;
-                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
-                        }
-                }
+//                int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+//                if (firstCompletelyVisibleItemPosition == 0) {
+//                        if (isLoading) {
+//                            currentPage = currentPage + 1;
+//                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+//                        }
+//                }
 
 
             }
@@ -542,9 +543,11 @@ public class ChatActivity extends AppCompatActivity {
                                             lineList.add(newLine);
                                             Message message = new Message(lineList, myId, null, newMessageId);
                                             messageList.add(message);
+                                            personalMessageAdapter.notifyItemInserted(messageList.size());
 
                                         } else {
                                             lastLineList.add(newLine);
+                                            personalMessageAdapter.notifyDataSetChanged();
                                         }
                                     }
                                 } else {
@@ -552,10 +555,12 @@ public class ChatActivity extends AppCompatActivity {
                                     lineList.add(newLine);
                                     Message message = new Message(lineList, myId, null, newMessageId);
                                     messageList.add(message);
+                                    personalMessageAdapter.notifyItemInserted(messageList.size());
                                 }
 
                             }
-                            personalMessageAdapter.setData(messageList);
+
+//                            personalMessageAdapter.setData(messageList);
                             recyclerView.setAdapter(personalMessageAdapter);
 
                         } catch (Exception e) {
@@ -573,12 +578,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void run() {
 
                         String chatId = (String) args[0];
-                        String currentUserId = (String) args[1];
-                        String newMessageId = (String) args[2];
+                        String newMessageId = (String) args[1];
+                        String currentUserId = (String) args[2];
+
 
                         // get line
                         try {
@@ -603,6 +610,7 @@ public class ChatActivity extends AppCompatActivity {
                                         lineList.add(newLine);
                                         Message message = new Message(lineList, currentUserId, null, newMessageId);
                                         messageList.add(message);
+                                        personalMessageAdapter.notifyItemInserted(messageList.size());
                                     } else {
                                         int lengthLineList = lastMessage.getLines().size();
                                         List<Line> lastLineList = lastMessage.getLines();
@@ -615,9 +623,10 @@ public class ChatActivity extends AppCompatActivity {
                                             lineList.add(newLine);
                                             Message message = new Message(lineList, currentUserId, null, newMessageId);
                                             messageList.add(message);
-
+                                            personalMessageAdapter.notifyItemInserted(messageList.size());
                                         } else {
                                             lastLineList.add(newLine);
+                                            personalMessageAdapter.notifyDataSetChanged();
                                         }
                                     }
                                 } else {
@@ -625,13 +634,16 @@ public class ChatActivity extends AppCompatActivity {
                                     lineList.add(newLine);
                                     Message message = new Message(lineList, currentUserId, null, newMessageId);
                                     messageList.add(message);
+                                    personalMessageAdapter.notifyItemInserted(messageList.size());
                                 }
                             }
                             if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
                                 scrollLastPositionBtn.setVisibility(View.GONE);
                                 newMessageTv.setVisibility(View.VISIBLE);
                             }
-                            personalMessageAdapter.setData(messageList);
+
+
+
 
                             // emit
                             if (isActivityRunning) {
@@ -896,15 +908,44 @@ public class ChatActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Uri> docPaths = new ArrayList<>();
                     docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
-
-                    for (Uri uri : docPaths) {
+                    // 1 file
+                    if(docPaths.size() == 1){
+                        Uri uri = docPaths.get(0);
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-                        uploadFile(mPartImage);
+                        int file_size = Integer.parseInt(String.valueOf(file.length()/102400));
+                        if(file_size <= 20){
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                            MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                            uploadFile(mPartImage);
+                        }
+                        else{
+                            CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20BM");
+                        }
 
                     }
+                    // multi file
+                    else{
+                        int count = 0;
+                        for (Uri uri : docPaths) {
+                            String realPath = RealPathUtil.getRealPath(this, uri);
+                            File file = new File(realPath);
+                            int file_size = Integer.parseInt(String.valueOf(file.length()/102400));
+                            if(file_size <= 20){
+                                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                                MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                                uploadFile(mPartImage);
+                            }
+                            else {
+                                count++;
+                            }
+
+                        }
+                        if(count > 0){
+                            CustomAlert.showToast(this, CustomAlert.WARNING, "Có " + count + " file lớn hơn 20MB");
+                        }
+                    }
+
 
                 }
                 break;

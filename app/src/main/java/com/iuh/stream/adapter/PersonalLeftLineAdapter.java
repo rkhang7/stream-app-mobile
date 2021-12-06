@@ -91,7 +91,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 holder.textLayout.setVisibility(View.GONE);
                 holder.imageLayout.setVisibility(View.VISIBLE);
                 holder.fileLayout.setVisibility(View.GONE);
-                Glide.with(mContext).load(line.getContent()).into(holder.imageContentIv);
+                Picasso.get().load(line.getContent()).into(holder.imageContentIv);
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);
@@ -114,7 +114,6 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 holder.textLayout.setVisibility(View.GONE);
                 holder.imageLayout.setVisibility(View.GONE);
                 holder.fileLayout.setVisibility(View.VISIBLE);
-
                 // abc.docx
                 String content = line.getContent();
                 String[] split = content.split("\\.");
@@ -176,8 +175,6 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                         break;
 
                 }
-
-
 
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);

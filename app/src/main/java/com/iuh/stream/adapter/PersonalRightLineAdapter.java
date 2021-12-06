@@ -25,6 +25,7 @@ import com.iuh.stream.models.chat.Line;
 import com.iuh.stream.models.response.FileSizeResponse;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
@@ -77,11 +78,10 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                 holder.textLayout.setVisibility(View.GONE);
                 holder.imageLayout.setVisibility(View.VISIBLE);
                 holder.fileLayout.setVisibility(View.GONE);
-                Glide.with(mContext).load(line.getContent()).into(holder.imageContentIv);
+                Picasso.get().load(line.getContent()).into(holder.imageContentIv);
                 if(position == lineList.size() - 1){
                     holder.imageLastTimeTv.setVisibility(View.VISIBLE);
                     holder.imageLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
-
                 }
                 else{
                     holder.imageLastTimeTv.setVisibility(View.GONE);
