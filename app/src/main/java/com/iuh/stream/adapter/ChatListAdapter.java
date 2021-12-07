@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.ChatActivity;
+import com.iuh.stream.activity.GroupChatActivity;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
@@ -32,6 +34,7 @@ import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -211,6 +214,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                                 mContext.startActivity(intent);
                             }
                         }
+                    }
+                    else {
+                        Group group = chats.getGroup();
+                        Intent intent = new Intent(mContext, GroupChatActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(MyConstant.GROUP_KEY, group);
+                        bundle.putInt(MyConstant.NUMBER_MEMBER, chats.getUsers().size());
+                        bundle.putString(MyConstant.GROUP_CHAT_ID, chats.get_id());
+                        bundle.putSerializable(MyConstant.LIST_MEMBER_KEY, (Serializable) chats.getUsers());
+                        intent.putExtras(bundle);
+                        mContext.startActivity(intent);
                     }
 
                 }

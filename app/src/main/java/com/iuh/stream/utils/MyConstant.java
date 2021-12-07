@@ -12,6 +12,10 @@ public class MyConstant {
     public static final String FILE_TYPE = "file";
     public static final String USER_KEY = "USER";
     public static final String CONTENT_KEY = "content";
+    public static final String GROUP_KEY = "group";
+    public static final String NUMBER_MEMBER = "size";
+    public static final String GROUP_CHAT_ID = "group_id";
+    public static final String LIST_MEMBER_KEY = "list_member";
 
     // gửi lời mời kết bạn
     public static final String ADD_FRIEND_REQUEST = "add-friend";
