@@ -441,21 +441,21 @@ public class ChatActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
                 totalItemCount = linearLayoutManager.getItemCount();
                 lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                if (totalItemCount <= (lastVisibleItem + visibleThreshold) && newMessageTv.getVisibility() == View.GONE) {
                     newMessageTv.setVisibility(View.GONE);
                     scrollLastPositionBtn.setVisibility(View.GONE);
                 } else {
                     scrollLastPositionBtn.setVisibility(View.VISIBLE);
                 }
 
-                // paging
-//                int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-//                if (firstCompletelyVisibleItemPosition == 0) {
-//                        if (isLoading) {
-//                            currentPage = currentPage + 1;
-//                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
-//                        }
-//                }
+//                 paging
+                int firstCompletelyVisibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                if (firstCompletelyVisibleItemPosition == 0) {
+                        if (isLoading) {
+                            currentPage = currentPage + 1;
+                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+                        }
+                }
 
 
             }
@@ -611,6 +611,7 @@ public class ChatActivity extends AppCompatActivity {
                                         Message message = new Message(lineList, currentUserId, null, newMessageId);
                                         messageList.add(message);
                                         personalMessageAdapter.notifyItemInserted(messageList.size());
+                                        newMessageTv.setVisibility(View.VISIBLE);
                                     } else {
                                         int lengthLineList = lastMessage.getLines().size();
                                         List<Line> lastLineList = lastMessage.getLines();
@@ -628,6 +629,11 @@ public class ChatActivity extends AppCompatActivity {
                                             lastLineList.add(newLine);
                                             personalMessageAdapter.notifyDataSetChanged();
                                         }
+
+                                        if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
+                                            scrollLastPositionBtn.setVisibility(View.GONE);
+                                            newMessageTv.setVisibility(View.VISIBLE);
+                                        }
                                     }
                                 } else {
                                     List<Line> lineList = new ArrayList<>();
@@ -635,14 +641,13 @@ public class ChatActivity extends AppCompatActivity {
                                     Message message = new Message(lineList, currentUserId, null, newMessageId);
                                     messageList.add(message);
                                     personalMessageAdapter.notifyItemInserted(messageList.size());
+
+                                    if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
+                                        scrollLastPositionBtn.setVisibility(View.GONE);
+                                        newMessageTv.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }
-                            if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
-                                scrollLastPositionBtn.setVisibility(View.GONE);
-                                newMessageTv.setVisibility(View.VISIBLE);
-                            }
-
-
 
 
                             // emit

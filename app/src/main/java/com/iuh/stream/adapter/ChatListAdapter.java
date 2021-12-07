@@ -81,6 +81,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                         holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
                     }
                     else{
+
                         holder.lastLineTv.setText(lastLine.getLine().getContent());
                     }
                 }
@@ -112,7 +113,56 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                 Group group = chats.getGroup();
                 holder.avatarIv.setImageResource(R.drawable.group_chat);
                 holder.nameTv.setText(group.getName());
+
+                LastLine lastLine = chats.getLatestLine();
+                // text type
+                if(lastLine.getLine().getType().equals(MyConstant.TEXT_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
+                    }
+                    else{
+                        for(User user: chats.getUsers()){
+                            if(user.get_id().equals(lastLine.getSenderId())){
+                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
+                            }
+                        }
+
+                    }
+                }
+                // image type
+                else if(lastLine.getLine().getType().equals(MyConstant.IMAGE_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: [Hình ảnh]");
+                    }
+                    else{
+                        for(User user: chats.getUsers()){
+                            if(user.get_id().equals(lastLine.getSenderId())){
+                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + "[Hình ảnh]");
+                            }
+                        }
+                    }
+                }
+
+                // file type
+                else if(lastLine.getLine().getType().equals(MyConstant.FILE_TYPE)){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
+                    }
+                    else{
+                        for(User user: chats.getUsers()){
+                            if(user.get_id().equals(lastLine.getSenderId())){
+                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
+                            }
+                        }
+                    }
+                }
+                holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
+
             }
+
+
+
+
 
             if(chats.getUnreadMessagesCount() <= 0){
                 holder.unreadMessageTv.setVisibility(View.GONE);
@@ -123,8 +173,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             else{
                 holder.unreadMessageTv.setText(chats.getUnreadMessagesCount() + "");
             }
-
-
 
         }
     }

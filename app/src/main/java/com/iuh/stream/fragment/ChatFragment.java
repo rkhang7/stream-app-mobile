@@ -116,6 +116,8 @@ public class ChatFragment extends Fragment{
                 });
             }
         });
+
+        // mình nhắn tin, server trả về
         SocketClient.getInstance().on(MyConstant.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -128,8 +130,20 @@ public class ChatFragment extends Fragment{
             }
         });
 
-    }
+        // người khác tạo
+        SocketClient.getInstance().on(MyConstant.CREATE_GROUP, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                    }
+                });
+            }
+        });
 
+    }
 
 
     private void getChatList(String accessToken) {
