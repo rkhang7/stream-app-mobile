@@ -79,6 +79,22 @@
                 app:layout_flexGrow="1"/>
         </com.google.android.flexbox.FlexboxLayout>
 
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv"
+            android:visibility="gone"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:visibility="visible"
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/member_group_rcv"/>
+        </androidx.core.widget.NestedScrollView>
+
+
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/leave_group_layout"
             android:layout_width="match_parent"
