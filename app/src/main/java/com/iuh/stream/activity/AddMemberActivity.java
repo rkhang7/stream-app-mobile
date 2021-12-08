@@ -142,18 +142,23 @@ public class AddMemberActivity extends AppCompatActivity implements FriendListen
             public void processFinnish(List<User> friendArrayList) {
                 List<User> filterFriends = new ArrayList<>();
                 for (User user : friendArrayList) {
+                    String fullName = user.getFirstName().toLowerCase() + " " +
+                            user.getLastName().toLowerCase();
                     if (user.getEmail() != null) {
-                        if (user.getFirstName().toLowerCase().contains(key)
-                                || user.getLastName().toLowerCase().contains(key)
-                                || user.getEmail().equals(key))
+                        if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
+                                || user.getLastName().toLowerCase().contains(key.toLowerCase())
+                                || user.getEmail().equals(key.toLowerCase())
+                                || fullName.contains(key.toLowerCase()))
                         {
                             filterFriends.add(user);
                         }
                     }
                     if (user.getPhoneNumber() != null) {
-                        if (user.getFirstName().toLowerCase().contains(key)
-                                || user.getLastName().toLowerCase().contains(key)
-                                || user.getPhoneNumber().equals(key)
+                        if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
+                                || user.getLastName().toLowerCase().contains(key.toLowerCase())
+                                || user.getPhoneNumber().equals(key.toLowerCase())
+                                || fullName.contains(key.toLowerCase()
+                        )
                         ) {
                             filterFriends.add(user);
                         }

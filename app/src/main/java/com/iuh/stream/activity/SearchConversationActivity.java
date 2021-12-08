@@ -91,15 +91,28 @@ public class SearchConversationActivity extends AppCompatActivity {
                 List<Chats> filterChats = new ArrayList<>();
                 for(Chats chats : chatsList){
                     List<User> userList = chats.getUsers();
-                    for(User user: userList){
-                        if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
-                            if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
-                                    || user.getLastName().toLowerCase().contains(key.toLowerCase()))
-                            {
-                                filterChats.add(chats);
+                    // chat 1:1
+                    if(chats.getGroup() == null){
+                        for(User user: userList){
+                            if(!user.get_id().equals(mAuth.getCurrentUser().getUid())){
+                                String fullName = user.getFirstName().toLowerCase() + " " +
+                                        user.getLastName().toLowerCase();
+                                if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
+                                        || user.getLastName().toLowerCase().contains(key.toLowerCase())
+                                || fullName.contains(key.toLowerCase()))
+                                {
+                                    filterChats.add(chats);
+                                }
                             }
                         }
                     }
+                    // group chat
+                    else{
+                        if(chats.getGroup().getName().toLowerCase().contains(key)){
+                            filterChats.add(chats);
+                        }
+                    }
+
                 }
 
                 if (filterChats.size() > 0) {

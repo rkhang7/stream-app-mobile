@@ -82,8 +82,10 @@ public class PhoneFriendsActivity extends AppCompatActivity {
     private void filterContacts(String key) {
         List<Contact> filterContacts = new ArrayList<>();
         for (Contact contact : contactList) {
-            if (contact.getFirstName().toLowerCase().contains(key)
-                    || contact.getLastName().toLowerCase().contains(key) || contact.getPhoneName().toLowerCase().contains(key)) {
+            String fullName = contact.getFirstName() + " " + contact.getLastName();
+            if (contact.getFirstName().toLowerCase().contains(key.toLowerCase())
+                    || contact.getLastName().toLowerCase().contains(key.toLowerCase()) || contact.getPhoneName().toLowerCase().contains(key.toLowerCase())
+            || fullName.contains(key.toLowerCase())) {
                 filterContacts.add(contact);
             }
         }

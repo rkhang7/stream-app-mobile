@@ -113,6 +113,7 @@
         android:layout_height="match_parent"
         android:textSize="18sp"
         android:visibility="gone"
+        android:layout_centerHorizontal="true"
         android:textColor="@color/black"
         android:layout_gravity="center"
         android:text="Không tìm thấy kết quả phù hợp"/>

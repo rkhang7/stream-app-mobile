@@ -91,10 +91,13 @@ public class SearchActivity extends AppCompatActivity {
             public void processFinnish(List<User> friendArrayList) {
                 List<User> filterFriends = new ArrayList<>();
                 for (User user : friendArrayList) {
+                    String fullName = user.getFirstName().toLowerCase() + " " +
+                            user.getLastName().toLowerCase();
                     if (user.getEmail() != null) {
                         if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
                                 || user.getLastName().toLowerCase().contains(key.toLowerCase())
-                                || user.getEmail().equals(key.toLowerCase()))
+                                || user.getEmail().equals(key.toLowerCase())
+                                || fullName.contains(key.toLowerCase()))
                         {
                             filterFriends.add(user);
                         }
@@ -103,6 +106,8 @@ public class SearchActivity extends AppCompatActivity {
                         if (user.getFirstName().toLowerCase().contains(key.toLowerCase())
                                 || user.getLastName().toLowerCase().contains(key.toLowerCase())
                                 || user.getPhoneNumber().equals(key.toLowerCase())
+                                || fullName.contains(key.toLowerCase()
+                        )
                         ) {
                             filterFriends.add(user);
                         }
