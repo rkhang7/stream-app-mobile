@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,13 +37,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ChatFragment extends Fragment{
+public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private LinearLayout searchLayout;
     private TextView searchTv, notFoundTv;
     private ImageButton addGroupBtn;
     private View view;
     private ChatListAdapter chatListAdapter;
     private ShimmerRecyclerView shimmerRecyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private ChatList chatList;
     private List<Chats> chatsList;
@@ -100,9 +102,12 @@ public class ChatFragment extends Fragment{
         shimmerRecyclerView.setAdapter(chatListAdapter);
         shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
         shimmerRecyclerView.showShimmerAdapter();
+        swipeRefreshLayout = view.findViewById(R.id.srl);
+        swipeRefreshLayout.setColorSchemeResources(R.color.main);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
 
-        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)));
+        getChatList(DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN)), LOAD);
 
         // người khác nhắn tin, server trả về
         SocketClient.getInstance().on(MyConstant.PRIVATE_MESSAGE, new Emitter.Listener() {
@@ -111,7 +116,7 @@ public class ChatFragment extends Fragment{
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
                     }
                 });
             }
@@ -124,7 +129,7 @@ public class ChatFragment extends Fragment{
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
                     }
                 });
             }
@@ -137,7 +142,7 @@ public class ChatFragment extends Fragment{
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
                     }
                 });
             }
@@ -149,7 +154,7 @@ public class ChatFragment extends Fragment{
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
                     }
                 });
             }
@@ -158,20 +163,23 @@ public class ChatFragment extends Fragment{
     }
 
 
-    private void getChatList(String accessToken) {
+    private void getChatList(String accessToken, int type) {
         RetrofitService.getInstance.getChatList(accessToken)
                 .enqueue(new Callback<ChatList>() {
                     @Override
                     public void onResponse(Call<ChatList> call, Response<ChatList> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), type);
                         }
                          else if(response.code() == 200){
                             chatList = response.body();
                              shimmerRecyclerView.hideShimmerAdapter();
                              chatListAdapter.setData(chatList.getChats());
                              shimmerRecyclerView.setAdapter(chatListAdapter);
+                             if(type == REFRESH){
+                                 swipeRefreshLayout.setRefreshing(false);
+                             }
                         }
 
                     }
@@ -183,4 +191,8 @@ public class ChatFragment extends Fragment{
                 });
     }
 
+    @Override
+    public void onRefresh() {
+        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), REFRESH);
+    }
 }

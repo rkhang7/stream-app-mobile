@@ -42,6 +42,7 @@
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/layout/tab_phone.xml" value="0.1921875" />
         <entry key="..\:/Github/stream-app-mobile/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1921875" />
         <entry key="app/src/main/res/drawable-anydpi/bg_blue_cornner_top_16.xml" value="0.11614583333333334" />
+        <entry key="app/src/main/res/drawable-anydpi/group_add_black.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-anydpi/ic_contact.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable-anydpi/ic_person.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/drawable/arrow_back_32.xml" value="0.1" />
@@ -66,6 +67,7 @@
         <entry key="app/src/main/res/drawable/unread_message_bg.xml" value="0.15729166666666666" />
         <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_add_group.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_add_member.xml" value="0.103125" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.11" />
         <entry key="app/src/main/res/layout/activity_image_crop.xml" value="0.23770491803278687" />
@@ -91,6 +93,7 @@
         <entry key="app/src/main/res/layout/contact_row.xml" value="0.16" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/fragment_group_contact.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_recived.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_sent.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />

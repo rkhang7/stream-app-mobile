@@ -54,8 +54,8 @@
             android:id="@+id/add_group_btn"
             style="@style/BorderlessButton"
             android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/group_add_black" />
+            android:layout_height="48dp"
+            android:src="@drawable/icons8_group_32" />
     </com.google.android.flexbox.FlexboxLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,12 +84,18 @@
             app:layout_constraintTop_toTopOf="@+id/textView2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
-        android:id="@+id/list_chat_rcv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible" />
+        android:layout_height="wrap_content">
+        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+            android:id="@+id/list_chat_rcv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <TextView
         android:id="@+id/not_found_tv"
