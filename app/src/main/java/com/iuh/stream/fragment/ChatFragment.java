@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.iuh.stream.R;
-import com.iuh.stream.activity.AddGroupActivity;
+import com.iuh.stream.activity.CreateGroupActivity;
 import com.iuh.stream.activity.SearchConversationActivity;
 import com.iuh.stream.adapter.ChatListAdapter;
 import com.iuh.stream.api.RetrofitService;
@@ -66,7 +66,7 @@ public class ChatFragment extends Fragment{
         addGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), AddGroupActivity.class));
+                startActivity(new Intent(getContext(), CreateGroupActivity.class));
             }
         });
 
@@ -132,6 +132,18 @@ public class ChatFragment extends Fragment{
 
         // người khác tạo
         SocketClient.getInstance().on(MyConstant.CREATE_GROUP, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                    }
+                });
+            }
+        });
+
+        SocketClient.getInstance().on(MyConstant.GROUP_NOTIFICATION, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 ((Activity)getContext()).runOnUiThread(new Runnable() {

@@ -34,7 +34,6 @@
             android:id="@+id/last_line_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ok"
             android:textSize="10sp"/>
     </LinearLayout>
 
@@ -42,8 +41,7 @@
         android:id="@+id/last_date_line_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="19/11"/>
+        android:layout_alignParentEnd="true"/>
 
 
     <TextView

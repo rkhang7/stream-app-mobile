@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nhóm mới"
+                android:text="Thêm vào nhóm"
                 style="@style/Heading2"
                 android:textSize="16sp"/>
 
@@ -49,39 +49,16 @@
 
     </RelativeLayout>
 
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0.5dp"-->
-<!--        android:background="#C8C8C8"/>-->
+    <!--    <View-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0.5dp"-->
+    <!--        android:background="#C8C8C8"/>-->
 
-    <RelativeLayout
-        android:layout_marginTop="16dp"
-        android:id="@+id/add_group_name"
-        android:layout_below="@id/add_group_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            style="@style/BorderlessButton"
-            android:id="@+id/camera_btn"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/camera_black"/>
-
-        <EditText
-            android:id="@+id/group_name_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/camera_btn"
-            android:hint="Nhập tên nhóm"
-            android:maxLines="1" />
-
-    </RelativeLayout>
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_marginTop="16dp"
         android:id="@+id/add_group_search"
-        android:layout_below="@id/add_group_name"
+        android:layout_below="@id/add_group_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:flexDirection="row"
@@ -145,8 +122,8 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tạo nhóm"
-        android:id="@+id/create_group_btn"
+        android:text="Thêm"
+        android:id="@+id/addMemberBtn"
         android:layout_alignParentEnd="true"
         style="@style/RoundedButton"
         android:layout_alignParentBottom="true"/>

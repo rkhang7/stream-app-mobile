@@ -118,48 +118,51 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                 holder.nameTv.setText(group.getName());
 
                 LastLine lastLine = chats.getLatestLine();
-                // text type
-                if(lastLine.getLine().getType().equals(MyConstant.TEXT_TYPE)){
-                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
-                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
-                    }
-                    else{
-                        for(User user: chats.getUsers()){
-                            if(user.get_id().equals(lastLine.getSenderId())){
-                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
-                            }
+                if(lastLine != null){
+                    // text type
+                    if(lastLine.getLine().getType().equals(MyConstant.TEXT_TYPE)){
+                        if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                            holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
                         }
+                        else{
+                            for(User user: chats.getUsers()){
+                                if(user.get_id().equals(lastLine.getSenderId())){
+                                    holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
+                                }
+                            }
 
+                        }
                     }
-                }
-                // image type
-                else if(lastLine.getLine().getType().equals(MyConstant.IMAGE_TYPE)){
-                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
-                        holder.lastLineTv.setText("Bạn: [Hình ảnh]");
-                    }
-                    else{
-                        for(User user: chats.getUsers()){
-                            if(user.get_id().equals(lastLine.getSenderId())){
-                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + "[Hình ảnh]");
+                    // image type
+                    else if(lastLine.getLine().getType().equals(MyConstant.IMAGE_TYPE)){
+                        if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                            holder.lastLineTv.setText("Bạn: [Hình ảnh]");
+                        }
+                        else{
+                            for(User user: chats.getUsers()){
+                                if(user.get_id().equals(lastLine.getSenderId())){
+                                    holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + "[Hình ảnh]");
+                                }
                             }
                         }
                     }
+
+                    // file type
+                    else if(lastLine.getLine().getType().equals(MyConstant.FILE_TYPE)){
+                        if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                            holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
+                        }
+                        else{
+                            for(User user: chats.getUsers()){
+                                if(user.get_id().equals(lastLine.getSenderId())){
+                                    holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
+                                }
+                            }
+                        }
+                    }
+                    holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
                 }
 
-                // file type
-                else if(lastLine.getLine().getType().equals(MyConstant.FILE_TYPE)){
-                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
-                        holder.lastLineTv.setText("Bạn: " + lastLine.getLine().getContent());
-                    }
-                    else{
-                        for(User user: chats.getUsers()){
-                            if(user.get_id().equals(lastLine.getSenderId())){
-                                holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + lastLine.getLine().getContent());
-                            }
-                        }
-                    }
-                }
-                holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
 
             }
 
@@ -252,9 +255,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
         // set up dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
         String name = tempUser.getFirstName() + " " + tempUser.getLastName();
-        builder.setTitle(name);
+        if(chats.getGroup() == null){
+            builder.setTitle(name);
+        }
+        else{
+            String groupName = chats.getGroup().getName();
+            builder.setTitle(groupName);
+        }
+
         String[] options = {"Xóa cuộc trò chuyện", "Bật chế độ Mini chat"};
         builder.setItems(options, (dialog, which) -> {
             switch (which){

@@ -77,7 +77,7 @@ import retrofit2.Response;
 public class GroupChatActivity extends AppCompatActivity {
     // view
     private EditText messageEt;
-    private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn;
+    private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn, optionBtn;
     private Group group;
     private TextView groupNameTv, numberMemberTv, textingTv;
     private EmojiPopup emojiPopup;
@@ -102,6 +102,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private int currentPage = 1;
     private List<User> memberList;
+    private Bundle bundle;
 
     private boolean isActivityRunning = false;
     private boolean isLoading = true;
@@ -209,6 +210,15 @@ public class GroupChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openFilePicker();
+            }
+        });
+
+        optionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), GroupOptionActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -351,6 +361,7 @@ public class GroupChatActivity extends AppCompatActivity {
         emojiBtn = findViewById(R.id.emoji_btn);
         sendBtn = findViewById(R.id.sendBtn);
         imageBtn = findViewById(R.id.chat_image_btn);
+        optionBtn = findViewById(R.id.toolbar_information_btn);
         fileBtn = findViewById(R.id.chat_file_btn);
         backBtn = findViewById(R.id.back_btn);
         groupNameTv = findViewById(R.id.group_name_tv);
@@ -367,7 +378,7 @@ public class GroupChatActivity extends AppCompatActivity {
         emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
                 .build(messageEt);
 
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         group = (Group) bundle.getSerializable(MyConstant.GROUP_KEY);
         // set info
         groupNameTv.setText(group.getName());
@@ -416,7 +427,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 if (firstCompletelyVisibleItemPosition == 0) {
                     if (isLoading) {
                         currentPage = currentPage + 1;
-                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+                        loadMessage(chatId, currentPage, NEXT_PAGE_LOAD);
                     }
                 }
 
@@ -432,7 +443,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), FIRST_LOAD);
+        loadMessage(chatId, currentPage, FIRST_LOAD);
 
 
 
@@ -585,7 +596,7 @@ public class GroupChatActivity extends AppCompatActivity {
                                     messageList.add(message);
                                     groupMessageAdapter.notifyItemInserted(messageList.size());
 
-                                    if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
+                                    if (scrollLastPositionBtn.getVisibility() != View.GONE) {
                                         scrollLastPositionBtn.setVisibility(View.GONE);
                                         newMessageTv.setVisibility(View.VISIBLE);
                                     }
@@ -697,17 +708,15 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
 
-    private void loadMessage(String id, int page, String accessToken, int type) {
+    private void loadMessage(String id, int page, int type) {
         pagingPb.setVisibility(View.VISIBLE);
-        RetrofitService.getInstance.getMessageById(id, page, accessToken)
+        RetrofitService.getInstance.getMessageById(id, page, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                        if (response.body() == null) {
-                            CustomAlert.showToast(GroupChatActivity.this, CustomAlert.INFO, "Không có tin nhắn");
-                        } else if (response.code() == 403) {
+                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            loadMessage(id, page, accessToken, type);
+                            loadMessage(id, page, type);
                         } else if (response.code() == 200) {
                             pagingPb.setVisibility(View.GONE);
                             List<Message> tempMessageList = response.body();

@@ -7,6 +7,8 @@ import com.iuh.stream.models.jwt.IdToken;
 import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
+import com.iuh.stream.models.request.AddMemberRequest;
+import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileSizeResponse;
 import com.iuh.stream.models.response.ImageUrlResponse;
 import com.iuh.stream.models.response.UpdateUserResponse;
@@ -106,4 +108,11 @@ public interface RetrofitService {
 
     @GET("/files/size/{name}")
     Call<FileSizeResponse> getFileSizeByName(@Path("name") String name, @Header("Authorization") String accessToken);
+
+    @POST("/groups")
+    @FormUrlEncoded
+    Call<CreateGroupResponse> createGroup(@Field("members") List<String> memberList, @Field("name") String name, @Header("Authorization") String accessToken);
+
+    @POST("/groups/add-members")
+    Call<List<User>> addMembers(@Body AddMemberRequest addMemberRequest, @Header("Authorization") String accessToken);
 }

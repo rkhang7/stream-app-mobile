@@ -453,7 +453,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (firstCompletelyVisibleItemPosition == 0) {
                         if (isLoading) {
                             currentPage = currentPage + 1;
-                            loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), NEXT_PAGE_LOAD);
+                            loadMessage(chatId, currentPage, NEXT_PAGE_LOAD);
                         }
                 }
 
@@ -777,7 +777,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void run() {
                         String tempId = (String) args[0];
                         chatId = tempId;
-                        loadMessage(chatId, currentPage, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), FIRST_LOAD);
+                        loadMessage(chatId, currentPage, FIRST_LOAD);
                     }
                 });
 
@@ -785,17 +785,15 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void loadMessage(String id, int page, String accessToken, int type) {
+    private void loadMessage(String id, int page, int type) {
         pagingPb.setVisibility(View.VISIBLE);
-        RetrofitService.getInstance.getMessageById(id, page, accessToken)
+        RetrofitService.getInstance.getMessageById(id, page, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                        if (response.body() == null) {
-                            CustomAlert.showToast(ChatActivity.this, CustomAlert.INFO, "Không có tin nhắn");
-                        } else if (response.code() == 403) {
+                        if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            loadMessage(id, page, accessToken, type);
+                            loadMessage(id, page, type);
                         } else if (response.code() == 200) {
                             pagingPb.setVisibility(View.GONE);
                             List<Message> tempMessageList = response.body();
