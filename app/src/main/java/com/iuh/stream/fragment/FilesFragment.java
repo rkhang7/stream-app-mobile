@@ -18,11 +18,13 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.response.FileResponse;
 import com.iuh.stream.utils.MyConstant;
+import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,6 +93,17 @@ public class FilesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         loadFiles(mParam1);
+        SocketClient.getInstance().on(MyConstant.RENDER_FILE_RESPONSE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadFiles(mParam1);
+                    }
+                });
+            }
+        });
     }
 
     private void loadFiles(String chatId) {

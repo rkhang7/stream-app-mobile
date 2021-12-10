@@ -39,7 +39,7 @@ public class GroupOptionActivity extends AppCompatActivity {
     // views
     private CircleImageView groupImageIv;
     private TextView groupNameTv;
-    private FlexboxLayout addMemberLayout, viewMembersLayout, leaveGroupBtn;
+    private FlexboxLayout addMemberLayout, viewMembersLayout, leaveGroupBtn, collectionsLayout;
     private NestedScrollView nestedScrollView;
 
 
@@ -78,6 +78,15 @@ public class GroupOptionActivity extends AppCompatActivity {
                 else if(nestedScrollView.getVisibility() == View.VISIBLE){
                     nestedScrollView.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        collectionsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CollectionsActivity.class);
+                intent.putExtra(MyConstant.CHAT_ID, bundle.getSerializable(MyConstant.GROUP_CHAT_ID));
+                startActivity(intent);
             }
         });
 
@@ -148,6 +157,7 @@ public class GroupOptionActivity extends AppCompatActivity {
         groupNameTv = findViewById(R.id.group_name_tv);
         addMemberLayout = findViewById(R.id.add_members_layout);
         viewMembersLayout = findViewById(R.id.view_members_layout);
+        collectionsLayout = findViewById(R.id.collections_layout);
         leaveGroupBtn = findViewById(R.id.leave_group_layout);
         nestedScrollView = findViewById(R.id.nsv);
 

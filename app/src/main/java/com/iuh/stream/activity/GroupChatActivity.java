@@ -193,6 +193,7 @@ public class GroupChatActivity extends AppCompatActivity {
         scrollLastPositionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                newMessageTv.setVisibility(View.GONE);
                 scrollLastPositionBtn.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
@@ -202,6 +203,7 @@ public class GroupChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 newMessageTv.setVisibility(View.GONE);
+                scrollLastPositionBtn.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
         });
