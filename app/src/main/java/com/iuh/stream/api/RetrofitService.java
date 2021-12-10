@@ -115,4 +115,8 @@ public interface RetrofitService {
 
     @POST("/groups/add-members")
     Call<List<User>> addMembers(@Body AddMemberRequest addMemberRequest, @Header("Authorization") String accessToken);
+
+    @POST("/groups/leave")
+    @FormUrlEncoded
+    Call<String> leaveGroup(@Field("id") String id, @Header("Authorization") String accessToken);
 }

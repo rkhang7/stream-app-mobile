@@ -1,22 +1,29 @@
 package com.iuh.stream.activity;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.MemberAdapter;
+import com.iuh.stream.api.RetrofitService;
+import com.iuh.stream.datalocal.DataLocalManager;
+import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.Group;
 import com.iuh.stream.utils.MyConstant;
+import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -24,12 +31,15 @@ import java.util.Collections;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GroupOptionActivity extends AppCompatActivity {
     // views
     private CircleImageView groupImageIv;
     private TextView groupNameTv;
-    private FlexboxLayout addMemberLayout, viewMembersLayout;
+    private FlexboxLayout addMemberLayout, viewMembersLayout, leaveGroupBtn;
     private NestedScrollView nestedScrollView;
 
 
@@ -39,6 +49,8 @@ public class GroupOptionActivity extends AppCompatActivity {
     private List<User> memberList;
     private MemberAdapter memberAdapter;
     private RecyclerView recyclerView;
+    private String myId;
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +80,63 @@ public class GroupOptionActivity extends AppCompatActivity {
                 }
             }
         });
+
+        leaveGroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openConfirmDialog();
+            }
+        });
+    }
+
+    private void openConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GroupOptionActivity.this);
+        builder.setTitle("Rời khỏi nhóm ?");
+        builder.setIcon(R.drawable.icons8_warning_64px);
+        builder.setMessage("Bạn có muốn rời khỏi nhóm này ?");
+        builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                leaveGroupBtn(mAuth.getCurrentUser().getUid());
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void leaveGroupBtn(String uid) {
+        RetrofitService.getInstance.leaveGroup(uid, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            leaveGroupBtn(uid);
+                        }
+                        else if(response.code() == 200){
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else{
+                            CustomAlert.showToast(GroupOptionActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        CustomAlert.showToast(GroupOptionActivity.this, CustomAlert.WARNING, t.getMessage());
+
+                    }
+                });
     }
 
     private void addControls() {
@@ -79,9 +148,10 @@ public class GroupOptionActivity extends AppCompatActivity {
         groupNameTv = findViewById(R.id.group_name_tv);
         addMemberLayout = findViewById(R.id.add_members_layout);
         viewMembersLayout = findViewById(R.id.view_members_layout);
+        leaveGroupBtn = findViewById(R.id.leave_group_layout);
         nestedScrollView = findViewById(R.id.nsv);
 
-
+        mAuth = FirebaseAuth.getInstance();
 
         bundle = getIntent().getExtras();
         group = (Group) bundle.getSerializable(MyConstant.GROUP_KEY);
