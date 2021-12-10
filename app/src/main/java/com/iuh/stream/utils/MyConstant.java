@@ -15,7 +15,10 @@ public class MyConstant {
     public static final String GROUP_KEY = "group";
     public static final String NUMBER_MEMBER = "size";
     public static final String GROUP_CHAT_ID = "group_id";
+    public static final String CHAT_ID = "chat_id";
     public static final String LIST_MEMBER_KEY = "list_member";
+
+
 
     // gửi lời mời kết bạn
     public static final String ADD_FRIEND_REQUEST = "add-friend";

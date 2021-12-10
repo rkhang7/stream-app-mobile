@@ -10,6 +10,7 @@ import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.request.AddMemberRequest;
 import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileSizeResponse;
+import com.iuh.stream.models.response.ImageContentResponse;
 import com.iuh.stream.models.response.ImageUrlResponse;
 import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.MyConstant;
@@ -119,4 +120,10 @@ public interface RetrofitService {
     @POST("/groups/leave")
     @FormUrlEncoded
     Call<String> leaveGroup(@Field("id") String id, @Header("Authorization") String accessToken);
+
+    @GET("/files/image/{chatId}")
+    Call<List<ImageUrlResponse>> getAllImagesChat(@Path("chatId") String chatId, @Header("Authorization") String accessToken);
+
+    @GET("/files")
+    Call<List<ImageUrlResponse>> getAllFilesChat(@Query("chatId") String chatId, @Header("Authorization") String accessToken);
 }

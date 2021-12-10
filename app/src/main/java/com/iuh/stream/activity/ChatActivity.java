@@ -53,6 +53,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,7 +76,7 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity {
     // view
     private EditText messageEt;
-    private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn;
+    private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn, optionBtn;
     private User user;
     private CircleImageView avatarIv;
     private TextView nameTv, activeTv, textingTv;
@@ -202,10 +203,23 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        optionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PersonalOptionActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(MyConstant.USER_KEY, user);
+                bundle.putSerializable(MyConstant.CHAT_ID, chatId);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         scrollLastPositionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scrollLastPositionBtn.setVisibility(View.GONE);
+                newMessageTv.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
         });
@@ -214,6 +228,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 newMessageTv.setVisibility(View.GONE);
+                scrollLastPositionBtn.setVisibility(View.GONE);
                 recyclerView.scrollToPosition(messageList.size() - 1);
             }
         });
@@ -398,6 +413,7 @@ public class ChatActivity extends AppCompatActivity {
         imageBtn = findViewById(R.id.chat_image_btn);
         fileBtn = findViewById(R.id.chat_file_btn);
         backBtn = findViewById(R.id.back_btn);
+        optionBtn = findViewById(R.id.toolbar_information_btn);
         avatarIv = findViewById(R.id.toolbar_image);
         nameTv = findViewById(R.id.toolbar_name_tv);
         onlineIv = findViewById(R.id.toolbar_online_iv);

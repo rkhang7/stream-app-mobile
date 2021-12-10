@@ -22,9 +22,13 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.PersonalOptionActivity"
+            android:exported="true"
+            android:label="Tùy chọn" />
+        <activity
             android:name=".activity.AddMemberActivity"
             android:exported="true"
-            android:theme="@style/Theme.NoActionBar"/>
+            android:theme="@style/Theme.NoActionBar" />
         <activity
             android:name=".activity.GroupOptionActivity"
             android:exported="true"
