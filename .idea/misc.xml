@@ -69,6 +69,7 @@
         <entry key="app/src/main/res/layout/activity_add_group.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_add_member.xml" value="0.103125" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_collections.xml" value="0.12760416666666666" />
         <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.11" />
         <entry key="app/src/main/res/layout/activity_group_option.xml" value="0.13697916666666668" />
         <entry key="app/src/main/res/layout/activity_image_crop.xml" value="0.23770491803278687" />
@@ -93,9 +94,12 @@
         <entry key="app/src/main/res/layout/chat_list_item_demo.xml" value="0.33" />
         <entry key="app/src/main/res/layout/chat_toolbar.xml" value="0.18" />
         <entry key="app/src/main/res/layout/contact_row.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/file_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/fragment_files.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_group_contact.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/fragment_images.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_recived.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/fragment_list_friend_invitation_sent.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.10625" />
@@ -103,6 +107,7 @@
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.12" />
         <entry key="app/src/main/res/layout/friend_checkbox.xml" value="0.12203947368421053" />
         <entry key="app/src/main/res/layout/friend_row.xml" value="0.15" />
+        <entry key="app/src/main/res/layout/image_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/invitation_received.xml" value="0.12" />
         <entry key="app/src/main/res/layout/invitation_sent.xml" value="0.2" />
         <entry key="app/src/main/res/layout/line_item_left.xml" value="0.5" />

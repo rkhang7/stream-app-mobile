@@ -340,6 +340,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             }
 
                             SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.RENDER_IMAGE_REQUEST, chatId);
 
                         } else {
                             CustomAlert.showToast(GroupChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
@@ -839,6 +840,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             }
 
                             SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.RENDER_FILE_REQUEST, chatId);
                         } else {
                             CustomAlert.showToast(GroupChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                         }

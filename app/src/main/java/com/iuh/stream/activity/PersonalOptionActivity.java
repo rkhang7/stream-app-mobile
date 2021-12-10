@@ -2,7 +2,9 @@ package com.iuh.stream.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
@@ -34,7 +36,14 @@ public class PersonalOptionActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
-
+        collectionsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CollectionsActivity.class);
+                intent.putExtra(MyConstant.CHAT_ID, chatId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addControls() {
@@ -43,6 +52,7 @@ public class PersonalOptionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         avatarIv = findViewById(R.id.personal_image_iv);
         nameTv = findViewById(R.id.personal_name_tv);
+        collectionsLayout = findViewById(R.id.collections_layout);
 
         bundle = getIntent().getExtras();
         user = (User) bundle.getSerializable(MyConstant.USER_KEY);

@@ -40,6 +40,12 @@ public class MyConstant {
     public static final String CANCEL_FRIEND_INV_REQUEST = "cancel-friend-inv";
     public static final String CANCEL_FRIEND_INV_RESPONSE = "cancel-friend-inv-res";
 
+    public static final String RENDER_FILE_REQUEST = "render-file";
+    public static final String RENDER_FILE_RESPONSE = "render-file-res";
+
+    public static final String RENDER_IMAGE_REQUEST = "render-image";
+    public static final String RENDER_IMAGE_RESPONSE = "render-image-res";
+
     public static final String PRIVATE_MESSAGE = "private-message";
     public static final String MESSAGE_SENT = "message-sent";
 

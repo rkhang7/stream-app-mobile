@@ -22,6 +22,10 @@
         android:theme="@style/Theme.Stream"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.CollectionsActivity"
+            android:exported="true"
+            android:label="Ảnh, file đã gửi"/>
+        <activity
             android:name=".activity.PersonalOptionActivity"
             android:exported="true"
             android:label="Tùy chọn" />
