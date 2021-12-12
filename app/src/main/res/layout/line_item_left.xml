@@ -94,15 +94,16 @@
         android:padding="4dp">
 
         <ImageView
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:id="@+id/type_file_iv"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:adjustViewBounds="true"
-            android:src="@drawable/icons8_json_48"/>
+            android:src="@drawable/icons8_json_48" />
 
         <LinearLayout
+            android:id="@+id/info_layout"
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:layout_toRightOf="@id/type_file_iv"
@@ -111,6 +112,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:maxWidth="130dp"
                 android:id="@+id/name_file_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -146,17 +148,58 @@
 
 
         <TextView
-            android:layout_below="@id/type_file_iv"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="6dp"
             android:id="@+id/file_last_time_line_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/type_file_iv"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="16dp"
             android:text="8:30"
             android:textSize="10dp" />
 
 
+        <TextView
+            android:layout_marginLeft="16dp"
+            android:id="@+id/open_view"
+            android:gravity="center"
+            android:background="@drawable/left_open_bg"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/info_layout"
+            android:layout_width="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_height="20dp"
+            android:textAllCaps="true"
+            android:text="Mở"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:layout_marginLeft="16dp"
+            android:id="@+id/download_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/info_layout"
+            android:background="@color/transparent"
+            android:gravity="center"
+            android:src="@drawable/download_black"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/linear_pb"
+            android:layout_width="120dp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="true"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/info_layout"
+            android:layout_marginTop="40dp"/>
+
     </RelativeLayout>
+
+
 
 
 

@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -933,14 +934,14 @@ public class ChatActivity extends AppCompatActivity {
                         Uri uri = docPaths.get(0);
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
-                        int file_size = Integer.parseInt(String.valueOf(file.length()/102400));
+                        float file_size = Float.parseFloat(String.valueOf(file.length()))/1024000;
                         if(file_size <= 20){
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                             MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
                             uploadFile(mPartImage);
                         }
                         else{
-                            CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20BM");
+                            CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20MB");
                         }
 
                     }

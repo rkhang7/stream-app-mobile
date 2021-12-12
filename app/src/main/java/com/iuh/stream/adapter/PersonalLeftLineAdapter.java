@@ -3,20 +3,25 @@ package com.iuh.stream.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.ViewImageMessageActivity;
 import com.iuh.stream.api.RetrofitService;
@@ -28,10 +33,15 @@ import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -79,15 +89,15 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     holder.textLastTimeTv.setVisibility(View.VISIBLE);
                     holder.textLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
-                if(position != 0){
+                if (position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                 }
-                if(position != lineList.size() - 1){
+                if (position != lineList.size() - 1) {
                     holder.textLastTimeTv.setVisibility(View.GONE);
                 }
             }
             // image type
-            else if(line.getType().equals(MyConstant.IMAGE_TYPE)){
+            else if (line.getType().equals(MyConstant.IMAGE_TYPE)) {
                 holder.textLayout.setVisibility(View.GONE);
                 holder.imageLayout.setVisibility(View.VISIBLE);
                 holder.fileLayout.setVisibility(View.GONE);
@@ -102,15 +112,15 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     holder.imageLastTimeTv.setVisibility(View.VISIBLE);
                     holder.imageLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
-                if(position != 0){
+                if (position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                 }
-                if(position != lineList.size() - 1){
+                if (position != lineList.size() - 1) {
                     holder.imageLastTimeTv.setVisibility(View.GONE);
                 }
             }
             // file
-            if(line.getType().equals(MyConstant.FILE_TYPE)){
+            if (line.getType().equals(MyConstant.FILE_TYPE)) {
                 holder.textLayout.setVisibility(View.GONE);
                 holder.imageLayout.setVisibility(View.GONE);
                 holder.fileLayout.setVisibility(View.VISIBLE);
@@ -122,7 +132,15 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 holder.nameFileTv.setText(name);
                 holder.typeFileTv.setText(type + " * ");
                 setSize(holder.sizeFileTv, content);
-                switch (type){
+                if (checkIsExistFile(content)) {
+                    holder.openFileTv.setVisibility(View.VISIBLE);
+                    holder.downloadFileBtn.setVisibility(View.GONE);
+                } else {
+                    holder.downloadFileBtn.setVisibility(View.VISIBLE);
+                    holder.openFileTv.setVisibility(View.GONE);
+                }
+
+                switch (type) {
                     case "JSON":
                         holder.typeFileIv.setImageResource(R.drawable.icons8_json_48);
                         break;
@@ -186,10 +204,10 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     holder.fileLastTimeTv.setVisibility(View.VISIBLE);
                     holder.fileLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
-                if(position != 0){
+                if (position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
                 }
-                if(position != lineList.size() - 1){
+                if (position != lineList.size() - 1) {
                     holder.fileLastTimeTv.setVisibility(View.GONE);
                 }
             }
@@ -197,22 +215,31 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
         }
     }
 
+    private boolean checkIsExistFile(String fileName) {
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, fileName);
+        if (file.exists()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     private void setSize(TextView sizeFileTv, String name) {
         RetrofitService.getInstance.getFileSizeByName(name, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<FileSizeResponse>() {
                     @Override
                     public void onResponse(Call<FileSizeResponse> call, Response<FileSizeResponse> response) {
-                        if(response.code() == 403){
+                        if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             setSize(sizeFileTv, name);
-                        }
-                        else if(response.code() == 200){
+                        } else if (response.code() == 200) {
                             FileSizeResponse fileSizeResponse = response.body();
                             int size = fileSizeResponse.getSize();
-                            String sizeConverted = Formatter.formatFileSize(mContext,size);
+                            String sizeConverted = Formatter.formatFileSize(mContext, size);
                             sizeFileTv.setText(sizeConverted);
-                        }
-                        else {
+                        } else {
                             CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
                         }
                     }
@@ -234,10 +261,12 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
 
     public class PersonLeftLineViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView avatarIv;
-        private TextView textLastTimeTv, imageLastTimeTv, textContentTv, nameFileTv, typeFileTv, fileLastTimeTv, sizeFileTv;
+        private TextView textLastTimeTv, imageLastTimeTv, textContentTv, nameFileTv, typeFileTv, fileLastTimeTv, sizeFileTv, openFileTv;
         private LinearLayout textLayout, imageLayout;
         private ImageView imageContentIv, typeFileIv;
         private RelativeLayout fileLayout;
+        private ImageButton downloadFileBtn;
+        private LinearProgressIndicator linearProgressIndicator;
 
         public PersonLeftLineViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -259,6 +288,9 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
             typeFileTv = itemView.findViewById(R.id.type_file_tv);
             fileLastTimeTv = itemView.findViewById(R.id.file_last_time_line_tv);
             sizeFileTv = itemView.findViewById(R.id.size_file_tv);
+            openFileTv = itemView.findViewById(R.id.open_view);
+            downloadFileBtn = itemView.findViewById(R.id.download_view);
+            linearProgressIndicator = itemView.findViewById(R.id.linear_pb);
 
 
             // view image
@@ -271,7 +303,126 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     mContext.startActivity(intent);
                 }
             });
+
+            openFileTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Line line = lineList.get(getAdapterPosition());
+                    openFile(line.getContent());
+                }
+            });
+
+            downloadFileBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Line line = lineList.get(getAdapterPosition());
+                    downloadFile(linearProgressIndicator, openFileTv, downloadFileBtn, line.getContent());
+                }
+            });
         }
+    }
+
+    private void openFile(String fileName) {
+        String[] split = fileName.split("\\.");
+        String type = split[1].toUpperCase(Locale.ROOT);
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, fileName);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        switch (type) {
+            case "JSON":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/json");
+                break;
+            case "DOC":
+            case "DOCX":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                break;
+            case "XLS":
+            case "XLSX":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                break;
+            case "PPT":
+            case "PPTX":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                break;
+            case "TXT":
+                intent.setDataAndType(Uri.parse(file.getPath()), "text/plain");
+                break;
+            case "PDF":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/pdf");
+                break;
+            case "APK":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.android.package-archive");
+                break;
+            case "CSV":
+                intent.setDataAndType(Uri.parse(file.getPath()), "text/csv");
+                break;
+            case "HTML":
+                intent.setDataAndType(Uri.parse(file.getPath()), "text/html");
+                break;
+            case "CSS":
+                intent.setDataAndType(Uri.parse(file.getPath()), "text/css");
+                break;
+            case "ZIP":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/zip");
+                break;
+            case "RAR":
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.rar");
+                break;
+            case "MP3":
+                intent.setDataAndType(Uri.parse(file.getPath()), "audio/mpeg");
+                break;
+            case "MP4":
+            case "MOV":
+            case "MKV":
+                intent.setDataAndType(Uri.parse(file.getPath()), "video/mp4");
+                break;
+            default:
+                intent.setDataAndType(Uri.parse(file.getPath()), "text/plain");
+                break;
+
+        }
+        try {
+            mContext.startActivity(intent);
+        }catch (Exception e){
+            Toast.makeText(mContext, "Không thể mở file", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void downloadFile(LinearProgressIndicator linearProgressIndicator, TextView openFileTv, ImageButton downloadFileBtn,String fileName) {
+        linearProgressIndicator.setVisibility(View.VISIBLE);
+        RetrofitService.getInstance.downloadFile(fileName, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() == 403) {
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            downloadFile(linearProgressIndicator, openFileTv, downloadFileBtn, fileName);
+                        } else {
+                            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                            File file = new File(path, fileName);
+
+                            try {
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                IOUtils.write(response.body().bytes(), fileOutputStream);
+                                CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Đã tải xong");
+                                linearProgressIndicator.setVisibility(View.GONE);
+                                downloadFileBtn.setVisibility(View.GONE);
+                                openFileTv.setVisibility(View.VISIBLE);
+
+                            } catch (Exception e) {
+                                CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                            }
+                        }
+
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
     }
 
 

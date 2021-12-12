@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp">
 
@@ -17,22 +17,22 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/default_avatar"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/text_layout"
-            android:layout_alignParentEnd="true"
-            android:minHeight="40dp"
-            android:minWidth="60dp"
-            android:layout_marginStart="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
             android:layout_toRightOf="@id/chat_image"
             android:background="@drawable/line_item_right_bg"
             android:gravity="start"
-            android:padding="4dp">
+            android:minWidth="60dp"
+            android:minHeight="40dp"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/chat_text_content"
@@ -42,114 +42,119 @@
                 android:text="a"
                 android:textAlignment="textStart"
                 android:textColor="@color/white" />
+
             <TextView
-                android:textSize="10dp"
-                android:textColor="@color/white"
                 android:id="@+id/text_last_time_line_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:text="16:30"
-                android:layout_marginStart="4dp"/>
+                android:textColor="@color/white"
+                android:textSize="10dp" />
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/image_layout"
-            android:layout_alignParentEnd="true"
-            android:minHeight="40dp"
-            android:minWidth="60dp"
-            android:layout_marginStart="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
             android:layout_toRightOf="@id/chat_image"
-            android:gravity="start">
+            android:gravity="start"
+            android:minWidth="60dp"
+            android:minHeight="40dp"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp">
+
                 <ImageView
-                    android:background="@drawable/image_content_bg"
                     android:id="@+id/chat_image_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/default_image"/>
+                    android:background="@drawable/image_content_bg"
+                    android:src="@drawable/default_image"
+                    android:textColor="@color/black" />
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:layout_marginTop="4dp"
-                android:textSize="10dp"
                 android:id="@+id/image_last_time_line_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
                 android:text="16:30"
-                android:layout_marginStart="4dp"/>
+                android:textSize="10dp" />
         </LinearLayout>
 
 
         <RelativeLayout
-            android:background="@drawable/line_item_right_bg"
-            android:visibility="visible"
             android:id="@+id/file_layout"
-            android:layout_alignParentEnd="true"
-            android:minHeight="40dp"
-            android:minWidth="60dp"
-            android:layout_marginStart="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
             android:layout_toRightOf="@id/chat_image"
+            android:background="@drawable/line_item_right_bg"
             android:gravity="start"
-            android:padding="4dp">
+            android:minWidth="60dp"
+            android:minHeight="40dp"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:visibility="visible">
 
             <ImageView
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
                 android:id="@+id/type_file_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:adjustViewBounds="true"
-                android:src="@drawable/icons8_json_48"/>
+                android:src="@drawable/icons8_json_48" />
 
             <LinearLayout
-                android:layout_marginStart="4dp"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:layout_toRightOf="@id/type_file_iv"
+                android:id="@+id/info_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_toRightOf="@id/type_file_iv"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
+                    android:maxWidth="130dp"
                     android:id="@+id/name_file_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Name file"
                     android:textColor="@color/white"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/type_file_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="DOCX"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp" />
 
 
                     <TextView
                         android:id="@+id/size_file_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10sp"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
 
                 </LinearLayout>
 
@@ -157,19 +162,58 @@
 
 
             <TextView
-                android:textColor="@color/white"
-                android:layout_below="@id/type_file_iv"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="6dp"
                 android:id="@+id/file_last_time_line_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/type_file_iv"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="16dp"
                 android:text="8:30"
+                android:textColor="@color/white"
                 android:textSize="10dp" />
 
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/open_view"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@+id/info_layout"
+                android:background="@drawable/right_open_bg"
+                android:gravity="center"
+                android:text="Mở"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="visible" />
 
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/download_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@+id/info_layout"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:src="@drawable/download_white"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/linear_pb"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/info_layout"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="45dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+        </RelativeLayout>
 
 
     </RelativeLayout>

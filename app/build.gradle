@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
 }
 
+
 android {
     dataBinding {
         enabled = true
@@ -74,4 +75,5 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1"
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.5'
 }

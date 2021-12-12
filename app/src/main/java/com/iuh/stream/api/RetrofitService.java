@@ -19,6 +19,7 @@ import com.iuh.stream.utils.MyConstant;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -127,4 +128,7 @@ public interface RetrofitService {
 
     @GET("/files")
     Call<List<FileResponse>> getAllFilesChat(@Query("chatId") String chatId, @Header("Authorization") String accessToken);
+
+    @GET("/files/{name}")
+    Call<ResponseBody> downloadFile(@Path("name") String fileName,  @Header("Authorization") String accessToken);
 }
