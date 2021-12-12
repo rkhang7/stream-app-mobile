@@ -348,7 +348,8 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 intent.setDataAndType(Uri.parse(file.getPath()), "text/plain");
                 break;
             case "PDF":
-                intent.setDataAndType(Uri.parse(file.getPath()), "application/pdf");
+                intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 break;
             case "APK":
                 intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.android.package-archive");

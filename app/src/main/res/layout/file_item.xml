@@ -36,6 +36,7 @@
     </LinearLayout>
 
     <ImageButton
+        android:visibility="gone"
         android:layout_alignParentEnd="true"
         android:id="@+id/download_btn"
         android:layout_width="48dp"
@@ -43,5 +44,30 @@
         android:scaleType="centerCrop"
         style="@style/BorderlessButton"
         android:src="@drawable/download_black"/>
+
+    <TextView
+        android:layout_marginLeft="16dp"
+        android:id="@+id/open_view"
+        android:gravity="center"
+        android:background="@drawable/left_open_bg"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="40dp"
+        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:layout_height="20dp"
+        android:textAllCaps="true"
+        android:text="Mở"
+        android:visibility="visible"/>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/linear_pb"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/info_file_layout"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
