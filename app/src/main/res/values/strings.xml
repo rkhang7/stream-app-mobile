@@ -37,4 +37,5 @@
     <string name="input_dob">Vui lòng chọn ngày sinh của bạn</string>
     <string name="phone_number">Số điện thoai: </string>
     <string name="search_conversation">Tìm cuộc hội thoại</string>
+    <string name="recall_line">Tin nhắn đã được thu hồi</string>
 </resources>

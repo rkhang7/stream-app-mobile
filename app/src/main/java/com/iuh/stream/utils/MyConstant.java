@@ -53,4 +53,5 @@ public class MyConstant {
     public static final String RECEIVE_MESSAGE = "receive-message";
     public static final String CREATE_GROUP = "group-created";
     public static final String  GROUP_NOTIFICATION = "group-notification";
+    public static final String RECALL_LINE = "recall-line";
 }

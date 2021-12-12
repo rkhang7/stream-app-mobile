@@ -11,6 +11,7 @@ import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.request.AddMemberRequest;
 import com.iuh.stream.models.request.LeaveGroupRequest;
+import com.iuh.stream.models.request.RecallLineRequest;
 import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileResponse;
 import com.iuh.stream.models.response.FileSizeResponse;
@@ -104,6 +105,9 @@ public interface RetrofitService {
 
     @DELETE("/chats/{id}")
     Call<Void> deleteChatById(@Path("id") String chatId, @Header("Authorization") String accessToken);
+
+    @POST("/chats/recall-line")
+    Call<String> recallLine(@Body RecallLineRequest recallLineRequest, @Header("Authorization") String accessToken);
 
     @Multipart
     @POST("/files/uploadImage")

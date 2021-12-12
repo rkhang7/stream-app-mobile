@@ -30,6 +30,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
     private static final int LEFT_LINE = 1;
     private static final int RIGHT_LINE = 2;
     private String hisImageUrl;
+    private String chatId;
 
     public PersonalMessageAdapter(Context mContext, String myId, String hisImageUrl) {
         this.mContext = mContext;
@@ -42,6 +43,10 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
     public void setData(List<Message> messageList){
         this.messageList = messageList;
         notifyDataSetChanged();
+    }
+
+    public void setChatId(String chatId){
+        this.chatId = chatId;
     }
 
     @NonNull
@@ -74,7 +79,7 @@ public class PersonalMessageAdapter extends RecyclerView.Adapter<PersonalMessage
             holder.recyclerView.setLayoutManager(linearLayoutManager);
             holder.recyclerView.setFocusable(false);
             // adapter
-            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext);
+            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext, message.get_id(), chatId);
             personalRightLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalRightLineAdapter);
             if(position == messageList.size()-1){

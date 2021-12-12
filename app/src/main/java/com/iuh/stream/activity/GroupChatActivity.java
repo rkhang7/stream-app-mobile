@@ -403,7 +403,7 @@ public class GroupChatActivity extends AppCompatActivity {
         messageList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.chat_rcv);
-        groupMessageAdapter = new GroupMessageAdapter(this, myId, memberList);
+        groupMessageAdapter = new GroupMessageAdapter(this, myId, memberList, chatId);
         groupMessageAdapter.setData(messageList);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -464,6 +464,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             JSONObject lineJsonObject = jsonObject.getJSONObject("line");
                             String content = lineJsonObject.getString("content");
                             String type = lineJsonObject.getString("type");
+                            String lineId = lineJsonObject.getString("_id");
 
                             String newMessageId = jsonObject.getString("messageId");
 
@@ -473,7 +474,7 @@ public class GroupChatActivity extends AppCompatActivity {
                                 long l = Instant.parse(stringDate)
                                         .toEpochMilli();
                                 Date date = new Date(l);
-                                newLine = Line.builder().content(content).createdAt(date).type(type)
+                                newLine = Line.builder().id(lineId).content(content).createdAt(date).type(type)
                                         .build();
 
                                 // last message
@@ -547,6 +548,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             JSONObject lineObject = (JSONObject) args[3];
                             String content = lineObject.getString("content");
                             String type = lineObject.getString("type");
+                            String lineId = lineObject.getString("_id");
 
                             Line newLine = null;
                             String stringDate = lineObject.getString("createdAt");
@@ -554,7 +556,7 @@ public class GroupChatActivity extends AppCompatActivity {
                                 long l = Instant.parse(stringDate)
                                         .toEpochMilli();
                                 Date date = new Date(l);
-                                newLine = Line.builder().content(content).createdAt(date).type(type).build();
+                                newLine = Line.builder().id(lineId).content(content).createdAt(date).type(type).build();
 
                                 // last message
                                 int lengthMessageList = messageList.size();
@@ -703,6 +705,33 @@ public class GroupChatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         textingTv.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
+        // người khác thu hồi tin nhắn
+        SocketClient.getInstance().on(MyConstant.RECALL_LINE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String chatId = (String) args[0];
+                        String lineId = (String) args[1];
+
+                        for (Message message: messageList){
+                            List<Line> lineList = message.getLines();
+                            for(Line line: lineList){
+                                if(line.getId().equals(lineId)){
+                                    line.setType(MyConstant.TEXT_TYPE);
+                                    line.setContent(getString(R.string.recall_line));
+                                    break;
+                                }
+                            }
+                        }
+
+                        groupMessageAdapter.setData(messageList);
                     }
                 });
             }

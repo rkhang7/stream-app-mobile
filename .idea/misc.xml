@@ -122,6 +122,7 @@
         <entry key="app/src/main/res/layout/message_item_left.xml" value="0.12203947368421053" />
         <entry key="app/src/main/res/layout/overlay_layout.xml" value="0.11510416666666666" />
         <entry key="app/src/main/res/layout/popup_layout.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/right_line_popup.xml" value="0.25" />
         <entry key="app/src/main/res/layout/show_login_method_dialog.xml" value="0.175" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
       </map>

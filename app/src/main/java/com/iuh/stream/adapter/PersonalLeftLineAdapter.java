@@ -78,7 +78,14 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 holder.textLayout.setVisibility(View.VISIBLE);
                 holder.imageLayout.setVisibility(View.GONE);
                 holder.fileLayout.setVisibility(View.GONE);
-                holder.textContentTv.setText(line.getContent());
+                if(line.getContent().equals("")){
+                    holder.textContentTv.setText(R.string.recall_line);
+//                    holder.textContentTv.setTextColor(mContext.getResources().getColor(R.color.gray));
+                }
+                else {
+                    holder.textContentTv.setText(line.getContent());
+                }
+
                 if (position == 0) {
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);

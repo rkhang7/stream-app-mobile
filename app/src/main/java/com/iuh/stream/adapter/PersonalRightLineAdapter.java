@@ -1,17 +1,28 @@
 package com.iuh.stream.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.Formatter;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.iuh.stream.R;
 import com.iuh.stream.activity.ViewImageMessageActivity;
@@ -27,7 +40,10 @@ import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.models.chat.Message;
+import com.iuh.stream.models.request.RecallLineRequest;
 import com.iuh.stream.models.response.FileSizeResponse;
+import com.iuh.stream.models.response.UpdateUserResponse;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -36,8 +52,13 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,9 +68,13 @@ import retrofit2.Response;
 public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRightLineAdapter.PersonRightLineViewHolder>{
     private Context mContext;
     private List<Line> lineList;
+    private String messageId;
+    private String chatId;
 
-    public PersonalRightLineAdapter(Context mContext) {
+    public PersonalRightLineAdapter(Context mContext, String messageId, String chatId) {
         this.mContext = mContext;
+        this.messageId = messageId;
+        this.chatId = chatId;
     }
 
     public void setData(List<Line> lineList){
@@ -73,7 +98,14 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                 holder.textLayout.setVisibility(View.VISIBLE);
                 holder.imageLayout.setVisibility(View.GONE);
                 holder.fileLayout.setVisibility(View.GONE);
-                holder.textContentTv.setText(line.getContent());
+                if(line.getContent().equals("")){
+                    holder.textContentTv.setText(R.string.recall_line);
+//                    holder.textContentTv.setTextColor(mContext.getResources().getColor(R.color.gray));
+                }
+                else {
+                    holder.textContentTv.setText(line.getContent());
+                }
+
                if(position == lineList.size() - 1){
                    holder.textLastTimeTv.setVisibility(View.VISIBLE);
                    holder.textLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
@@ -291,8 +323,97 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                     downloadFile(linearProgressIndicator, openFileTv, downloadFileBtn, line.getContent());
                 }
             });
+
+            imageContentIv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Line line = lineList.get(getAdapterPosition());
+
+                    if(!line.getContent().equals("")){
+                        RecallLineRequest recallLineRequest = new RecallLineRequest(chatId, messageId , line.getId());
+                        openPopup(recallLineRequest);
+                    }
+                    return false;
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Line line = lineList.get(getAdapterPosition());
+
+                    if(!line.getContent().equals("")){
+                        RecallLineRequest recallLineRequest = new RecallLineRequest(chatId, messageId , line.getId());
+                        openPopup(recallLineRequest);
+                    }
+                    return false;
+                }
+            });
         }
     }
+    private void openPopup(RecallLineRequest recallLineRequest) {
+        final Dialog dialog = new Dialog(mContext);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.right_line_popup);
+
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.gravity = Gravity.BOTTOM;
+
+        window.setAttributes(attributes);
+
+        dialog.setCancelable(true);
+
+
+
+        // init views
+
+        ImageView recallBtn = dialog.findViewById(R.id.recall_btn);
+        recallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recallLine(recallLineRequest, dialog);
+            }
+        });
+
+
+
+
+        dialog.show();
+
+
+    }
+
+    private void recallLine(RecallLineRequest recallLineRequest, Dialog dialog) {
+        RetrofitService.getInstance.recallLine(recallLineRequest, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(response.code() == 403){
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                            recallLine(recallLineRequest, dialog);
+                        }
+                        else if(response.code() == 200){
+                            dialog.dismiss();
+                        }
+                        else {
+                            CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, mContext.getString(R.string.error_notification));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+
+                    }
+                });
+    }
+
     private void openFile(String fileName) {
         String[] split = fileName.split("\\.");
         String type = split[1].toUpperCase(Locale.ROOT);

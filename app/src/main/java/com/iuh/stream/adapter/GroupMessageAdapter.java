@@ -28,11 +28,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
     private static final int LEFT_LINE = 1;
     private static final int RIGHT_LINE = 2;
     private List<User> memberList;
+    private String chatId;
 
-    public GroupMessageAdapter(Context mContext, String myId, List<User> memberList) {
+    public GroupMessageAdapter(Context mContext, String myId, List<User> memberList, String chatId) {
         this.mContext = mContext;
         this.myId = myId;
         this.memberList = memberList;
+        this.chatId = chatId;
     }
 
     public void setData(List<Message> messageList){
@@ -78,7 +80,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             holder.recyclerView.setLayoutManager(linearLayoutManager);
             holder.recyclerView.setFocusable(false);
             // adapter
-            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext);
+            PersonalRightLineAdapter personalRightLineAdapter = new PersonalRightLineAdapter(mContext, message.get_id(), chatId);
             personalRightLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalRightLineAdapter);
             Log.e("TAG", "right: " );

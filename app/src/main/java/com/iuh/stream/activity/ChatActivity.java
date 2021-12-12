@@ -527,6 +527,7 @@ public class ChatActivity extends AppCompatActivity {
                             JSONObject lineJsonObject = jsonObject.getJSONObject("line");
                             String content = lineJsonObject.getString("content");
                             String type = lineJsonObject.getString("type");
+                            String lineId = lineJsonObject.getString("_id");
 
                             String newMessageId = jsonObject.getString("messageId");
 
@@ -536,7 +537,7 @@ public class ChatActivity extends AppCompatActivity {
                                 long l = Instant.parse(stringDate)
                                         .toEpochMilli();
                                 Date date = new Date(l);
-                                newLine = Line.builder().content(content).createdAt(date).type(type)
+                                newLine = Line.builder().id(lineId).content(content).createdAt(date).type(type)
                                         .build();
 
                                 // last message
@@ -610,6 +611,7 @@ public class ChatActivity extends AppCompatActivity {
                             JSONObject lineObject = (JSONObject) args[3];
                             String content = lineObject.getString("content");
                             String type = lineObject.getString("type");
+                            String lineId = lineObject.getString("_id");
 
                             Line newLine = null;
                             String stringDate = lineObject.getString("createdAt");
@@ -617,7 +619,7 @@ public class ChatActivity extends AppCompatActivity {
                                 long l = Instant.parse(stringDate)
                                         .toEpochMilli();
                                 Date date = new Date(l);
-                                newLine = Line.builder().content(content).createdAt(date).type(type).build();
+                                newLine = Line.builder().id(lineId).content(content).createdAt(date).type(type).build();
 
                                 // last message
                                 int lengthMessageList = messageList.size();
@@ -768,6 +770,33 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // người khác thu hồi tin nhắn
+        SocketClient.getInstance().on(MyConstant.RECALL_LINE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String chatId = (String) args[0];
+                        String lineId = (String) args[1];
+
+                        for (Message message: messageList){
+                            List<Line> lineList = message.getLines();
+                            for(Line line: lineList){
+                                if(line.getId().equals(lineId)){
+                                    line.setType(MyConstant.TEXT_TYPE);
+                                    line.setContent(getString(R.string.recall_line));
+                                    break;
+                                }
+                            }
+                        }
+
+                        personalMessageAdapter.setData(messageList);
+                    }
+                });
+            }
+        });
+
 
     }
 
@@ -795,6 +824,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void run() {
                         String tempId = (String) args[0];
                         chatId = tempId;
+                        personalMessageAdapter.setChatId(chatId);
                         loadMessage(chatId, currentPage, FIRST_LOAD);
                     }
                 });

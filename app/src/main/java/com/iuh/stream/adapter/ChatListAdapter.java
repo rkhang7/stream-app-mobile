@@ -107,7 +107,17 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                         holder.lastLineTv.setText(lastLine.getLine().getContent());
                     }
                 }
+
+                // recall line
                 holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
+                if(lastLine.getLine().getContent().equals("")){
+                    if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                        holder.lastLineTv.setText("Bạn: Tin nhắn đã được thu hồi");
+                    }
+                    else {
+                        holder.lastLineTv.setText(R.string.recall_line);
+                    }
+                }
 
 
             }
@@ -161,6 +171,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                         }
                     }
                     holder.lastTimeLineTv.setText(Util.getTime(lastLine.getLine().getCreatedAt()));
+
+                    if(lastLine.getLine().getContent().equals("")){
+                        if(lastLine.getSenderId().equals(mAuth.getCurrentUser().getUid())){
+                            holder.lastLineTv.setText("Bạn: Tin nhắn đã được thu hồi");
+                        }
+                        else{
+                            for(User user: chats.getUsers()){
+                                if(user.get_id().equals(lastLine.getSenderId())){
+                                    holder.lastLineTv.setText(user.getFirstName() + " " + user.getLastName() + ": " + mContext.getString(R.string.recall_line));
+                                }
+                            }
+                        }
+                    }
                 }
 
 
