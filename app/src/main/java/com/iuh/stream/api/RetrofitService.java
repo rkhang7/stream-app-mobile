@@ -1,5 +1,7 @@
 package com.iuh.stream.api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.iuh.stream.models.chat.Message;
 import com.iuh.stream.models.chatlist.ChatList;
 import com.iuh.stream.models.chatlist.Chats;
@@ -8,6 +10,7 @@ import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.request.AddMemberRequest;
+import com.iuh.stream.models.request.LeaveGroupRequest;
 import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileResponse;
 import com.iuh.stream.models.response.FileSizeResponse;
@@ -37,10 +40,11 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RetrofitService {
+    Gson gson = new GsonBuilder().setLenient().create();
 
     RetrofitService getInstance = new Retrofit.Builder()
             .baseUrl(MyConstant.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build().create(RetrofitService.class);
 
     @POST("users/{uid}")
@@ -121,7 +125,7 @@ public interface RetrofitService {
 
     @POST("/groups/leave")
     @FormUrlEncoded
-    Call<String> leaveGroup(@Field("id") String id, @Header("Authorization") String accessToken);
+    Call<String> leaveGroup(@Field("id") String chatId, @Header("Authorization") String accessToken);
 
     @GET("/files/image/{chatId}")
     Call<List<ImageContentResponse>> getAllImagesChat(@Path("chatId") String chatId, @Header("Authorization") String accessToken);

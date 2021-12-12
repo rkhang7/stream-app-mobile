@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.Group;
+import com.iuh.stream.models.request.LeaveGroupRequest;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
 import com.squareup.picasso.Picasso;
@@ -51,6 +53,7 @@ public class GroupOptionActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private String myId;
     private FirebaseAuth mAuth;
+    private String chatId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,23 +115,24 @@ public class GroupOptionActivity extends AppCompatActivity {
         builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                leaveGroupBtn(mAuth.getCurrentUser().getUid());
+                leaveGroupBtn(chatId);
             }
         });
 
         builder.create().show();
     }
 
-    private void leaveGroupBtn(String uid) {
-        RetrofitService.getInstance.leaveGroup(uid, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+    private void leaveGroupBtn(String chatId) {
+        RetrofitService.getInstance.leaveGroup(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            leaveGroupBtn(uid);
+                            leaveGroupBtn(chatId);
                         }
                         else if(response.code() == 200){
+                            CustomAlert.showToast(GroupOptionActivity.this, CustomAlert.INFO, "Rời nhóm thành công");
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -143,7 +147,7 @@ public class GroupOptionActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         CustomAlert.showToast(GroupOptionActivity.this, CustomAlert.WARNING, t.getMessage());
-
+                        Log.e("TAG", "onFailure: " +t.getMessage() );
                     }
                 });
     }
@@ -164,6 +168,7 @@ public class GroupOptionActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         bundle = getIntent().getExtras();
+        chatId = bundle.getString(MyConstant.GROUP_CHAT_ID);
         group = (Group) bundle.getSerializable(MyConstant.GROUP_KEY);
         groupNameTv.setText(group.getName());
 
