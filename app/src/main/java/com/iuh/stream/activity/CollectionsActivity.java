@@ -10,10 +10,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.MyFragmentAdapter;
 import com.iuh.stream.fragment.FilesFragment;
-import com.iuh.stream.fragment.GroupContactFragment;
 import com.iuh.stream.fragment.ImagesFragment;
-import com.iuh.stream.fragment.PersonalContactFragment;
 import com.iuh.stream.utils.MyConstant;
+
+import java.util.Objects;
 
 public class CollectionsActivity extends AppCompatActivity {
 
@@ -29,7 +29,7 @@ public class CollectionsActivity extends AppCompatActivity {
     private void addControls() {
         // get chatId
         chatId = getIntent().getStringExtra(MyConstant.CHAT_ID);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         // init views
         TabLayout tabLayout = findViewById(R.id.collections_tab_layout);
         ViewPager2 viewPager2 = findViewById(R.id.collections_pager2);

@@ -1,5 +1,6 @@
 package com.iuh.stream.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,7 +100,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendList
         RetrofitService.getInstance.createGroup(memberList, groupName, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<CreateGroupResponse>() {
                     @Override
-                    public void onResponse(Call<CreateGroupResponse> call, Response<CreateGroupResponse> response) {
+                    public void onResponse(@NonNull Call<CreateGroupResponse> call, @NonNull Response<CreateGroupResponse> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             createGroupChat(memberList, groupName);
@@ -124,7 +125,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendList
                     }
 
                     @Override
-                    public void onFailure(Call<CreateGroupResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<CreateGroupResponse> call, @NonNull Throwable t) {
                         CustomAlert.showToast(CreateGroupActivity.this, CustomAlert.WARNING, t.getMessage());
 
                     }

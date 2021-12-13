@@ -10,7 +10,6 @@ import com.iuh.stream.models.jwt.Token;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.request.AddMemberRequest;
-import com.iuh.stream.models.request.LeaveGroupRequest;
 import com.iuh.stream.models.request.RecallLineRequest;
 import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileResponse;

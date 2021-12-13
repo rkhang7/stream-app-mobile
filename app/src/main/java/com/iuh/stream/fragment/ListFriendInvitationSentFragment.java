@@ -63,7 +63,7 @@ public class ListFriendInvitationSentFragment extends Fragment {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getCurrentUser();
                         }
                         else if(response.code() == 200){

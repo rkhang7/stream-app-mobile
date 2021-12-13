@@ -43,16 +43,24 @@
         android:textSize="10dp"
         android:visibility="gone" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/reader_message_iv"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+    <TextView
+        android:id="@+id/readed_message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/message_rcv"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/status_message_bg"
+        android:drawableLeft="@drawable/icons8_double_tick_12"
+        android:drawablePadding="4dp"
         android:gravity="center_vertical"
-        android:src="@drawable/default_avatar"
+        android:padding="4dp"
+        android:text="Đã xem"
+        android:textColor="@color/white"
+        android:textSize="10dp"
         android:visibility="gone" />
+
+
 
 
 

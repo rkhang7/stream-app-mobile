@@ -3,11 +3,8 @@ package com.iuh.stream.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -27,14 +24,10 @@ import com.iuh.stream.interfaces.FriendListener;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.Group;
 import com.iuh.stream.models.request.AddMemberRequest;
-import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,12 +56,7 @@ public class AddMemberActivity extends AppCompatActivity implements FriendListen
     }
 
     private void addEvents() {
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        backBtn.setOnClickListener(v -> finish());
 
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -84,14 +72,6 @@ public class AddMemberActivity extends AppCompatActivity implements FriendListen
             @Override
             public void afterTextChanged(Editable editable) {
                 filterFriends(editable.toString());
-            }
-        });
-
-
-        addMemberBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
 
@@ -185,7 +165,7 @@ public class AddMemberActivity extends AppCompatActivity implements FriendListen
         countTv = findViewById(R.id.count_tv);
         backBtn = findViewById(R.id.back_btn);
         friendCheckBoxAdapter = new FriendCheckBoxAdapter(this, this);
-        friendCheckBoxAdapter.setData(new ArrayList<User>());
+        friendCheckBoxAdapter.setData(new ArrayList<>());
         recyclerView  =findViewById(R.id.friend_rvc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(friendCheckBoxAdapter);

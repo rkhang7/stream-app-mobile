@@ -1,5 +1,6 @@
 package com.iuh.stream.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +24,8 @@ import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
 import com.iuh.stream.models.User;
 import com.iuh.stream.models.chatlist.Group;
-import com.iuh.stream.models.request.LeaveGroupRequest;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +48,6 @@ public class GroupOptionActivity extends AppCompatActivity {
     private List<User> memberList;
     private MemberAdapter memberAdapter;
     private RecyclerView recyclerView;
-    private String myId;
     private FirebaseAuth mAuth;
     private String chatId;
     @Override
@@ -126,7 +122,7 @@ public class GroupOptionActivity extends AppCompatActivity {
         RetrofitService.getInstance.leaveGroup(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             leaveGroupBtn(chatId);
@@ -145,7 +141,7 @@ public class GroupOptionActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                         CustomAlert.showToast(GroupOptionActivity.this, CustomAlert.WARNING, t.getMessage());
                         Log.e("TAG", "onFailure: " +t.getMessage() );
                     }

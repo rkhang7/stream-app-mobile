@@ -4,6 +4,8 @@ package com.iuh.stream.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -180,7 +182,7 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         RetrofitService.getInstance.getChatList(accessToken)
                 .enqueue(new Callback<ChatList>() {
                     @Override
-                    public void onResponse(Call<ChatList> call, Response<ChatList> response) {
+                    public void onResponse(@NonNull Call<ChatList> call, @NonNull Response<ChatList> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), type);
@@ -198,7 +200,7 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     }
 
                     @Override
-                    public void onFailure(Call<ChatList> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ChatList> call, @NonNull Throwable t) {
 
                     }
                 });

@@ -69,7 +69,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                     break;
                 }
             }
-            PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(mContext, hisImageUrl);
+            PersonalLeftLineAdapter personalLeftLineAdapter = new PersonalLeftLineAdapter(mContext, hisImageUrl, message);
             personalLeftLineAdapter.setData(message.getLines());
             holder.recyclerView.setAdapter(personalLeftLineAdapter);
 
@@ -102,7 +102,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                         if(lastLine.getReadedUsers().size() > 0){
                             holder.sentMessageTv.setVisibility(View.GONE);
                             holder.receiveMessageTv.setVisibility(View.GONE);
-                            holder.readerMessageIv.setVisibility(View.VISIBLE);
+                            holder.readMessageTv.setVisibility(View.VISIBLE);
 //                            Glide.with(mContext).load(hisImageUrl).into(holder.readerMessageIv);
                         }
                     }
@@ -111,14 +111,14 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 else{
                     holder.sentMessageTv.setVisibility(View.GONE);
                     holder.receiveMessageTv.setVisibility(View.GONE);
-                    holder.readerMessageIv.setVisibility(View.VISIBLE);
+                    holder.readMessageTv.setVisibility(View.VISIBLE);
                 }
 
             }
             else {
                 holder.sentMessageTv.setVisibility(View.GONE);
                 holder.receiveMessageTv.setVisibility(View.GONE);
-                holder.readerMessageIv.setVisibility(View.GONE);
+                holder.readMessageTv.setVisibility(View.GONE);
             }
         }
     }
@@ -133,14 +133,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     public class GroupMessageAdapterViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView recyclerView;
-        private TextView sentMessageTv, receiveMessageTv;
-        private CircleImageView readerMessageIv;
+        private TextView sentMessageTv, receiveMessageTv,readMessageTv;
         public GroupMessageAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             recyclerView = itemView.findViewById(R.id.message_rcv);
             sentMessageTv = itemView.findViewById(R.id.sent_message_tv);
             receiveMessageTv = itemView.findViewById(R.id.receive_message_tv);
-            readerMessageIv = itemView.findViewById(R.id.reader_message_iv);
+            readMessageTv = itemView.findViewById(R.id.readed_message_tv);
         }
     }
 

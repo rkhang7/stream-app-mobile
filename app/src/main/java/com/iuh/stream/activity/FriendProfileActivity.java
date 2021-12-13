@@ -100,7 +100,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         RetrofitService.getInstance.addFriendRequest(receiverId, accessToken)
                 .enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             addFriendRequest(receiverId, accessToken);
@@ -116,7 +116,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         CustomAlert.showToast(FriendProfileActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
                     }
                 });
@@ -264,7 +264,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
-                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             updateStatusFriendRequest();
                         } else {
                             currentUser = response.body();

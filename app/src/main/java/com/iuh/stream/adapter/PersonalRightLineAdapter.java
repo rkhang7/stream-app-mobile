@@ -395,7 +395,7 @@ public class PersonalRightLineAdapter extends RecyclerView.Adapter<PersonalRight
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             recallLine(recallLineRequest, dialog);
                         }
                         else if(response.code() == 200){

@@ -3,7 +3,6 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -15,16 +14,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,7 +31,6 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.iuh.stream.R;
 import com.iuh.stream.adapter.GroupMessageAdapter;
-import com.iuh.stream.adapter.PersonalMessageAdapter;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
@@ -48,7 +43,6 @@ import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.RealPathUtil;
 import com.iuh.stream.utils.SocketClient;
 import com.iuh.stream.utils.Util;
-import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiPopup;
 
 
@@ -62,10 +56,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-import droidninja.filepicker.utils.ContentUriUtils;
 import gun0912.tedimagepicker.builder.TedImagePicker;
 import io.socket.emitter.Emitter;
 import okhttp3.MediaType;
@@ -85,8 +77,6 @@ public class GroupChatActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String chatId, myId;
     private LinearLayout nameLayout;
-    private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
-    private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
     private static final String TEXTING_EVENT = "texting";
     private static final String STOP_TEXTING_EVENT = "stop-texting";
     private static final int FIRST_LOAD = 11;
@@ -98,7 +88,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private List<Message> messageList;
     private GroupMessageAdapter groupMessageAdapter;
     private RecyclerView recyclerView;
-    private int visibleThreshold = 1; // trigger just one item before the end
+    private final int visibleThreshold = 1; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
     private ProgressDialog progressDialog;
     private int currentPage = 1;
@@ -181,7 +171,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
 
                 // reset message
                 messageEt.setText("");
@@ -325,7 +315,7 @@ public class GroupChatActivity extends AppCompatActivity {
         RetrofitService.getInstance.uploadImageChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<ImageUrlResponse>() {
                     @Override
-                    public void onResponse(Call<ImageUrlResponse> call, Response<ImageUrlResponse> response) {
+                    public void onResponse(@NonNull Call<ImageUrlResponse> call, @NonNull Response<ImageUrlResponse> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
@@ -342,7 +332,7 @@ public class GroupChatActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
                             SocketClient.getInstance().emit(MyConstant.RENDER_IMAGE_REQUEST, chatId);
 
                         } else {
@@ -351,7 +341,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ImageUrlResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ImageUrlResponse> call, @NonNull Throwable t) {
                         CustomAlert.showToast(GroupChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
 
                     }
@@ -746,7 +736,7 @@ public class GroupChatActivity extends AppCompatActivity {
         RetrofitService.getInstance.getMessageById(id, page, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<List<Message>>() {
                     @Override
-                    public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                    public void onResponse(@NonNull Call<List<Message>> call, @NonNull Response<List<Message>> response) {
                          if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             loadMessage(id, page, type);
@@ -793,7 +783,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Message>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<List<Message>> call, @NonNull Throwable t) {
                         CustomAlert.showToast(GroupChatActivity.this, CustomAlert.WARNING, t.getMessage());
                     }
                 });
@@ -804,52 +794,48 @@ public class GroupChatActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case FilePickerConst.REQUEST_CODE_DOC:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Uri> docPaths = new ArrayList<>();
-                    docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
-                    // 1 file
-                    if(docPaths.size() == 1){
-                        Uri uri = docPaths.get(0);
+        if (requestCode == FilePickerConst.REQUEST_CODE_DOC) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                ArrayList<Uri> docPaths = new ArrayList<>();
+                docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+                // 1 file
+                if (docPaths.size() == 1) {
+                    Uri uri = docPaths.get(0);
+                    String realPath = RealPathUtil.getRealPath(this, uri);
+                    File file = new File(realPath);
+                    int file_size = Integer.parseInt(String.valueOf(file.length() / 102400));
+                    if (file_size <= 20) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                        uploadFile(mPartImage);
+                    } else {
+                        CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20BM");
+                    }
+
+                }
+                // multi file
+                else {
+                    int count = 0;
+                    for (Uri uri : docPaths) {
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
-                        int file_size = Integer.parseInt(String.valueOf(file.length()/102400));
-                        if(file_size <= 20){
+                        float file_size = Float.parseFloat(String.valueOf(file.length())) / 1024000;
+                        if (file_size <= 20) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                             MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
                             uploadFile(mPartImage);
-                        }
-                        else{
-                            CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20BM");
+                        } else {
+                            count++;
                         }
 
                     }
-                    // multi file
-                    else{
-                        int count = 0;
-                        for (Uri uri : docPaths) {
-                            String realPath = RealPathUtil.getRealPath(this, uri);
-                            File file = new File(realPath);
-                            float file_size = Float.parseFloat(String.valueOf(file.length()))/1024000;
-                            if(file_size <= 20){
-                                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                                MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-                                uploadFile(mPartImage);
-                            }
-                            else {
-                                count++;
-                            }
-
-                        }
-                        if(count > 0){
-                            CustomAlert.showToast(this, CustomAlert.WARNING, "Có " + count + " file lớn hơn 20MB");
-                        }
+                    if (count > 0) {
+                        CustomAlert.showToast(this, CustomAlert.WARNING, "Có " + count + " file lớn hơn 20MB");
                     }
-
-
                 }
-                break;
+
+
+            }
         }
     }
 
@@ -857,7 +843,7 @@ public class GroupChatActivity extends AppCompatActivity {
         RetrofitService.getInstance.uploadFileChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
@@ -871,7 +857,7 @@ public class GroupChatActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
                             SocketClient.getInstance().emit(MyConstant.RENDER_FILE_REQUEST, chatId);
                         } else {
                             CustomAlert.showToast(GroupChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
@@ -879,7 +865,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
 
                     }
                 });

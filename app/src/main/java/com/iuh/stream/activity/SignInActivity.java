@@ -218,7 +218,7 @@ public class SignInActivity extends AppCompatActivity {
                     IdToken idToken = new IdToken(task.getResult().getToken());
                     RetrofitService.getInstance.getToken(idToken).enqueue(new Callback<Token>() {
                         @Override
-                        public void onResponse(Call<Token> call, Response<Token> response) {
+                        public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                             if(response.isSuccessful()) {
                                 Token token = response.body();
                                 saveTokenToDataLocal(token);

@@ -1,5 +1,7 @@
 package com.iuh.stream.api;
 
+import androidx.annotation.NonNull;
+
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.interfaces.PersonalChatListAsyncResponse;
 import com.iuh.stream.models.chatlist.ChatList;
@@ -20,7 +22,7 @@ public class PersonalChatListCallBack {
         RetrofitService.getInstance.getChatList(accessToken)
                 .enqueue(new Callback<ChatList>() {
                     @Override
-                    public void onResponse(Call<ChatList> call, Response<ChatList> response) {
+                    public void onResponse(@NonNull Call<ChatList> call, @NonNull Response<ChatList> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), callback);
@@ -33,7 +35,7 @@ public class PersonalChatListCallBack {
                     }
 
                     @Override
-                    public void onFailure(Call<ChatList> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ChatList> call, @NonNull Throwable t) {
 
                     }
                 });

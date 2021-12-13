@@ -3,7 +3,6 @@ package com.iuh.stream.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -15,7 +14,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -54,7 +52,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +61,6 @@ import java.util.concurrent.TimeUnit;
 import de.hdodenhof.circleimageview.CircleImageView;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-import droidninja.filepicker.utils.ContentUriUtils;
 import gun0912.tedimagepicker.builder.TedImagePicker;
 import io.socket.emitter.Emitter;
 import okhttp3.MediaType;
@@ -99,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
     private List<Message> messageList;
     private PersonalMessageAdapter personalMessageAdapter;
     private RecyclerView recyclerView;
-    private int visibleThreshold = 1; // trigger just one item before the end
+    private final int visibleThreshold = 1; // trigger just one item before the end
     private int lastVisibleItem, totalItemCount;
     private ProgressDialog progressDialog;
     private int currentPage = 1;
@@ -125,14 +121,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String hisId = user.get_id();
-                viewInfo(hisId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                viewInfo(hisId);
             }
         });
         nameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String hisId = user.get_id();
-                viewInfo(hisId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                viewInfo(hisId);
             }
         });
         messageEt.addTextChangedListener(new TextWatcher() {
@@ -194,7 +190,7 @@ public class ChatActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
 
                 // reset message
                 messageEt.setText("");
@@ -284,14 +280,14 @@ public class ChatActivity extends AppCompatActivity {
                 .check();
     }
 
-    private void viewInfo(String id, String accessToken) {
+    private void viewInfo(String id) {
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            viewInfo(id, accessToken);
+                            viewInfo(id);
                         } else {
                             User user = response.body();
                             if (user != null) {
@@ -373,7 +369,7 @@ public class ChatActivity extends AppCompatActivity {
         RetrofitService.getInstance.uploadImageChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<ImageUrlResponse>() {
                     @Override
-                    public void onResponse(Call<ImageUrlResponse> call, Response<ImageUrlResponse> response) {
+                    public void onResponse(@NonNull Call<ImageUrlResponse> call, Response<ImageUrlResponse> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
@@ -390,7 +386,7 @@ public class ChatActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
                             SocketClient.getInstance().emit(MyConstant.RENDER_IMAGE_REQUEST, chatId);
 
                         } else {
@@ -399,7 +395,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ImageUrlResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ImageUrlResponse> call, @NonNull Throwable t) {
                         CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
 
                     }
@@ -435,7 +431,7 @@ public class ChatActivity extends AppCompatActivity {
 
         user = (User) getIntent().getSerializableExtra(MyConstant.USER_KEY);
         // set info
-        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+        updateStatusUser(user.get_id());
         Picasso.get().load(user.getImageURL()).into(avatarIv);
         nameTv.setText(user.getLastName());
         mAuth = FirebaseAuth.getInstance();
@@ -495,7 +491,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        updateStatusUser(user.get_id());
                     }
                 });
             }
@@ -507,7 +503,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        updateStatusUser(user.get_id(), DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                        updateStatusUser(user.get_id());
                     }
                 });
             }
@@ -585,8 +581,6 @@ public class ChatActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-//                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), RIGHT_ITEM);
-//                        Log.e("TAG", "right: ");
                     }
                 });
             }
@@ -632,6 +626,7 @@ public class ChatActivity extends AppCompatActivity {
                                         messageList.add(message);
                                         personalMessageAdapter.notifyItemInserted(messageList.size());
                                         newMessageTv.setVisibility(View.VISIBLE);
+                                        Log.e("TAG", "run: 1"  );
                                     } else {
                                         int lengthLineList = lastMessage.getLines().size();
                                         List<Line> lastLineList = lastMessage.getLines();
@@ -645,9 +640,16 @@ public class ChatActivity extends AppCompatActivity {
                                             Message message = new Message(lineList, currentUserId, null, newMessageId);
                                             messageList.add(message);
                                             personalMessageAdapter.notifyItemInserted(messageList.size());
+                                            newMessageTv.setVisibility(View.VISIBLE);
+                                            Log.e("TAG", "run: 2"  );
                                         } else {
                                             lastLineList.add(newLine);
                                             personalMessageAdapter.notifyDataSetChanged();
+
+                                            if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
+                                                scrollLastPositionBtn.setVisibility(View.GONE);
+                                                newMessageTv.setVisibility(View.VISIBLE);
+                                            }
                                         }
 
                                         if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
@@ -662,10 +664,11 @@ public class ChatActivity extends AppCompatActivity {
                                     messageList.add(message);
                                     personalMessageAdapter.notifyItemInserted(messageList.size());
 
-                                    if (scrollLastPositionBtn.getVisibility() == View.VISIBLE) {
+                                    if (scrollLastPositionBtn.getVisibility() != View.GONE) {
                                         scrollLastPositionBtn.setVisibility(View.GONE);
                                         newMessageTv.setVisibility(View.VISIBLE);
                                     }
+                                    Log.e("TAG", "run: 3"  );
                                 }
                             }
 
@@ -679,10 +682,6 @@ public class ChatActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, e.getMessage());
                         }
-
-
-//                        loadMessage(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LEFT_ITEM);
-//                        Log.e("TAG", "left: " );
                     }
                 });
             }
@@ -695,9 +694,9 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String chatId = (String) args[0];
-                        String lineId = (String) args[1];
-                        String senderId = (String) args[2];
+//                        String chatId = (String) args[0];
+//                        String lineId = (String) args[1];
+//                        String senderId = (String) args[2];
                         // last message
                         int lengthMessageList = messageList.size();
                         if (lengthMessageList > 0) {
@@ -721,8 +720,8 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String chatId = (String) args[0];
-                        String lineId = (String) args[1];
+//                        String chatId = (String) args[0];
+//                        String lineId = (String) args[1];
                         String senderId = (String) args[2];
 
                         // last message
@@ -892,14 +891,14 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void updateStatusUser(String id, String accessToken) {
+    private void updateStatusUser(String id) {
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            updateStatusUser(id, accessToken);
+                            updateStatusUser(id);
                         } else {
                             User userUpdated = response.body();
                             if (user != null) {
@@ -954,52 +953,48 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case FilePickerConst.REQUEST_CODE_DOC:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Uri> docPaths = new ArrayList<>();
-                    docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
-                    // 1 file
-                    if(docPaths.size() == 1){
-                        Uri uri = docPaths.get(0);
+        if (requestCode == FilePickerConst.REQUEST_CODE_DOC) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                ArrayList<Uri> docPaths = new ArrayList<>();
+                docPaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+                // 1 file
+                if (docPaths.size() == 1) {
+                    Uri uri = docPaths.get(0);
+                    String realPath = RealPathUtil.getRealPath(this, uri);
+                    File file = new File(realPath);
+                    float file_size = Float.parseFloat(String.valueOf(file.length())) / 1024000;
+                    if (file_size <= 20) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                        uploadFile(mPartImage);
+                    } else {
+                        CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20MB");
+                    }
+
+                }
+                // multi file
+                else {
+                    int count = 0;
+                    for (Uri uri : docPaths) {
                         String realPath = RealPathUtil.getRealPath(this, uri);
                         File file = new File(realPath);
-                        float file_size = Float.parseFloat(String.valueOf(file.length()))/1024000;
-                        if(file_size <= 20){
+                        int file_size = Integer.parseInt(String.valueOf(file.length() / 102400));
+                        if (file_size <= 20) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                             MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
                             uploadFile(mPartImage);
-                        }
-                        else{
-                            CustomAlert.showToast(this, CustomAlert.WARNING, "File phải nhỏ hơn 20MB");
+                        } else {
+                            count++;
                         }
 
                     }
-                    // multi file
-                    else{
-                        int count = 0;
-                        for (Uri uri : docPaths) {
-                            String realPath = RealPathUtil.getRealPath(this, uri);
-                            File file = new File(realPath);
-                            int file_size = Integer.parseInt(String.valueOf(file.length()/102400));
-                            if(file_size <= 20){
-                                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                                MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-                                uploadFile(mPartImage);
-                            }
-                            else {
-                                count++;
-                            }
-
-                        }
-                        if(count > 0){
-                            CustomAlert.showToast(this, CustomAlert.WARNING, "Có " + count + " file lớn hơn 20MB");
-                        }
+                    if (count > 0) {
+                        CustomAlert.showToast(this, CustomAlert.WARNING, "Có " + count + " file lớn hơn 20MB");
                     }
-
-
                 }
-                break;
+
+
+            }
         }
     }
 
@@ -1007,7 +1002,7 @@ public class ChatActivity extends AppCompatActivity {
         RetrofitService.getInstance.uploadFileChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                         if (response.code() == 403) {
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             uploadImage(file);
@@ -1021,7 +1016,7 @@ public class ChatActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, new Object[]{chatId, myId, jsonObject});
+                            SocketClient.getInstance().emit(MyConstant.PRIVATE_MESSAGE, chatId, myId, jsonObject);
                             SocketClient.getInstance().emit(MyConstant.RENDER_FILE_REQUEST, chatId);
                         } else {
                             CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, getString(R.string.error_notification));
@@ -1029,7 +1024,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
 
                     }
                 });

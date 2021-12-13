@@ -197,8 +197,8 @@ public class PhoneFriendsActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                                 if (response.code() == 403) {
-                                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
-                                    Util.refreshToken(REFRESH_TOKEN);
+
+                                    Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                                     RetrofitService.getInstance.getUserByPhoneNumber(phoneNumberConverted, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                                             .enqueue(new Callback<User>() {
                                                 @Override

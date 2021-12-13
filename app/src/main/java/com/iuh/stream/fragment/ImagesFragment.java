@@ -117,7 +117,7 @@ public class ImagesFragment extends Fragment {
                     @Override
                     public void onResponse(Call<List<ImageContentResponse>> call, Response<List<ImageContentResponse>> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             loadImages(chatId);
                         }
                         else if(response.code() == 200){

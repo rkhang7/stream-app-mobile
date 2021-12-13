@@ -23,11 +23,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.iuh.stream.R;
+import com.iuh.stream.activity.AddFriendActivity;
+import com.iuh.stream.activity.ChatActivity;
+import com.iuh.stream.activity.FriendProfileActivity;
 import com.iuh.stream.activity.ViewImageMessageActivity;
 import com.iuh.stream.api.RetrofitService;
 import com.iuh.stream.datalocal.DataLocalManager;
 import com.iuh.stream.dialog.CustomAlert;
+import com.iuh.stream.models.User;
 import com.iuh.stream.models.chat.Line;
+import com.iuh.stream.models.chat.Message;
 import com.iuh.stream.models.response.FileSizeResponse;
 import com.iuh.stream.utils.MyConstant;
 import com.iuh.stream.utils.Util;
@@ -50,10 +55,12 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
     private List<Line> lineList;
     private String hisImageUrl;
     private Context mContext;
+    private Message message;
 
-    public PersonalLeftLineAdapter(Context context, String hisImageUrl) {
+    public PersonalLeftLineAdapter(Context context, String hisImageUrl, Message message) {
         this.mContext = context;
         this.hisImageUrl = hisImageUrl;
+        this.message = message;
     }
 
     public void setData(List<Line> lineList) {
@@ -326,7 +333,47 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     downloadFile(linearProgressIndicator, openFileTv, downloadFileBtn, line.getContent());
                 }
             });
+
+            avatarIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String userId = message.getSender();
+                    viewInfo(userId);
+                }
+            });
         }
+    }
+
+    private void viewInfo(String id) {
+        RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+                .enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                        if (response.code() == 403) {
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
+                            viewInfo(id);
+                        } else {
+                            User user = response.body();
+                            if (user != null) {
+                                if (user.isDeleted()) {
+                                    CustomAlert.showToast((Activity) mContext, CustomAlert.INFO, "Tài khoản đã bị xóa");
+                                } else {
+                                    Intent intent = new Intent((Activity) mContext, FriendProfileActivity.class);
+                                    intent.putExtra(AddFriendActivity.USER_KEY, user);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    mContext.startActivity(intent);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                        CustomAlert.showToast((Activity) mContext, CustomAlert.WARNING, t.getMessage());
+                    }
+                });
     }
 
     private void openFile(String fileName) {

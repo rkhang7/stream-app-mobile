@@ -258,7 +258,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             deleteMe(accessToken);
                         }
                         else if(response.code() == 401){
@@ -328,8 +328,7 @@ public class ProfileFragment extends Fragment {
                 if(response.code() == 403){
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                     newtonCradleLoading.start();
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
-                    Util.refreshToken(REFRESH_TOKEN);
+                    Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                     getUserInfo();
                 }
                 else {

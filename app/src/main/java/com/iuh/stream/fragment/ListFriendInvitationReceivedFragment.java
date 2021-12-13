@@ -64,7 +64,7 @@ public class ListFriendInvitationReceivedFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         if(response.code() == 403){
-                            Util.refreshToken(MyConstant.REFRESH_TOKEN);
+                            Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             getCurrentUser();
                         }
                         else{

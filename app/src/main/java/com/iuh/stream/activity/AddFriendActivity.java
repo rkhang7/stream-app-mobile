@@ -133,8 +133,7 @@ public class AddFriendActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN);
-                    Util.refreshToken(REFRESH_TOKEN);
+                    Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                     findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                 }
                 else {
@@ -172,8 +171,8 @@ public class AddFriendActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if(response.code() == 403){
-                    String REFRESH_TOKEN = DataLocalManager.getStringValue(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
-                    Util.refreshToken(REFRESH_TOKEN);
+
+                    Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                     findUserByPhoneNumber(keyword, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN));
                 }
                 else {

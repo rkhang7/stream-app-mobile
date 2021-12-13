@@ -3,6 +3,7 @@ package com.iuh.stream.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -110,7 +111,7 @@ public class FilesFragment extends Fragment {
         RetrofitService.getInstance.getAllFilesChat(chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<List<FileResponse>>() {
                     @Override
-                    public void onResponse(Call<List<FileResponse>> call, Response<List<FileResponse>> response) {
+                    public void onResponse(@NonNull Call<List<FileResponse>> call, @NonNull Response<List<FileResponse>> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             loadFiles(chatId);
@@ -126,7 +127,7 @@ public class FilesFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<List<FileResponse>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<List<FileResponse>> call, @NonNull Throwable t) {
                         CustomAlert.showToast((Activity) getContext(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
