@@ -121,6 +121,7 @@
         <entry key="app/src/main/res/layout/member_in_group_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/message_item.xml" value="0.2" />
         <entry key="app/src/main/res/layout/message_item_left.xml" value="0.12203947368421053" />
+        <entry key="app/src/main/res/layout/modal_bottom_sheet.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/overlay_layout.xml" value="0.11510416666666666" />
         <entry key="app/src/main/res/layout/popup_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/right_line_popup.xml" value="0.25" />

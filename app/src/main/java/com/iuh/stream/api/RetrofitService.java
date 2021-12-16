@@ -11,6 +11,7 @@ import com.iuh.stream.models.User;
 import com.iuh.stream.models.jwt.TokenResponse;
 import com.iuh.stream.models.request.AddMemberRequest;
 import com.iuh.stream.models.request.RecallLineRequest;
+import com.iuh.stream.models.request.RemoveMemberRequest;
 import com.iuh.stream.models.request.RenameGroupRequest;
 import com.iuh.stream.models.response.CreateGroupResponse;
 import com.iuh.stream.models.response.FileResponse;
@@ -133,6 +134,9 @@ public interface RetrofitService {
 
     @PUT("/groups")
     Call<String> renameGroup(@Body RenameGroupRequest renameGroupRequest, @Header("Authorization") String accessToken);
+
+    @POST("/groups/remove-member")
+    Call<Void> removeMember(@Body RemoveMemberRequest removeMemberRequest, @Header("Authorization") String accessToken);
 
     @GET("/files/image/{chatId}")
     Call<List<ImageContentResponse>> getAllImagesChat(@Path("chatId") String chatId, @Header("Authorization") String accessToken);

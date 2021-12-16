@@ -293,7 +293,7 @@ public class GroupOptionActivity extends AppCompatActivity {
         groupNameTv.setText(group.getName());
 
         memberList = (List<User>) bundle.getSerializable(MyConstant.LIST_MEMBER_KEY);
-        memberAdapter = new MemberAdapter(this, memberList, group.getAdmins());
+        memberAdapter = new MemberAdapter(this, memberList, group.getAdmins(), chatId);
         recyclerView = findViewById(R.id.member_group_rcv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(memberAdapter);
