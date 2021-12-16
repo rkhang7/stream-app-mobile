@@ -72,7 +72,8 @@ public class GroupChatActivity extends AppCompatActivity {
     private EditText messageEt;
     private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn, optionBtn;
     private Group group;
-    private TextView groupNameTv, numberMemberTv, textingTv;
+    private TextView numberMemberTv, textingTv;
+    public static TextView groupNameTv;
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
     private String chatId, myId;
