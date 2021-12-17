@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import android.view.LayoutInflater;
@@ -27,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListFriendInvitationSentFragment extends Fragment {
+public class ListFriendInvitationSentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private User user;
     private View view;
@@ -35,6 +36,9 @@ public class ListFriendInvitationSentFragment extends Fragment {
     private List<String> listInvitationSentId;
     private InvitationSentAdapter invitationSentAdapter;
     private ShimmerRecyclerView shimmerRecyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private static final int LOAD = 1;
+    private static final int REFRESH = 2;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,6 +49,9 @@ public class ListFriendInvitationSentFragment extends Fragment {
     }
 
     private void addControls() {
+        swipeRefreshLayout = view.findViewById(R.id.friend_invitation_sent_srl);
+        swipeRefreshLayout.setColorSchemeResources(R.color.main);
+        swipeRefreshLayout.setOnRefreshListener(this);
         listInvitationSentId = new ArrayList<>();
         listInvitationSentUser = new ArrayList<>();
         invitationSentAdapter = new InvitationSentAdapter(getContext());
@@ -54,24 +61,27 @@ public class ListFriendInvitationSentFragment extends Fragment {
         shimmerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         shimmerRecyclerView.setDemoLayoutReference(R.layout.chat_list_item_demo);
         shimmerRecyclerView.showShimmerAdapter();
-       getCurrentUser();
+       getCurrentUser(LOAD);
     }
 
-    private void getCurrentUser() {
+    private void getCurrentUser(int type) {
         RetrofitService.getInstance.getMeInfo(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            getCurrentUser();
+                            getCurrentUser(type);
                         }
                         else if(response.code() == 200){
                             user = response.body();
-                            listInvitationSentId = user.getFriendInvitations();
-                            shimmerRecyclerView.hideShimmerAdapter();
+                            if (user != null) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                listInvitationSentId = user.getFriendInvitations();
+                                shimmerRecyclerView.hideShimmerAdapter();
+                            }
                             for(String id: listInvitationSentId){
-                                getListInvitationSentUser(id);
+                                getListInvitationSentUser(id, type);
                             }
                         }
                     }
@@ -83,14 +93,15 @@ public class ListFriendInvitationSentFragment extends Fragment {
                 });
     }
 
-    private void getListInvitationSentUser(String id) {
+    private void getListInvitationSentUser(String id, int type) {
+        listInvitationSentUser.clear();
         RetrofitService.getInstance.getUserById(id, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
                         if(response.code() == 403){
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
-                            getListInvitationSentUser(id);
+                            getListInvitationSentUser(id,type);
                         }
                         else if(response.code() == 404){
                             CustomAlert.showToast(getActivity(), CustomAlert.WARNING, "Not found User");
@@ -101,6 +112,9 @@ public class ListFriendInvitationSentFragment extends Fragment {
                         }
                         invitationSentAdapter.setData(listInvitationSentUser);
                         shimmerRecyclerView.setAdapter(invitationSentAdapter);
+                        if(type == REFRESH){
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                     }
 
                     @Override
@@ -108,5 +122,10 @@ public class ListFriendInvitationSentFragment extends Fragment {
                         CustomAlert.showToast(getActivity(), CustomAlert.WARNING, t.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void onRefresh() {
+        getCurrentUser(REFRESH);
     }
 }

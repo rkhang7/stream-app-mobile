@@ -6,8 +6,15 @@
     android:orientation="vertical"
     tools:context=".fragment.ListFriendInvitationSentFragment">
 
-    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
-        android:id="@+id/list_sent_rcv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/friend_invitation_sent_srl"
+        android:layout_height="wrap_content">
+        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+            android:id="@+id/list_sent_rcv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </LinearLayout>
