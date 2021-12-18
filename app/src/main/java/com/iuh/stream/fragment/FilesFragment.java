@@ -118,8 +118,11 @@ public class FilesFragment extends Fragment {
                         }
                         else if(response.code() == 200){
                             fileResponseList = response.body();
-                            filesAdapter.setData(fileResponseList);
-                            recyclerView.setAdapter(filesAdapter);
+                            if(fileResponseList != null){
+                                filesAdapter.setData(fileResponseList);
+                                recyclerView.setAdapter(filesAdapter);
+                            }
+
                         }
                         else{
                             CustomAlert.showToast((Activity) getContext(), CustomAlert.WARNING, getString(R.string.error_notification));

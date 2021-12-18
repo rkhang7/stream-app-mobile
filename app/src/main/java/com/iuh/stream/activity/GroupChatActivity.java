@@ -228,8 +228,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 String[] apkType = {"apk"};
                 String[] jsonType = {"json"};
                 String[] csvType = {"csv"};
-                String[] htmlType = {"html"};
-                String[] cssType = {"css"};
+
 
                 FilePickerBuilder.getInstance()
                         .setMaxCount(10) //optional
@@ -238,8 +237,6 @@ public class GroupChatActivity extends AppCompatActivity {
                         .addFileSupport("APK", apkType)
                         .addFileSupport("JSON", jsonType)
                         .addFileSupport("CSV", csvType)
-                        .addFileSupport("HTML", htmlType)
-                        .addFileSupport("CSS", cssType)
                         .setActivityTheme(R.style.LibAppTheme) //optional
                         .pickFile(GroupChatActivity.this);
             }

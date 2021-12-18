@@ -97,6 +97,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);
                     holder.textLastTimeTv.setVisibility(View.VISIBLE);
+                    holder.textLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
                 if (position == lineList.size() - 1 && position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);
@@ -120,6 +121,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                     Picasso.get().load(hisImageUrl).into(holder.avatarIv);
                     holder.avatarIv.setVisibility(View.VISIBLE);
                     holder.imageLastTimeTv.setVisibility(View.VISIBLE);
+                    holder.imageLastTimeTv.setText(Util.getTime(line.getCreatedAt()));
                 }
                 if (position == lineList.size() - 1 && position != 0) {
                     holder.avatarIv.setVisibility(View.INVISIBLE);

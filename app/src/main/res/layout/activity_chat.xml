@@ -125,6 +125,7 @@
         android:background="#e0e9ee"
         android:padding="8dp" />
 
+
     <ProgressBar
         android:id="@+id/paging_pb"
         android:layout_width="wrap_content"
@@ -185,6 +186,7 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -239,6 +241,24 @@
             android:layout_height="32dp"
             android:src="@drawable/send_32"
             android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_deleted_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <TextView
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hiện tại bạn không thể nhắn tin với người này"/>
     </LinearLayout>
 
 

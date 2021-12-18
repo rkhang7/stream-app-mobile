@@ -141,7 +141,7 @@ public interface RetrofitService {
     @GET("/files/image/{chatId}")
     Call<List<ImageContentResponse>> getAllImagesChat(@Path("chatId") String chatId, @Header("Authorization") String accessToken);
 
-    @GET("/files")
+    @GET("/files/")
     Call<List<FileResponse>> getAllFilesChat(@Query("chatId") String chatId, @Header("Authorization") String accessToken);
 
     @GET("/files/{name}")

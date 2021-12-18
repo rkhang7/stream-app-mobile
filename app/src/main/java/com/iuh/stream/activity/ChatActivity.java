@@ -81,7 +81,7 @@ public class ChatActivity extends AppCompatActivity {
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
     private String chatId, myId;
-    private LinearLayout nameLayout;
+    private LinearLayout nameLayout, inputLayout, userDeletedLayout;
     private static final String CREATE_PERSONAL_CHAT_REQUEST = "create-personal-chat";
     private static final String CREATE_PERSONAL_CHAT_RESPONSE = "create-personal-chat-res";
     private static final String TEXTING_EVENT = "texting";
@@ -249,8 +249,6 @@ public class ChatActivity extends AppCompatActivity {
                 String[] apkType = {"apk"};
                 String[] jsonType = {"json"};
                 String[] csvType = {"csv"};
-                String[] htmlType = {"html"};
-                String[] cssType = {"css"};
 
                 FilePickerBuilder.getInstance()
                         .setMaxCount(10) //optional
@@ -259,8 +257,6 @@ public class ChatActivity extends AppCompatActivity {
                         .addFileSupport("APK", apkType)
                         .addFileSupport("JSON", jsonType)
                         .addFileSupport("CSV", csvType)
-                        .addFileSupport("HTML", htmlType)
-                        .addFileSupport("CSS", cssType)
                         .setActivityTheme(R.style.LibAppTheme) //optional
                         .pickFile(ChatActivity.this);
             }
@@ -423,13 +419,16 @@ public class ChatActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.chat_pb);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Vui lòng đợi");
-
+        inputLayout = findViewById(R.id.inputLayout);
+        userDeletedLayout = findViewById(R.id.user_deleted_layout);
 
         // emoji
         emojiPopup = EmojiPopup.Builder.fromRootView(findViewById(R.id.root_view))
                 .build(messageEt);
 
         user = (User) getIntent().getSerializableExtra(MyConstant.USER_KEY);
+
+
         // set info
         updateStatusUser(user.get_id());
         Picasso.get().load(user.getImageURL()).into(avatarIv);
@@ -447,6 +446,17 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         recyclerView.setAdapter(personalMessageAdapter);
+
+        if(user.isDeleted()){
+            nameTv.setText("Người dùng");
+            inputLayout.setVisibility(View.GONE);
+            userDeletedLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            nameTv.setText(user.getLastName());
+            inputLayout.setVisibility(View.VISIBLE);
+            userDeletedLayout.setVisibility(View.GONE);
+        }
 
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
