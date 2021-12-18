@@ -181,7 +181,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     }
 
     private boolean checkIsExistFile(String fileName) {
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File path = new File(Environment.getExternalStorageDirectory() + "/Download/stream");
         File file = new File(path, fileName);
         if (file.exists()) {
             return true;
@@ -266,7 +266,8 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
                             Util.refreshToken(DataLocalManager.getStringValue(MyConstant.REFRESH_TOKEN));
                             downloadFile(linearProgressIndicator, openFileTv, downloadFileBtn, fileName);
                         } else {
-                            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                            File path = new File(Environment.getExternalStorageDirectory() + "/Download/stream");
+                            path.mkdir();
                             File file = new File(path, fileName);
 
                             try {

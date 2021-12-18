@@ -72,7 +72,8 @@ public class GroupChatActivity extends AppCompatActivity {
     private EditText messageEt;
     private ImageButton emojiBtn, sendBtn, imageBtn, fileBtn, backBtn, optionBtn;
     private Group group;
-    private TextView numberMemberTv, textingTv;
+    private TextView textingTv;
+    public static TextView numberMemberTv;
     public static TextView groupNameTv;
     private EmojiPopup emojiPopup;
     private FirebaseAuth mAuth;
@@ -506,6 +507,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
 //                            personalMessageAdapter.setData(messageList);
                             recyclerView.setAdapter(groupMessageAdapter);
+                            newMessageTv.setVisibility(View.GONE);
 
                         } catch (Exception e) {
                             e.printStackTrace();

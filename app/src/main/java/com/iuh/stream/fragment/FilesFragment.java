@@ -97,12 +97,15 @@ public class FilesFragment extends Fragment {
         SocketClient.getInstance().on(MyConstant.RENDER_FILE_RESPONSE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                ((Activity)getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadFiles(mParam1);
-                    }
-                });
+                if((Activity)getContext() != null){
+                    ((Activity)getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadFiles(mParam1);
+                        }
+                    });
+                }
+
             }
         });
     }

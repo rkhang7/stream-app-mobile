@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -249,7 +250,6 @@ public class ChatActivity extends AppCompatActivity {
                 String[] apkType = {"apk"};
                 String[] jsonType = {"json"};
                 String[] csvType = {"csv"};
-
                 FilePickerBuilder.getInstance()
                         .setMaxCount(10) //optional
                         .addFileSupport("RAR", zipTypes)
@@ -482,6 +482,22 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
 
+//                Log.e("TAG", "dx: " + dx);
+//                Log.e("TAG", "dy" + dx);
+//                Log.e("TAG", "lastVisibleItem: " + lastVisibleItem);
+//                Log.e("TAG", "lastCompletelyVisibleItem: " + linearLayoutManager.findLastCompletelyVisibleItemPosition());
+//                Log.e("TAG", "firstVisibleItem: " + linearLayoutManager.findFirstVisibleItemPosition());
+//                Log.e("TAG", "firstCompletelyVisibleItem: " + linearLayoutManager.findFirstCompletelyVisibleItemPosition());
+//
+//                if(lastVisibleItem == linearLayoutManager.findLastCompletelyVisibleItemPosition()){
+//                    if(newMessageTv.getVisibility() == View.VISIBLE){
+//                        newMessageTv.setVisibility(View.GONE);
+//                    }
+//                    if(scrollLastPositionBtn.getVisibility() == View.VISIBLE){
+//                        scrollLastPositionBtn.setVisibility(View.GONE);
+//                    }
+//
+//                }
             }
 
             @Override
@@ -587,6 +603,7 @@ public class ChatActivity extends AppCompatActivity {
 
 //                            personalMessageAdapter.setData(messageList);
                             recyclerView.setAdapter(personalMessageAdapter);
+                            newMessageTv.setVisibility(View.GONE);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -636,7 +653,6 @@ public class ChatActivity extends AppCompatActivity {
                                         messageList.add(message);
                                         personalMessageAdapter.notifyItemInserted(messageList.size());
                                         newMessageTv.setVisibility(View.VISIBLE);
-                                        Log.e("TAG", "run: 1"  );
                                     } else {
                                         int lengthLineList = lastMessage.getLines().size();
                                         List<Line> lastLineList = lastMessage.getLines();
@@ -651,7 +667,6 @@ public class ChatActivity extends AppCompatActivity {
                                             messageList.add(message);
                                             personalMessageAdapter.notifyItemInserted(messageList.size());
                                             newMessageTv.setVisibility(View.VISIBLE);
-                                            Log.e("TAG", "run: 2"  );
                                         } else {
                                             lastLineList.add(newLine);
                                             personalMessageAdapter.notifyDataSetChanged();
@@ -678,7 +693,6 @@ public class ChatActivity extends AppCompatActivity {
                                         scrollLastPositionBtn.setVisibility(View.GONE);
                                         newMessageTv.setVisibility(View.VISIBLE);
                                     }
-                                    Log.e("TAG", "run: 3"  );
                                 }
                             }
 
@@ -934,6 +948,7 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
+    @NonNull
     private String getDifferentTime(Date lastOnline) {
 
         long duration = new Date().getTime() - lastOnline.getTime();
