@@ -116,7 +116,7 @@ public interface RetrofitService {
 
     @Multipart
     @POST("/files/upload")
-    Call<String> uploadFileChat(@Part MultipartBody.Part file , @Header("Authorization") String accessToken);
+    Call<String> uploadFileChat(@Part MultipartBody.Part file,@Part("chatId") String id, @Header("Authorization") String accessToken);
 
     @GET("/files/size/{name}")
     Call<FileSizeResponse> getFileSizeByName(@Path("name") String name, @Header("Authorization") String accessToken);

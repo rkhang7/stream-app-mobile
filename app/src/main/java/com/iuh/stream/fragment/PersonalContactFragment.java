@@ -117,7 +117,10 @@ public class PersonalContactFragment extends Fragment implements SwipeRefreshLay
         new UserUtil().getListFriend(new UserListAsyncResponse() {
             @Override
             public void processFinnish(List<User> friendArrayList) {
-                listFriendUser = Util.sortListFriend(friendArrayList);
+                listFriendUser = friendArrayList;
+                if(listFriendUser.size() > 1){
+                    listFriendUser = Util.sortListFriend(friendArrayList);
+                }
                 shimmerRecyclerView.hideShimmerAdapter();
                 friendsAdapter.setData(listFriendUser);
                 shimmerRecyclerView.setAdapter(friendsAdapter);

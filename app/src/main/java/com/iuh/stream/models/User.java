@@ -6,6 +6,7 @@ import java.util.List;
 
 public class User implements Serializable {
     private String _id;
+    private String role;
     private String firstName;
     private String lastName;
     private String gender;
@@ -19,6 +20,7 @@ public class User implements Serializable {
     private List<String> contacts;
     private List<String> friendRequests;
     private List<String> friendInvitations;
+    private List<String> loginMethods;
 
     public User() {
     }
@@ -61,6 +63,25 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.online = online;
+    }
+
+    public User(String _id, String role, String firstName, String lastName, String gender, Date dateOfBirth, String imageURL, String phoneNumber, boolean deleted, String email, Date lastOnline, boolean online, List<String> contacts, List<String> friendRequests, List<String> friendInvitations, List<String> loginMethods) {
+        this._id = _id;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.imageURL = imageURL;
+        this.phoneNumber = phoneNumber;
+        this.deleted = deleted;
+        this.email = email;
+        this.lastOnline = lastOnline;
+        this.online = online;
+        this.contacts = contacts;
+        this.friendRequests = friendRequests;
+        this.friendInvitations = friendInvitations;
+        this.loginMethods = loginMethods;
     }
 
     public String get_id() {
@@ -175,10 +196,28 @@ public class User implements Serializable {
         this.deleted = deleted;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<String> getLoginMethods() {
+        return loginMethods;
+    }
+
+    public void setLoginMethods(List<String> loginMethods) {
+        this.loginMethods = loginMethods;
+    }
+
+
     @Override
     public String toString() {
         return "User{" +
                 "_id='" + _id + '\'' +
+                ", role='" + role + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
@@ -192,6 +231,7 @@ public class User implements Serializable {
                 ", contacts=" + contacts +
                 ", friendRequests=" + friendRequests +
                 ", friendInvitations=" + friendInvitations +
+                ", loginMethods=" + loginMethods +
                 '}';
     }
 }

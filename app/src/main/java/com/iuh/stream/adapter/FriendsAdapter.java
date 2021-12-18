@@ -65,8 +65,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FiendsVi
         User user = userList.get(position);
         Picasso.get().load(user.getImageURL()).into(holder.avatarIv);
         holder.nameTv.setText(user.getFirstName() + " " + user.getLastName());
-
-
         if(user.isOnline()){
             holder.onlineIv.setVisibility(View.VISIBLE);
             holder.offlineIv.setVisibility(View.INVISIBLE);

@@ -1009,7 +1009,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void uploadFile(MultipartBody.Part file) {
-        RetrofitService.getInstance.uploadFileChat(file, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
+        RetrofitService.getInstance.uploadFileChat(file, chatId, DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN))
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
@@ -1035,6 +1035,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        CustomAlert.showToast(ChatActivity.this, CustomAlert.WARNING, t.getMessage());
 
                     }
                 });
