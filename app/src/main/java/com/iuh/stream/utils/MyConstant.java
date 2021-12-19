@@ -1,8 +1,10 @@
 package com.iuh.stream.utils;
 
 public class MyConstant {
-    public static final String BASE_URL = "http://192.168.100.3:3000/";
+//    public static final String BASE_URL = "http://192.168.100.3:3000/";
 //    public static final String BASE_URL = "http://10.0.2.2:3000/";
+//    http://ec2-3-0-93-24.ap-southeast-1.compute.amazonaws.com:3000/
+    public static final String BASE_URL = "http://ec2-3-0-93-24.ap-southeast-1.compute.amazonaws.com:3000/";
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
     public static final String PASSWORD = "password";

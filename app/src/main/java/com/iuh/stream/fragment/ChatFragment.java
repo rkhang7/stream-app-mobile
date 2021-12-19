@@ -128,12 +128,15 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         SocketClient.getInstance().on(MyConstant.MESSAGE_SENT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                ((Activity)getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
-                    }
-                });
+                if((Activity)getContext() != null){
+                    ((Activity)getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getChatList(DataLocalManager.getStringValue(MyConstant.ACCESS_TOKEN), LOAD);
+                        }
+                    });
+                }
+
             }
         });
 

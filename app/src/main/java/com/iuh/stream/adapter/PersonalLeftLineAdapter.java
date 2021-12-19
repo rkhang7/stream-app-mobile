@@ -381,7 +381,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
     private void openFile(String fileName) {
         String[] split = fileName.split("\\.");
         String type = split[1].toUpperCase(Locale.ROOT);
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File path = new File(Environment.getExternalStorageDirectory() + "/Download/stream");
         File file = new File(path, fileName);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         switch (type) {
@@ -390,7 +390,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
                 break;
             case "DOC":
             case "DOCX":
-                intent.setDataAndType(Uri.parse(file.getPath()), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                intent.setDataAndType(Uri.parse(file.getPath()), "application/msword");
                 break;
             case "XLS":
             case "XLSX":
@@ -431,6 +431,7 @@ public class PersonalLeftLineAdapter extends RecyclerView.Adapter<PersonalLeftLi
             case "MP4":
             case "MOV":
             case "MKV":
+            case "AVI":
                 intent.setDataAndType(Uri.parse(file.getPath()), "video/mp4");
                 break;
             default:
